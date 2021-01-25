@@ -1,0 +1,12 @@
+{
+  "name": "Amial",
+  "displayName": "Amial",
+  "expo": {
+    "name": "Amial",
+    "slug": "Amial",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
