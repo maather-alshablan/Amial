@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1055987009677-cd14m1u51vbpdkoif8mjg8bh9g400aps.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1055987009677-cd14m1u51vbpdkoif8mjg8bh9g400aps</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB7MHk6utNVEYXqIKLBjgiDOQbdmgilu84</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1055987009677</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>Amial</string>
+	<key>PROJECT_ID</key>
+	<string>amial-8b79c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>amial-8b79c.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1055987009677:ios:c2699ffd7e974b3e1d3ac4</string>
+</dict>
+</plist>

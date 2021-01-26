@@ -18,8 +18,7 @@
 #import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
-
-
+#import <Firebase.h>
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
@@ -39,21 +38,24 @@ static void InitializeFlipper(UIApplication *application) {
 
 @end
 
-#import UIKit;
-#import Firebase;
+
 
 @implementation AppDelegate
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [FIRApp configure];
+   
+    if ([FIRApp defaultApp] == nil) {
+      [FIRApp configure];
+    }
+  
 #if defined(FB_SONARKIT_ENABLED) && __has_include(<FlipperKit/FlipperClient.h>)
   InitializeFlipper(application);
 
 
 #endif
-  
+ 
   
   self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
   self.launchOptions = launchOptions;

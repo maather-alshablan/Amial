@@ -1,12 +1,11 @@
 
-import * as firebase from 'firebase';
-import auth from 'firebase/auth';
+import firebase from 'firebase/app'
 
 
 const firebaseConfig = {
     apiKey: 'AIzaSyB7MHk6utNVEYXqIKLBjgiDOQbdmgilu84',
-    authDomain: 'Amial.firebaseapp.com',
-    databaseURL: 'https://Amial.firebaseio.com',
+    authDomain: 'amial-8b79c.firebaseapp.com',
+    databaseURL: 'https://amial-8b79c.firebaseio.com',
     projectId: 'amial-8b79c',
     storageBucket: 'amial-8b79c.appspot.com',
     messagingSenderId: '1055987009677',
@@ -14,9 +13,10 @@ const firebaseConfig = {
   };
  
 
-firebase.initializeApp(firebaseConfig);
+  const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 const database = firebase.firestore()
 const auth = firebase.auth()
+
 
 export default {firebase, database, auth};
