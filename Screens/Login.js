@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React , {Component} from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import auth from '../Configuration/firebase'
 
 export default class Login extends Component {
 
@@ -9,6 +10,23 @@ export default class Login extends Component {
     email: '',
     password:''
   }
+
+
+  handleSignIn = () =>{
+    auth.createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in 
+      var user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ..
+    });
+  }
+
+
   render(){
     return (
     <View style={styles.container}>
@@ -32,6 +50,7 @@ export default class Login extends Component {
 
       <Button
       title="تسجيل الدخول"
+      onPress = {() => handleSignIn()}
       />
 
       <TouchableOpacity
