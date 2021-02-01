@@ -11,29 +11,36 @@ export default class Login extends Component {
   state= {
     email: '',
     password:'',
-    error:null
+    errorMessage:null
   }
 
 
   handleSignIn = () =>{
-    //testing navigation
-      //  this.props.navigation.navigate('MainNavigation');
+    
+
+  //   if (this.state.email ==='' || this.state.email ==='')
+  //   {
+    
+  //   this.state.errorMessage = 'يجب تحديد البريد الإلكتروني و كلمة المرور'
+  //   return;
+  // }
+
+  
       console.log('hi')
     //test account: test@email.com password:123456
     firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
     .then((userCredential) => {
       console.log('user signed in')
-      // Signed in 
-      // var user = userCredential.user;
-      // this.props.navigation.navigate('MainNavigation');
-      // ...
+      
     })
     .catch((error) => {
-      var errorCode = error.code;
-      var errorMessage = error.message;
+      
       console.log(error)
+      this.setState({errorMessage:'يرجى التأكد من ادخال البريد الالكتروني و كلمة المرور الصحيح'})
       // ..
     });
+
+    this.setState({errorMessage:null})
   }
 
 
@@ -45,7 +52,10 @@ export default class Login extends Component {
       <Image 
       source={require('../Constants/PNGLogo.png')} 
       style={styles.logo}/>
-
+      <View style={{margin:10}}>
+      {this.state.errorMessage && <Text style={{ color: 'red' }}>
+                        {this.state.errorMessage}</Text>}
+                        </View>
       <View style={styles.InputView}>
       {/* <Text>البريد الإلكتروني</Text> */}
       <Icon name='mail' color={'#01b753'} size={25}/>
