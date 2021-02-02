@@ -96,7 +96,7 @@ function myVehicleNavigation(){
 
       function Header(){
         return(
-          <View >
+          <View>
           <Text style={{fontSize:40,color:'#5dbcd2', alignSelf:'flex-end'}}>مركبتي</Text>
           </View>
         )
