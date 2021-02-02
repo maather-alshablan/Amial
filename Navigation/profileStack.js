@@ -15,11 +15,11 @@ function ProfileStack (){
         component={Profile} 
         unmountOnBlur={true}
         options={{ 
-            headerRight: props => <Header {...props} /> ,
+          headerTitle: props => <Header {...props} /> ,
             headerStyle:{
               height:150
             },
-            headerTitle:null,
+            
             headerStyle: { shadowColor: 'transparent' }
             }}
         />
@@ -45,7 +45,7 @@ function ProfileStack (){
 function Header(){
     return(
       <View >
-      <Text style={{fontSize:30,color:'#5dbcd2', alignSelf:'flex-end'}}>حسابي</Text>
+      <Text style={{fontSize:30,color:'#5dbcd2',fontFamily:'Tajawal_400Regular', alignSelf:'flex-end'}}>حسابي</Text>
       </View>
     )
   }
@@ -53,7 +53,7 @@ function Header(){
   function FAQHeader(){
     return(
       <View >
-      <Text style={{fontSize:30,color:'#5dbcd2', alignSelf:'flex-end'}}>FAQ</Text>
+      <Text style={{fontSize:30,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', alignSelf:'flex-end'}}>FAQ</Text>
       </View>
     )
   }

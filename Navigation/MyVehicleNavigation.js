@@ -17,11 +17,11 @@ function myVehicleNavigation(){
             <Stack.Screen name='Vehicle' 
             component={Vehicle} 
             options={{ 
-              headerRight: props => <Header {...props} /> ,
+              headerTitle: props => <Header {...props} /> ,
               headerStyle:{
                 height:150
               },
-              headerTitle:null,
+              
               headerStyle: { shadowColor: 'transparent' }
               }}/>
             <Stack.Screen name='ManageVehicle' 
@@ -79,17 +79,17 @@ function myVehicleNavigation(){
       function RequestHeader(){
         return(
           <View style={{paddingVertical:10}}>
-          <Text style={{fontSize:40,color:'#5dbcd2', alignSelf:'flex-end' }}>مركبتي</Text>
-          <Text style={{fontSize:25,color:'grey', alignSelf:'flex-end'}}>الطلبات</Text>
+          <Text style={{fontSize:40,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', alignSelf:'flex-end' }}>مركبتي</Text>
+          <Text style={{fontSize:25,color:'grey', fontFamily:'Tajawal_300Light', alignSelf:'flex-end'}}>الطلبات</Text>
           </View>
         )
       }
 
       function ManageVehicleHeader(){
         return(
-          <View style={{paddingVertical:10}}>
-          <Text style={{fontSize:40,color:'#5dbcd2', alignSelf:'flex-end'}}>مركبتي</Text>
-          <Text style={{fontSize:25,color:'grey', alignSelf:'flex-end'}}>إدارة البيانات</Text>
+          <View style={{paddingVertical:15}}>
+          <Text style={{fontSize:40,color:'#5dbcd2',fontFamily:'Tajawal_400Regular', alignSelf:'flex-end'}}>مركبتي</Text>
+          <Text style={{fontSize:25,color:'grey',fontFamily:'Tajawal_300Light', alignSelf:'flex-end'}}>إدارة البيانات</Text>
           </View>
         )
       }
@@ -97,7 +97,7 @@ function myVehicleNavigation(){
       function Header(){
         return(
           <View>
-          <Text style={{fontSize:40,color:'#5dbcd2', alignSelf:'flex-end'}}>مركبتي</Text>
+          <Text style={{fontSize:40,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', alignSelf:'flex-end'}}>مركبتي</Text>
           </View>
         )
       }

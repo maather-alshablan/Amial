@@ -22,7 +22,7 @@ export default class Vehicle extends Component {
     {!this.state.hasVehicle ? 
       <View>{/* image is for mockup purposes */}
       <Image
-        source={require('../Constants/PNGLogo.png')} 
+        source={require('../Constants/Logo/PNGLogo.png')} 
         style={styles.logo}/>
       <View style={{flexDirection:'row-reverse', alignItems:'center'}}>
         <TouchableOpacity  style={styles.Button} onPress={()=> this.props.navigation.navigate('ManageVehicle')}>

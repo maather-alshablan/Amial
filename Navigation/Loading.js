@@ -8,7 +8,7 @@ export default function Loading() {
       <View style={styles}>
           <ActivityIndicator size='large' color='black'/>
    <Image
-   source={require('../Constants/PNGLogo.png')}
+   source={require('../Constants/Logo/PNGLogo.png')}
    style={{width: Dimensions.get('window').height*0.40, height:100, marginTop:300}}
    />
    </View>

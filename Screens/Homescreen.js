@@ -17,7 +17,7 @@ export default class Homescreen extends Component {
     return (
     <View style={styles.container}>
        <Image
-        source={require('../Constants/PNGLogo.png')} 
+        source={require('../Constants/Logo/PNGLogo.png')} 
         style={styles.logo}/>
       <View style={styles.searchContainer}>
         <TextInput

@@ -50,7 +50,7 @@ export default class Login extends Component {
     <View style={styles.container}>
 
       <Image 
-      source={require('../Constants/PNGLogo.png')} 
+      source={require('../Constants/Logo/PNGLogo.png')} 
       style={styles.logo}/>
       <View style={{margin:10}}>
       {this.state.errorMessage && <Text style={{ color: 'red' }}>

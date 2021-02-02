@@ -66,7 +66,7 @@ function MainNavigation(){
     function RequestHeader(){
       return(
         <View >
-        <Text style={{fontSize:30,color:'#5dbcd2', alignSelf:'flex-end'}}>رحلاتي</Text>
+        <Text style={{fontSize:30,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', alignSelf:'flex-end'}}>رحلاتي</Text>
         </View>
       )
     }
