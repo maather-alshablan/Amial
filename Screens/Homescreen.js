@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React , {Component} from 'react';
 import { StyleSheet, Text, View, Button,Dimensions, Image } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-
+import Map from '../Screens/maps'
 
 export default class Homescreen extends Component {
 
@@ -26,6 +26,9 @@ export default class Homescreen extends Component {
         value={this.state.searchValue}
         />
         
+      </View>
+      <View style={{margin:20, marginRight:300}} >
+        <Map/>
       </View>
                 </View>
   );

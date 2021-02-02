@@ -43,15 +43,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-  //  justifyContent: 'center',
+ 
   }, //for mockup
   logo:{
     height:200,
     width:350,
     resizeMode:'contain',
-    // margin:60,
-    // marginTop:150
-    
   },
   Button:{
     backgroundColor:'#5dbcd2',

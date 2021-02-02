@@ -1,5 +1,4 @@
 import * as React from "react";
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, View} from 'react-native';
 
@@ -19,7 +18,7 @@ function myVehicleNavigation(){
             options={{ 
               headerTitle: props => <Header {...props} /> ,
               headerStyle:{
-                height:150
+                height:170
               },
               
               headerStyle: { shadowColor: 'transparent' }
@@ -31,7 +30,7 @@ function myVehicleNavigation(){
               headerTitle:null,
               headerBackTitleVisible:false,
               headerStyle:{
-                height:150,
+                height:170,
                 shadowColor: 'transparent' 
               }
               }} />
@@ -58,11 +57,8 @@ function myVehicleNavigation(){
           screenOptions={{
           headerTitle:false,
           headerBackTitleVisible:false,
-          
           headerStyle:{
-      
              shadowColor: 'transparent' ,
-            
           }}}>
             <Stack.Screen name='Requests' 
             component={RequestsNavigation} 

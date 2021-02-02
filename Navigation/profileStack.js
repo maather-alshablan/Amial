@@ -16,21 +16,15 @@ function ProfileStack (){
         unmountOnBlur={true}
         options={{ 
           headerTitle: props => <Header {...props} /> ,
-            headerStyle:{
-              height:150
-            },
-            
-            headerStyle: { shadowColor: 'transparent' }
+            headerStyle: { shadowColor: 'transparent' ,height:170}
             }}
         />
         <Stack.Screen name="FAQ" component={FAQ}
            options={{ 
-            headerStyle:{
-              height:150
-            },
             headerTitle:props => <FAQHeader {...props} />,
             headerBackTitleVisible:false,
-            headerStyle: { shadowColor: 'transparent' }
+            headerBackTitleStyle:{color:'#5dbcd2'},
+            headerStyle: { shadowColor: 'transparent',height:170}
             }}
         
         />
@@ -45,7 +39,7 @@ function ProfileStack (){
 function Header(){
     return(
       <View >
-      <Text style={{fontSize:30,color:'#5dbcd2',fontFamily:'Tajawal_400Regular', alignSelf:'flex-end'}}>حسابي</Text>
+      <Text style={{fontSize:35,color:'#5dbcd2',fontFamily:'Tajawal_400Regular'}}>حسابي</Text>
       </View>
     )
   }
@@ -53,7 +47,7 @@ function Header(){
   function FAQHeader(){
     return(
       <View >
-      <Text style={{fontSize:30,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', alignSelf:'flex-end'}}>FAQ</Text>
+      <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>الأسئلة الشائعة</Text>
       </View>
     )
   }

@@ -18,15 +18,17 @@ function MainNavigation(){
 
 
     return (
-        <Tab.Navigator initialRouteName='Homescreen' tabBarOptions={{
+        <Tab.Navigator initialRouteName='Homescreen' 
+        
+        tabBarOptions={{
           style:{ borderTopWidth: 0,
             elevation: 0},
-            labelStyle:{fontSize:15}
-            
+            tabStyle:{height:25},
+            labelStyle:{fontSize:20, fontFamily:'Tajawal_300Light'}
         }} >
           <Tab.Screen name='Homescreen' component={Homescreen} 
           
-          options={{tabBarLabel:'الرئيسية'}}/>
+          options={{tabBarLabel:'الرئيسية',}}/>
           <Tab.Screen name='Trips' component={TripStack} options={{tabBarLabel:'رحلاتي'}}/>
           <Tab.Screen name='Vehicle' component={Vehicle}options={{tabBarLabel:'مركبتي'}}/>
           <Tab.Screen name='Profile' component={Profile} options={{tabBarLabel:'حسابي'}}/>
