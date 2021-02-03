@@ -5,8 +5,9 @@
     "name": "Amial",
     "slug": "Amial",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "splash": {
+      "image": "./images/AmialLogo.gif"}
+    
   }
 }
+
