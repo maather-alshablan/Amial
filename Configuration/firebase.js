@@ -18,8 +18,15 @@ const firebaseConfig = {
   };
  
    if (!firebase.apps.length){
-    firebase.initializeApp(firebaseConfig);}
+    firebase.initializeApp(firebaseConfig);
+    passwordReset: email => {
+      return firebase.auth().sendPasswordResetEmail(email)
+    }
+  }
   
    
     const auth = firebase.auth();
   export  {firebase, auth};
+
+  
+
