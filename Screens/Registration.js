@@ -136,12 +136,14 @@ export default class Registration extends Component {
           value={this.state.password}
           onChangeText={(password) => this.setState({ password })}
           iconName={'lock'}
+          secureTextEntry={true}
         />
         <Input
           placeholder="تاكيد كلمة المرور"
           value={this.state.confirmPassword}
           onChangeText={(confirmPassword) => this.setState({ confirmPassword })}
           iconName={'lock'}
+          secureTextEntry={true}
         />
         <TouchableOpacity
           onPress={this.handleSignUp}
