@@ -1,5 +1,4 @@
 import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, View,} from 'react-native';
 
@@ -26,12 +25,13 @@ function MainNavigation(){
             tabStyle:{height:25},
             labelStyle:{fontSize:20, fontFamily:'Tajawal_300Light'}
         }} >
+          <Tab.Screen name='Profile' component={Profile} options={{tabBarLabel:'حسابي'}}/>
+          <Tab.Screen name='Vehicle' component={Vehicle}options={{tabBarLabel:'مركبتي'}}/>
+          <Tab.Screen name='Trips' component={TripStack} options={{tabBarLabel:'رحلاتي'}}/>
+
           <Tab.Screen name='Homescreen' component={Homescreen} 
           
           options={{tabBarLabel:'الرئيسية',}}/>
-          <Tab.Screen name='Trips' component={TripStack} options={{tabBarLabel:'رحلاتي'}}/>
-          <Tab.Screen name='Vehicle' component={Vehicle}options={{tabBarLabel:'مركبتي'}}/>
-          <Tab.Screen name='Profile' component={Profile} options={{tabBarLabel:'حسابي'}}/>
         </Tab.Navigator>
       )
     }
