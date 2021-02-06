@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Input from '../components/Input';
+import { OverLay } from '../components/OverLay';
 import { auth, database } from '../Configuration/firebase'
 export default class Registration extends Component {
 
@@ -14,7 +15,8 @@ export default class Registration extends Component {
     confirmEmail: '',
     DoB: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    loading: false
   }
 
   handleSignUp = () => {
@@ -58,13 +60,12 @@ export default class Registration extends Component {
     auth.
       createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then((response) => {
-        // this.successfulRegistration()
-      }
-      )
+        this.successfulRegistration()
+      })
       .catch(
         (e) => {
           console.warn('successfulRegistration[error]', e)
-          this.setState({ errorMessage: 'يرجى التأكد من ادخال البيانات بالشكل الصحيح', formValid: false })
+          alert('يرجى التأكد من ادخال البيانات بالشكل الصحيح')
         })
 
     if (this.state.errorMessage == '') {
@@ -73,18 +74,24 @@ export default class Registration extends Component {
   }
 
   successfulRegistration = () => {
+    this.setState({ loading: true })
     const userid = auth.currentUser.uid;
-    database.ref().child('users').child(userid).set({
+    database.collection('users').add({
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
       mobileNumber: this.state.mobileNumber,
       nationalID: this.state.nationalID,
-    }).then(() => {
-      console.warn('success')
-      this.props.navigation.navigate('MainNavigation');
-    }).catch(error => console.warn(error)
-    );
+      userid: userid
+    }).then(success => {
+      this.props.navigation.navigate('Home');
+      this.setState({ loading: false })
+    }).catch(e => {
+      alert('حصل خطأ ما يرجى المحاولة لاحقا')
+      this.setState({ loading: false })
+      console.warn('error', e);
+    })
+
   }
 
 
@@ -144,6 +151,7 @@ export default class Registration extends Component {
         <Text style={{ fontSize: 14 }} >مسجل مسبقا؟ <Text style={{ textDecorationLine: 'underline', color: '#01b753' }}
           onPress={() => this.props.navigation.navigate('Login')}
         >تسجيل الدخول</Text></Text>
+        {this.state.loading ? <OverLay /> : null}
       </View>
     );
 
