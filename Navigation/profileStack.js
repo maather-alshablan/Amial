@@ -4,6 +4,9 @@ import { Text, View} from 'react-native';
 
 import Profile from '../Screens/Profile'
 import FAQ from '../Screens/FAQ'
+import creditCard from '../Screens/creditCard'
+import editProfile from '../Screens/editProfile'
+
 
 function ProfileStack (){
     const Stack = createStackNavigator()
@@ -11,6 +14,7 @@ function ProfileStack (){
     return(
         <Stack.Navigator
         initialRouteName="profile">
+
         <Stack.Screen name="profile" 
         component={Profile} 
         unmountOnBlur={true}
@@ -19,15 +23,29 @@ function ProfileStack (){
             headerStyle: { shadowColor: 'transparent' ,height:170}
             }}
         />
+
+          <Stack.Screen name="EditProfile" component={editProfile}
+           options={{ 
+            headerTitle:props => <EditProfileHeader {...props} />,
+            headerBackTitleVisible:false,
+            headerBackTitleStyle:{color:'#5dbcd2'},
+            headerStyle: { shadowColor: 'transparent',height:140}
+            }}/>
         <Stack.Screen name="FAQ" component={FAQ}
            options={{ 
             headerTitle:props => <FAQHeader {...props} />,
             headerBackTitleVisible:false,
             headerBackTitleStyle:{color:'#5dbcd2'},
             headerStyle: { shadowColor: 'transparent',height:170}
-            }}
-        
-        />
+            }}/>
+           
+            <Stack.Screen name="creditCard" component={creditCard}
+           options={{ 
+            headerTitle:props => <CreditCardHeader {...props} />,
+            headerBackTitleVisible:false,
+            headerBackTitleStyle:{color:'#5dbcd2'},
+            headerStyle: { shadowColor: 'transparent',height:140}
+            }}/>
 
         
         </Stack.Navigator>
@@ -44,10 +62,29 @@ function Header(){
     )
   }
 
+
+  function EditProfileHeader(){
+    return(
+      <View >
+      <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>تعديل بيانات الحساب
+</Text>
+      </View>
+    )
+  }
+
+
   function FAQHeader(){
     return(
       <View >
       <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>الأسئلة الشائعة</Text>
+      </View>
+    )
+  }
+
+  function CreditCardHeader(){
+    return(
+      <View >
+      <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}> بيانات البطاقة البنكية</Text>
       </View>
     )
   }
