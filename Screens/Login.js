@@ -3,8 +3,8 @@ import React , {Component} from 'react';
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import {firebase} from '../Configuration/firebase'
-import { log, color } from 'react-native-reanimated';
 import Icon from  'react-native-vector-icons/Entypo';
+import colors from '../Constants/colors';
 
 export default class Login extends Component {
 
@@ -58,7 +58,7 @@ export default class Login extends Component {
                         </View>
       <View style={styles.InputView}>
       {/* <Text>البريد الإلكتروني</Text> */}
-      <Icon name='mail' color={'#01b753'} size={25}/>
+      <Icon name='mail' color={'#01b753'} size={30}/>
 
       <TextInput
       style={styles.InputField}
@@ -71,7 +71,7 @@ export default class Login extends Component {
 
       <View style={styles.InputView}>
       {/* <Text style={{color:'#01b753'}}>كلمة المرور </Text> */}
-      <Icon name='lock' color={'#01b753'} size={25}/>
+      <Icon name='lock' color={'#01b753'} size={30}/>
       <TextInput
       style={styles.InputField}
       placeholder='كلمة المرور'
@@ -135,10 +135,11 @@ const styles = StyleSheet.create({
   height: 30, 
   borderColor: 'gray',
   borderWidth: 1 ,
-  width:200,
+  width:250,
   borderStartColor:'white',
   borderEndColor:'white',
-  borderTopColor:'white'
+  borderTopColor:'white',
+  fontSize:20
   },
   SignInButton:{
     backgroundColor:'#01b753',

@@ -4,9 +4,10 @@ import { Text, View,} from 'react-native';
 
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {MaterialCommunityIcons,FontAwesome, Ionicons} from '../Constants/icons'
+import colors from '../Constants/colors'
 
 import Homescreen from '../Screens/Homescreen'
-import Trips from '../Screens/Trips'
 import Vehicle from '../Navigation/MyVehicleNavigation' 
 import Profile from './profileStack'
 import RequestsNavigation from '../Navigation/RequestsNavigation'
@@ -22,16 +23,34 @@ function MainNavigation(){
         tabBarOptions={{
           style:{ borderTopWidth: 0,
             elevation: 0},
-            tabStyle:{height:25},
-            labelStyle:{fontSize:20, fontFamily:'Tajawal_300Light'}
+            tabStyle:{height:60},
+            labelStyle:{fontSize:17, fontFamily:'Tajawal_300Light'}
         }} >
-          <Tab.Screen name='Profile' component={Profile} options={{tabBarLabel:'حسابي'}}/>
-          <Tab.Screen name='Vehicle' component={Vehicle}options={{tabBarLabel:'مركبتي'}}/>
-          <Tab.Screen name='Trips' component={TripStack} options={{tabBarLabel:'رحلاتي'}}/>
+          <Tab.Screen name='Profile' component={Profile} 
+          options={
+            {tabBarLabel:'حسابي', tabBarIcon: ({ tintColor, focused }) => (
+            <FontAwesome
+              name={focused ? "user" : "user-o"}
+              color={focused ? colors.LightBlue:colors.Subtitle} 
+              size={25} />)}}/>
+          <Tab.Screen name='Vehicle' component={Vehicle}options={{tabBarLabel:'مركبتي', tabBarIcon: ({ tintColor, focused }) => (
+            <Ionicons
+              name={focused ? "car" : "car-outline"}
+              color={focused ? colors.LightBlue:colors.Subtitle} 
+              size={30} />)}}/>
+          <Tab.Screen name='Trips' component={TripStack} options={{tabBarLabel:'رحلاتي', tabBarIcon: ({ tintColor, focused }) => (
+            <FontAwesome
+              name={focused ? "road" : "road"}
+              color={focused ? colors.LightBlue:colors.Subtitle} 
+              size={30} />)}}/>
 
           <Tab.Screen name='Homescreen' component={Homescreen} 
           
-          options={{tabBarLabel:'الرئيسية',}}/>
+          options={{tabBarLabel:'الرئيسية', tabBarIcon: ({ tintColor, focused }) => (
+            <MaterialCommunityIcons
+              name={focused ? "home" : "home-outline"}
+              color={focused ? colors.LightBlue:colors.Subtitle} 
+              size={30} />)}}/>
         </Tab.Navigator>
       )
     }
@@ -56,7 +75,7 @@ function MainNavigation(){
           <Stack.Screen name='Requests' 
           component={RequestsNavigation} 
           options={{ 
-            headerRight: props => <RequestHeader {...props} /> ,
+            headerTitle: props => <RequestHeader {...props} /> ,
             headerStyle:{
               height:150
             }
