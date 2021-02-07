@@ -16,10 +16,13 @@ const firebaseConfig = {
   messagingSenderId: '1055987009677',
   appId: '1:1055987009677:ios:c2699ffd7e974b3e1d3ac4',
 };
-
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
+  passwordReset: email => {
+    return firebase.auth().sendPasswordResetEmail(email)
+  }
 }
+
 
 const database = firebase.firestore();
 const storage = firebase.storage();
