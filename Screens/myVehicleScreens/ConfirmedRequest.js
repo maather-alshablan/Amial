@@ -1,8 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React , {Component} from 'react';
 import { StyleSheet, Text, View, Button} from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import Request from './ConfirmedRequest'
+import colors from '../../Constants/colors';
 
 
 export default class ConfirmedRequests extends Component {
@@ -14,7 +13,7 @@ export default class ConfirmedRequests extends Component {
     return (
     <View style={styles.container}>
       
-      <Text>Confirmed</Text>
+      <Text style={styles.emptyTripsText}> لا يوجد رحلات..</Text>
       
       </View>
        );  }}
@@ -25,7 +24,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  }, //for mockup
+  },   
+  emptyTripsText:{
+    color:colors.Subtitle,
+    fontSize:20,
+    fontFamily:"Tajawal_500Medium"
+  }
   
 });
 

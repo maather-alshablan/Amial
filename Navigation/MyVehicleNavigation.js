@@ -6,6 +6,9 @@ import Vehicle from '../Screens/Vehicle'
 import ManageVehicle from '../Screens/myVehicleScreens/manageVehicle'
 import RequestsNavigation from '../Navigation/RequestsNavigation'
 import AddOrEditVehicle from '../Screens/myVehicleScreens/AddOrEditVehicle'
+import { color } from "react-native-reanimated";
+import colors from "../Constants/colors";
+
 
 function myVehicleNavigation() {
 
@@ -26,15 +29,13 @@ function myVehicleNavigation() {
       <Stack.Screen name='ManageVehicle'
         component={ManageVehicle}
         options={{
-          headerRight: props => <ManageVehicleHeader {...props} />,
-          headerTitle: null,
+          headerTitle: props => <ManageVehicleHeader {...props} />,
           headerBackTitleVisible: false,
           headerStyle: {
             height: 170,
             shadowColor: 'transparent'
           }
         }} />
-
       <Stack.Screen name='AddOrEditVehicle'
         component={AddOrEditVehicle}
         options={{
@@ -46,7 +47,6 @@ function myVehicleNavigation() {
             shadowColor: 'transparent'
           }
         }} />
-
       <Stack.Screen name='Requests'
         component={RequestStack}
         options={{
@@ -77,9 +77,9 @@ function RequestStack() {
       <Stack.Screen name='Requests'
         component={RequestsNavigation}
         options={{
-          headerRight: props => <RequestHeader {...props} />,
+          headerTitle: props => <RequestHeader {...props} />,
           headerStyle: {
-            height: 150
+            height: 170
           }
         }} />
     </Stack.Navigator>
@@ -89,8 +89,8 @@ function RequestStack() {
 function RequestHeader() {
   return (
     <View style={{ paddingVertical: 10 }}>
-      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'flex-end' }}>مركبتي</Text>
-      <Text style={{ fontSize: 25, color: 'grey', fontFamily: 'Tajawal_300Light', alignSelf: 'flex-end' }}>الطلبات</Text>
+      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'center' }}>مركبتي</Text>
+      <Text style={{ fontSize: 25, color: 'grey', fontFamily: 'Tajawal_300Light', alignSelf: 'center' }}>الطلبات</Text>
     </View>
   )
 }
@@ -98,17 +98,18 @@ function RequestHeader() {
 function ManageVehicleHeader() {
   return (
     <View style={{ paddingVertical: 15 }}>
-      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'flex-end' }}>مركبتي</Text>
-      <Text style={{ fontSize: 25, color: 'grey', fontFamily: 'Tajawal_300Light', alignSelf: 'flex-end' }}>إدارة البيانات</Text>
+      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'center' }}>مركبتي</Text>
+      <Text style={{ fontSize: 25, color: 'grey', fontFamily: 'Tajawal_300Light', alignSelf: 'center' }}>إدارة البيانات</Text>
     </View>
   )
 }
 
 function Header() {
   return (
-    <View>
-      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'flex-end' }}>مركبتي</Text>
+    <View >
+      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'center' }}>مركبتي</Text>
     </View>
   )
 }
 export default myVehicleNavigation;
+

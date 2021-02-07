@@ -20,7 +20,7 @@ function ProfileStack (){
         unmountOnBlur={true}
         options={{ 
           headerTitle: props => <Header {...props} /> ,
-            headerStyle: { shadowColor: 'transparent' ,height:170}
+            headerStyle: { shadowColor: 'transparent' ,height:140}
             }}
         />
 
@@ -36,7 +36,7 @@ function ProfileStack (){
             headerTitle:props => <FAQHeader {...props} />,
             headerBackTitleVisible:false,
             headerBackTitleStyle:{color:'#5dbcd2'},
-            headerStyle: { shadowColor: 'transparent',height:170}
+            headerStyle: { shadowColor: 'transparent',height:140}
             }}/>
            
             <Stack.Screen name="creditCard" component={creditCard}
@@ -76,7 +76,7 @@ function Header(){
   function FAQHeader(){
     return(
       <View >
-      <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>الأسئلة الشائعة</Text>
+      <Text style={{fontSize:33,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>الأسئلة الشائعة</Text>
       </View>
     )
   }
