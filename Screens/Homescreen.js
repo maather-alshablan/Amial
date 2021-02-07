@@ -3,6 +3,7 @@ import React , {Component} from 'react';
 import { StyleSheet, Text, View, Button,Dimensions, Image } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Map from '../Screens/maps'
+import { auth } from 'firebase';
 
 export default class Homescreen extends Component {
 
