@@ -69,63 +69,18 @@ ref.getDownloadURL()
   }
 
 
-  uploadImageToStorageasync= async (uri, userUID)=> {
-
-
-const blob = await new Promise((resolve, reject) => {
-  const xhr = new XMLHttpRequest();
-  xhr.onload = () => {
-      resolve(xhr.response);
-  };
-  xhr.responseType = 'blob';
-  xhr.open('GET', uri, true);
-  xhr.send(null);
-});
-
-const ref = firebase
-  .storage()
-  .ref()
-  .child('userImages/'+userUID);
-
-let snapshot = await ref.put(blob);
-console.log(snapshot.ref.getDownloadURL())
-return await snapshot.ref.getDownloadURL();
-
-}
-
-
- pickImage = async () => {
-
-  let result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.All,
-    allowsEditing: true,
-    aspect: [4, 3],
-    quality: 1,
-  });
-
-  console.log(result);
-
-  if (!result.cancelled) {
-    this.setState({image:result.uri});
-    this.uploadImageToStorageasync(result.uri,auth().currentUser.uid)
-  }
-};
-
-
-
-
   
   render(){
     const { image, hasCameraPermission } = this.state;
       return(
           <View style={styles.container}>
-            <TouchableOpacity onPress={this.pickImage.bind(this)} >
+            <View  >
               <Image 
               style={styles.profilePicture} 
               source={{
                 uri: image
               }}/>
-              </TouchableOpacity>
+              </View>
               <Text style={styles.Name}>
                   سارة عبدالله
               </Text> 
@@ -160,7 +115,7 @@ return await snapshot.ref.getDownloadURL();
     profilePicture:{
         width:120,
         height:120,
-        borderRadius:40,
+        borderRadius:60,
         marginBottom:10
     },
     Name:{

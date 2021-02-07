@@ -46,8 +46,9 @@ const styles = StyleSheet.create({
  
   }, //for mockup
   logo:{
-    height:200,
+    height:150,
     width:350,
+    marginTop:10,
     resizeMode:'contain',
   },
   Button:{

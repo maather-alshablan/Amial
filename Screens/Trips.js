@@ -20,13 +20,13 @@ export default class Trips extends Component {
   
       <View style={{flexDirection:'row-reverse' , margin:10}}>
         <TouchableOpacity  style={styles.Button}>
-        <Text style={{color:'white'}}>النشطة</Text>
+        <Text style={styles.tabText}>النشطة</Text>
          </TouchableOpacity>
          <TouchableOpacity  style={styles.Button}>
-        <Text style={{color:'white'}}>المؤكدة</Text>
+        <Text style={styles.tabText}>المؤكدة</Text>
          </TouchableOpacity>
          <TouchableOpacity  style={styles.Button}>
-        <Text style={{color:'white'}}>المعلقة</Text>
+        <Text style={styles.tabText}>المعلقة</Text>
          </TouchableOpacity>
          </View>
                 </View>
@@ -50,6 +50,10 @@ const styles = StyleSheet.create({
     height:30,
     borderRadius:10,
     color:'white'
+  }, tabText:{
+    color:'white',
+    fontFamily:'Tajawal_300Light',
+    fontSize:15
   }
 });
 

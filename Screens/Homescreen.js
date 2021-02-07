@@ -3,7 +3,8 @@ import React , {Component} from 'react';
 import { StyleSheet, Text, View, Button,Dimensions, Image } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Map from '../Screens/maps'
-import { auth } from 'firebase';
+import colors from '../Constants/colors'
+import { color } from 'react-native-reanimated';
 
 export default class Homescreen extends Component {
 
@@ -52,7 +53,6 @@ const styles = StyleSheet.create({
     height:150,
     width:200,
     resizeMode:'contain',
-    
   },
 });
 
