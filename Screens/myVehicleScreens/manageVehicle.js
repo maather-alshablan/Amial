@@ -58,10 +58,10 @@ export default class manageVehicle extends Component {
               </View>
               <View style={{ padding: 16, direction: 'rtl' }}>
 
-                <Text style={{ color: '#5dbcd2', fontSize: 14, textAlign: 'left', fontFamily: 'Tajawal_400Regular', }}>موديل السيارة: {car.car.carModel}</Text>
-                <Text style={{ color: '#5dbcd2', fontSize: 14, textAlign: 'left', fontFamily: 'Tajawal_400Regular', }}>نوغ السيارة: {car.car.carType}</Text>
+                <Text style={{ color: '#5dbcd2', fontSize: 20, textAlign: 'left', fontFamily: 'Tajawal_400Regular', }}>موديل السيارة: {car.car.carModel}</Text>
+                <Text style={{ color: '#5dbcd2', fontSize: 20, textAlign: 'left', fontFamily: 'Tajawal_400Regular', }}>نوع السيارة: {car.car.carType}</Text>
               </View>
-              <View style={{ flexDirection: 'row', flex: 1, borderTopColor: '#000', borderTopWidth: 1 }}>
+              <View style={{ flexDirection: 'row', flex: 1, borderTopColor: '#fff', borderTopWidth: 1 }}>
 
                 <TouchableOpacity
                   onPress={() => {
@@ -84,16 +84,16 @@ export default class manageVehicle extends Component {
                       { cancelable: false }
                     );
                   }}
-                  style={{ flex: 1, padding: 12, justifyContent: 'center', alignItems: 'center' }}>
-                  <Text>delete</Text>
+                   style={{ flex: 1, padding: 12, justifyContent: 'center', alignItems: 'center', fontFamily: 'Tajawal_400Regular', color: '#5dbcd2', }}>
+                  <Text>حذف السيارة</Text>
                 </TouchableOpacity>
                 <View style={{ height: '100%', width: 1, backgroundColor: '#000' }}></View>
                 <TouchableOpacity
                   onPress={() => {
                     this.props.navigation.navigate('AddOrEditVehicle')
                   }}
-                  style={{ flex: 1, padding: 12, justifyContent: 'center', alignItems: 'center' }}>
-                  <Text>Edit</Text>
+                  style={{ flex: 1, padding: 12, justifyContent: 'center', alignItems: 'center' , fontFamily: 'Tajawal_400Regular', color: '#5dbcd2', }}>
+                  <Text>تعديل معلومات السيارة</Text>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>)
