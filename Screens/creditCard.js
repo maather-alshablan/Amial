@@ -27,7 +27,7 @@ export default class creditCard extends Component {
               validColor={"black"}
               invalidColor={"red"}
               placeholderColor={"darkgray"}
-              allowScroll={true}
+              allowScroll={false}
               onFocus={this._onFocus}
               onChange={this._onChange} />
           

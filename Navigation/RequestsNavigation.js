@@ -13,14 +13,17 @@ export default function RequestsNavigation(){
      
           <Tab.Navigator initialRouteName='Pending' 
           tabBarOptions={{
-            tabStyle:{ borderTopWidth: 0 , borderTopColor:'transparent',borderTopWidth: 0,elevation:0},
+            tabStyle:{ borderTopWidth: 0 , borderTopColor:'transparent',borderTopWidth: 0,elevation:0,},
             indicatorStyle:{
               backgroundColor:'#5dbcd2',
-            }
+              
+            },
+            labelStyle:tabText
           }}
           style={{backgroundColor:'white',borderTopWidth: 0}}>
 
-            <Tab.Screen name='Confirmed' component={ConfirmedRequests}options={{ tabBarLabel: "مؤكدة",  }}/>
+            <Tab.Screen name='Confirmed' component={ConfirmedRequests}options={{ 
+              tabBarLabel: "مؤكدة" }}/>
             <Tab.Screen name='Active' component={ActiveRequests} options={{ tabBarLabel: "نشطة"}}/>
             <Tab.Screen name='Pending' component={PendingRequests} options={{ tabBarLabel: "معلقة"}}/>
 
@@ -30,3 +33,6 @@ export default function RequestsNavigation(){
         )
       }
       
+      const tabText={
+        fontFamily:'Tajawal_300Light',
+        fontSize:20}
