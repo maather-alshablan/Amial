@@ -5,25 +5,32 @@ import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import {firebase} from '../Configuration/firebase'
 import Icon from  'react-native-vector-icons/Entypo';
 import colors from '../Constants/colors';
+import {ModalComponent} from '../Constants/Components/Modal'
+import  { showMessage } from "react-native-flash-message";
+
 
 export default class Login extends Component {
 
   state= {
     email: '',
-    password:'',
-    errorMessage:null
+    password:''
   }
 
 
   handleSignIn = () =>{
     
 
-  //   if (this.state.email ==='' || this.state.email ==='')
-  //   {
+    if (this.state.email ==='' || this.state.password =='')
+    {
     
-  //   this.state.errorMessage = 'يجب تحديد البريد الإلكتروني و كلمة المرور'
-  //   return;
-  // }
+    showMessage({
+      message: 'يجب تحديد البريد الإلكتروني و كلمة المرور',
+      type: 'danger'
+    });
+    return;
+    
+  }
+
 
   
       console.log('hi')
@@ -35,12 +42,12 @@ export default class Login extends Component {
     })
     .catch((error) => {
       
-      console.log(error)
-      this.setState({errorMessage:'يرجى التأكد من ادخال البريد الالكتروني و كلمة المرور الصحيح'})
-      // ..
+      showMessage({
+        message: 'كلمة المرور او البريد الإلكتروني غير صحيح',
+        type: 'danger'
+      });
+      
     });
-
-    this.setState({errorMessage:null})
   }
 
 
@@ -102,6 +109,7 @@ export default class Login extends Component {
                     <Text>
                        سجل كمستخدم جديد؟  </Text>
                 </TouchableOpacity>
+                <ModalComponent/>
                 </View>
   );
   

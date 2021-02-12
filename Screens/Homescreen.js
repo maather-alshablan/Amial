@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React , {Component} from 'react';
 import { StyleSheet, Text, View, Button,Dimensions, Image } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Map from '../Screens/maps'
 import colors from '../Constants/colors'
-import { color } from 'react-native-reanimated';
+import request from '../Screens/myVehicleScreens/requestVehicle'
 
 export default class Homescreen extends Component {
 
@@ -31,7 +31,17 @@ export default class Homescreen extends Component {
       </View>
       <View style={{margin:20, marginRight:300}} >
         <Map/>
+
+        
       </View>
+     
+      < View style={{marginTop:300}} >
+          <TouchableOpacity style={styles.Button}  onPress={()=> this.props.navigation.navigate('VehicleView')}>
+            <Text>
+              Request Vehicle 
+            </Text>
+          </TouchableOpacity>
+        </View>
                 </View>
   );
   
@@ -53,6 +63,14 @@ const styles = StyleSheet.create({
     height:150,
     width:200,
     resizeMode:'contain',
-  },
+  },  Button:{
+    backgroundColor:colors.LightBlue,
+    justifyContent:'center',
+    alignItems:'center',
+    margin:10,
+    width:150,
+    height:30,
+    borderRadius:10,
+    color:'white'}  
 });
 

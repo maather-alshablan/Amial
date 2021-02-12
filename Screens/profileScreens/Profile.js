@@ -1,9 +1,9 @@
 import React , {Component} from 'react';
 import { StyleSheet, Text, View} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import {firebase} from '../Configuration/firebase'
-import Person from '../Screens/person'
-import {SimpleLineIcons, MaterialCommunityIcons, FontAwesome, Entypo} from '../Constants/icons'
+import {firebase} from '../../Configuration/firebase'
+import Person from '../profileScreens/person'
+import {SimpleLineIcons, MaterialCommunityIcons, FontAwesome, Entypo} from '../../Constants/icons'
 export default class Profile extends Component {
 
   state= {
@@ -37,6 +37,15 @@ export default class Profile extends Component {
           <Entypo name='chevron-right' size={20} style={{margin:5}}/>
           <Text style={styles.title}>
           بيانات البطاقة البنكية
+         </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+      style={styles.listItem}
+      onPress={()=>this.props.navigation.navigate('changePassword')}>
+          <Entypo name='chevron-right' size={20} style={{margin:5}}/>
+          <Text style={styles.title}>
+          تغيير كلمة المرور
          </Text>
       </TouchableOpacity>
 

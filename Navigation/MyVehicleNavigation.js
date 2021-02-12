@@ -5,7 +5,6 @@ import { Text, View} from 'react-native';
 import Vehicle from '../Screens/Vehicle'
 import ManageVehicle from '../Screens/myVehicleScreens/manageVehicle'
 import RequestsNavigation from '../Navigation/RequestsNavigation'
-import { color } from "react-native-reanimated";
 import colors from "../Constants/colors";
 
 
@@ -33,13 +32,16 @@ function myVehicleNavigation(){
               headerStyle:{
                 height:170,
                 shadowColor: 'transparent' 
-              }
+              },
+              headerTintColor:colors.LightBlue
               }} />
             <Stack.Screen name='Requests' 
             component={RequestStack}
             options={{ 
-              headerShown:false
-              }}/>
+              headerShown:false,
+              headerTintColor:colors.LightBlue
+              }}
+              />
 
           </Stack.Navigator>
         )
@@ -67,7 +69,8 @@ function myVehicleNavigation(){
               headerTitle: props => <RequestHeader {...props} /> ,
               headerStyle:{
                 height:170
-              }
+              },
+              headerTintColor:colors.LightBlue
               }}/>
           </Stack.Navigator>
         )

@@ -2,10 +2,12 @@ import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, View} from 'react-native';
 
-import Profile from '../Screens/Profile'
-import FAQ from '../Screens/FAQ'
-import creditCard from '../Screens/creditCard'
-import editProfile from '../Screens/editProfile'
+import Profile from '../Screens/profileScreens/Profile'
+import FAQ from '../Screens/profileScreens/FAQ'
+import creditCard from '../Screens/profileScreens/creditCard'
+import editProfile from '../Screens/profileScreens/editProfile'
+import changePassword from '../Screens/profileScreens/changePassword'
+import colors from '../Constants/colors'
 
 
 function ProfileStack (){
@@ -20,7 +22,9 @@ function ProfileStack (){
         unmountOnBlur={true}
         options={{ 
           headerTitle: props => <Header {...props} /> ,
-            headerStyle: { shadowColor: 'transparent' ,height:140}
+            headerStyle: { shadowColor: 'transparent' ,height:140},
+            headerTintColor:colors.LightBlue
+
             }}
         />
 
@@ -29,6 +33,7 @@ function ProfileStack (){
             headerTitle:props => <EditProfileHeader {...props} />,
             headerBackTitleVisible:false,
             headerBackTitleStyle:{color:'#5dbcd2'},
+            headerTintColor:colors.LightBlue,
             headerStyle: { shadowColor: 'transparent',height:140}
             }}/>
         <Stack.Screen name="FAQ" component={FAQ}
@@ -36,7 +41,8 @@ function ProfileStack (){
             headerTitle:props => <FAQHeader {...props} />,
             headerBackTitleVisible:false,
             headerBackTitleStyle:{color:'#5dbcd2'},
-            headerStyle: { shadowColor: 'transparent',height:140}
+            headerStyle: { shadowColor: 'transparent',height:140},
+            headerTintColor:colors.LightBlue
             }}/>
            
             <Stack.Screen name="creditCard" component={creditCard}
@@ -44,6 +50,16 @@ function ProfileStack (){
             headerTitle:props => <CreditCardHeader {...props} />,
             headerBackTitleVisible:false,
             headerBackTitleStyle:{color:'#5dbcd2'},
+            headerTintColor:colors.LightBlue,
+            headerStyle: { shadowColor: 'transparent',height:140}
+            }}/>
+       
+                 <Stack.Screen name="changePassword" component={changePassword}
+           options={{ 
+            headerTitle:props => <ChangePasswordHeader {...props} />,
+            headerBackTitleVisible:false,
+            headerBackTitleStyle:{color:'#5dbcd2'},
+            headerTintColor:colors.LightBlue,
             headerStyle: { shadowColor: 'transparent',height:140}
             }}/>
 
@@ -85,6 +101,14 @@ function Header(){
     return(
       <View >
       <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}> بيانات البطاقة البنكية</Text>
+      </View>
+    )
+  }
+
+  function ChangePasswordHeader(){
+    return(
+      <View >
+      <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}> تغيير كلمة المرور</Text>
       </View>
     )
   }
