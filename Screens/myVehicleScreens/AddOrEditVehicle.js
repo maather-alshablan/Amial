@@ -120,7 +120,7 @@ export default class AddOrEditVehicle extends Component {
           image: this.state.image,
           availabilities: this.state.availabilities
         }).then(success => {
-          alert('تم تعديل السيارة بنجاح')
+          alert('تم تعديل المركبة بنجاح')
           this.setState({ loading: false })
         }).catch(e => {
           alert('حصل خطأ ما يرجى المحاولة لاحقا')
@@ -140,7 +140,7 @@ export default class AddOrEditVehicle extends Component {
             image: downloadUrl,
             availabilities: this.state.availabilities
           }).then(success => {
-            alert('تم تعديل السيارة بنجاح')
+            alert('تم تعديل المركبة بنجاح')
             this.setState({ loading: false })
           }).catch(e => {
             alert('حصل خطأ ما يرجى المحاولة لاحقا')
@@ -166,7 +166,7 @@ export default class AddOrEditVehicle extends Component {
           image: downloadUrl,
           availabilities: this.state.availabilities
         }).then(success => {
-          alert('تم إضافة السيارة بنجاح')
+          alert('تم إضافة مركبتك بنجاح')
           this.setState({ loading: false })
         }).catch(e => {
           alert('حصل خطأ ما يرجى المحاولة لاحقا')
@@ -232,8 +232,8 @@ export default class AddOrEditVehicle extends Component {
                 format="YYYY-MM-DD"
                 minDate={new Date()}
                 // maxDate="2016-06-01"
-                confirmBtnText="تاكيد"
-                cancelBtnText="الغاء"
+                confirmBtnText="تأكيد"
+                cancelBtnText="إلغاء"
                 customStyles={{
                   dateIcon: {
                     position: 'absolute',
@@ -254,7 +254,7 @@ export default class AddOrEditVehicle extends Component {
                   this.setState(prevState => ({
                     availabilities: [...prevState.availabilities, this.state.date]
                   }))
-                }} style={{ marginLeft: 8, padding: 12, borderWidth: 1, borderRadius: 4, borderColor: '#01b753', justifyContent: 'center', alignItems: 'center' }}>
+                }} style={{ marginLeft: 8, padding: 12, borderWidth: 1, borderRadius: 4, borderColor: '#01b753', justifyContent: 'center', alignItems: 'center', fontFamily: 'Tajawal_400Regular', }}>
                 <Text style={{ textAlign: 'left', color: '#01b753' }}>إضافة</Text>
               </TouchableOpacity>
             </View>
@@ -279,7 +279,7 @@ export default class AddOrEditVehicle extends Component {
           </View>
           <TouchableOpacity
             onPress={this.handleSaveData}
-            style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', justifyContent: 'center', alignItems: 'center', marginVertical: 16, alignSelf: 'center' }}>
+            style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', justifyContent: 'center', alignItems: 'center', marginVertical: 16, alignSelf: 'center', fontFamily: 'Tajawal_400Regular', }}>
             <Text style={{ fontSize: 14, color: '#fff' }}>حفظ</Text>
           </TouchableOpacity>
         </ScrollView>

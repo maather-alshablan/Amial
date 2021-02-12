@@ -17,7 +17,7 @@ export default class Vehicle extends Component {
     return (
       <View style={styles.container}>
         {this.state.hasVehicle ?
-          <View><Text>Upload your vehicle</Text></View> : <View></View>}
+          <View><Text>أضف مركبتك</Text></View> : <View></View>}
 
         {!this.state.hasVehicle ?
           <View>{/* image is for mockup purposes */}
