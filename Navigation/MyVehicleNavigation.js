@@ -1,10 +1,12 @@
 import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Text, View} from 'react-native';
+import { Text, View } from 'react-native';
 
 import Vehicle from '../Screens/Vehicle'
 import ManageVehicle from '../Screens/myVehicleScreens/manageVehicle'
 import RequestsNavigation from '../Navigation/RequestsNavigation'
+
+import AddOrEditVehicle from '../Screens/myVehicleScreens/AddOrEditVehicle'
 import colors from "../Constants/colors";
 
 
@@ -63,6 +65,17 @@ function myVehicleNavigation(){
           headerStyle:{
              shadowColor: 'transparent' ,
           }}}>
+               <Stack.Screen name='AddOrEditVehicle'
+        component={AddOrEditVehicle}
+        options={{
+          headerRight: props => <ManageVehicleHeader {...props} />,
+          headerTitle: null,
+          headerBackTitleVisible: false,
+          headerStyle: {
+            height: 170,
+            shadowColor: 'transparent'
+          }
+        }} />
             <Stack.Screen name='Requests' 
             component={RequestsNavigation} 
             options={{ 
