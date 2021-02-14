@@ -17,6 +17,8 @@ export default class viewVehicle extends Component {
         }
     }
 
+
+    
     
         toggleModal = () => {
           this.setState({isModalVisible: !this.state.isModalVisible});
@@ -37,19 +39,22 @@ export default class viewVehicle extends Component {
           style={styles.Modal}
           >
           <View style={{
-      height: '50%',
+      height: '60%',
       width:400,
-      justifyContent:'center',
       marginTop: 'auto',
       backgroundColor:'white'
     }}>
-            <Text>Request  Vehicle</Text>
-            <Text>Pick up - drop off dates  </Text>
-            <Text>Pick Up Option </Text>
-            <Text>Total Summary</Text>
+<View style={{ alignSelf:'center'}}>
+            <Text style={styles.requestModalTitle}>طلب حجز المركبة</Text>
+           
+            <Text style={styles.requestModalLabel}>التواريخ المتاحة </Text>
 
+            <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
+
+            <Text style={styles.requestModalLabel}>المجموع</Text>
 
             <Button title="Hide modal" onPress={()=> {this.setState({isModalVisible:false})}}/>
+            </View>
             </View>
             </Modal>
         </View>
@@ -79,5 +84,20 @@ const styles = StyleSheet.create({
            alignSelf:'center',
            borderTopEndRadius:120
             
-        }
+        },
+        requestModalTitle:{
+            fontFamily:'Tajawal_500Medium',
+            fontSize:35,
+            marginTop:25,
+            color:colors.LightBlue,
+            alignSelf:'center'},
+
+        requestModalLabel:
+            {
+            alignSelf:'flex-end',
+            marginVertical:30,
+            marginLeft:150,
+            fontSize:25,
+            fontFamily:'Tajawal_300Light',
+            }
 })

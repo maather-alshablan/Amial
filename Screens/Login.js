@@ -7,6 +7,7 @@ import Icon from  'react-native-vector-icons/Entypo';
 import colors from '../Constants/colors';
 import {ModalComponent} from '../Constants/Components/Modal'
 import  { showMessage } from "react-native-flash-message";
+import { auth } from 'firebase';
 
 
 export default class Login extends Component {
@@ -25,19 +26,20 @@ export default class Login extends Component {
     
     showMessage({
       message: 'يجب تحديد البريد الإلكتروني و كلمة المرور',
-      type: 'danger'
+      type: 'danger',
+      style:{}
     });
     return;
     
   }
 
 
-  
-      console.log('hi')
     //test account: test@email.com password:123456
     firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
     .then((userCredential) => {
       console.log('user signed in')
+        
+      console.log('hi')
       
     })
     .catch((error) => {
@@ -88,28 +90,29 @@ export default class Login extends Component {
       />
 
       </View>
-      <StatusBar style="auto" />
-
      
 
       <TouchableOpacity
       onPress={()=> this.props.navigation.navigate('ForgotPassword')}>
-            <Text style={{color:'grey'}} >
+            <Text style={{color:'grey',fontFamily:'Tajawal_300Light'}} >
             نسيت كلمة المرور؟</Text>
                 </TouchableOpacity>
 
       <View >
         <TouchableOpacity style={styles.SignInButton} onPress = {() => this.handleSignIn()}>
-      <Text style={{color:'white',fontWeight:'600'}}>تسجيل الدخول</Text>
+      <Text style={{color:'white',fontWeight:'600', fontFamily:'Tajawal_700Bold',
+}}>تسجيل الدخول</Text>
       </TouchableOpacity>
       </View>
       
                 <TouchableOpacity 
                 onPress={()=> this.props.navigation.navigate('Registration')}>
-                    <Text>
+                    <Text style={{fontFamily:'Tajawal_700Bold',marginTop:10,textDecorationLine:'underline'}}>
                        سجل كمستخدم جديد؟  </Text>
                 </TouchableOpacity>
                 <ModalComponent/>
+                      <StatusBar style="auto" />
+
                 </View>
   );
   
@@ -126,7 +129,7 @@ const styles = StyleSheet.create({
     height:200,
     width:350,
     resizeMode:'contain',
-    margin:60,
+    //margin:60,
     marginTop:150
     
   },
@@ -138,6 +141,7 @@ const styles = StyleSheet.create({
    paddingHorizontal: 10,
   textAlign:'right',
   color:'black',
+  fontFamily:'Tajawal_400Regular',
   height: 30, 
   borderColor: 'gray',
   borderWidth: 1 ,

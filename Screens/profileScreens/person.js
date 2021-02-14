@@ -47,7 +47,7 @@ export default class Person extends Component {
     })
 
     // 2. Retrieve Profile Image
-    firebase
+    var ref =firebase
     .storage()
     .ref()
     .child('userImages/'+personID);

@@ -1,5 +1,5 @@
 import React , {Component} from 'react';
-import { StyleSheet, View, Text, TextInput,Image , Modal } from "react-native";
+import { StyleSheet, View, Text, TextInput,Image , ScrollView } from "react-native";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {firebase, database} from '../../Configuration/firebase'
 import {FontAwesome, Entypo } from '../../Constants/icons'
@@ -177,7 +177,9 @@ export default class editProfile extends Component{
         const { image, hasCameraPermission } = this.state;
 
         return(
+       //   <ScrollView>
             <View style={styles.container}>
+        
                   <TouchableOpacity onPress={this.pickImage.bind(this)} >
               <Image 
               style={styles.profilePicture} 
@@ -267,7 +269,9 @@ export default class editProfile extends Component{
 
 
         <ModalComponent/>
+       
               </View>
+           //   </ScrollView>
         )
     }
 }

@@ -20,6 +20,7 @@ export default class Profile extends Component {
     return (
     <View style={styles.container}>
       <Person/>
+      
       <View style={styles.list}>
 
       <TouchableOpacity 
@@ -103,7 +104,8 @@ const styles = StyleSheet.create({
   title:{
     marginBottom:5,
     color:'black',
-    fontSize:20
+    fontSize:20,
+    fontFamily:'Tajawal_400Regular'
   }
 
 

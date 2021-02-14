@@ -44,6 +44,17 @@ function myVehicleNavigation(){
               headerTintColor:colors.LightBlue
               }}
               />
+             <Stack.Screen name='AddOrEditVehicle'
+        component={AddOrEditVehicle}
+        options={{
+          headerRight: props => <ManageVehicleHeader {...props} />,
+          headerTitle: null,
+          headerBackTitleVisible: false,
+          headerStyle: {
+            height: 170,
+            shadowColor: 'transparent'
+          }
+        }} />
 
           </Stack.Navigator>
         )
@@ -65,17 +76,7 @@ function myVehicleNavigation(){
           headerStyle:{
              shadowColor: 'transparent' ,
           }}}>
-               <Stack.Screen name='AddOrEditVehicle'
-        component={AddOrEditVehicle}
-        options={{
-          headerRight: props => <ManageVehicleHeader {...props} />,
-          headerTitle: null,
-          headerBackTitleVisible: false,
-          headerStyle: {
-            height: 170,
-            shadowColor: 'transparent'
-          }
-        }} />
+               
             <Stack.Screen name='Requests' 
             component={RequestsNavigation} 
             options={{ 
