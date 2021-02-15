@@ -2,25 +2,56 @@ import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, Image, ImageBackgroundBase } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { database } from '../Configuration/firebase';
+import { auth } from 'firebase';
 
 
 export default class Vehicle extends Component {
 
   state = {
     hasVehicle: null,
+    vehicles:[]
+  }
+
+  async componentDidMount(){
+
+   // this.determineUserHasVehicle();
+   this.setState({hasVehicle:false})
+  }
+
+
+  determineUserHasVehicle = async () => {
+
+    database.collection('vehicle').where("ownerID"==auth().currentUser.uid).get().then((doc) => {
+      if (doc.empty) 
+      {
+        this.setState({hasVehicle: false});
+      }
+      else{
+        this.setState({hasVehicle: true});
+        this.setState({vehicles: doc.data()});
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });
   }
 
 
 
+  userHasNoVehicle = () =>{
+    return(
+      <View style={{alignSelf:'center', justifyContent:'center',marginVertical:280}}>
+       <Text style={styles.emptyTripsText}> لا يوجد مركبة..</Text>
+       <Text style={styles.emptyTripsText}> قم بمشاركة مركبتك على اميال</Text>
 
-  render() {
-    return (
-      <View style={styles.container}>
-        {this.state.hasVehicle ?
-          <View><Text>Upload your vehicle</Text></View> : <View></View>}
+        </View>
+    )
+  }
 
-        {!this.state.hasVehicle ?
-          <View>{/* image is for mockup purposes */}
+
+  userHasVehicle = () => {
+return(
+  <View>{/* image is for mockup purposes */}
             <Image
               source={require('../Constants/Logo/PNGLogo.png')}
               style={styles.logo} />
@@ -31,12 +62,23 @@ export default class Vehicle extends Component {
 
 
 
-              <TouchableOpacity style={styles.Button} onPress={() => this.props.navigation.navigate('Requests')}>
+              <TouchableOpacity style={styles.Button} onPress={() => this.props.navigation.navigate('Requests',{VehicleOwner:true})}>
                 <Text style={{ color: 'white' }}>الطلبات</Text>
               </TouchableOpacity>
             </View>
-          </View> : <View></View>
-        }</View>
+          </View>
+)
+  }
+
+
+  render() {
+    return (
+      <View style={styles.container}>
+   
+        {this.state.hasVehicle ? 
+         this.userHasVehicle() : this.userHasNoVehicle()
+        }
+        </View>
     );
   }
 }
@@ -63,6 +105,13 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 10,
     color: 'white'
+  },
+  emptyTripsText:{
+    fontFamily:'Tajawal_700Bold',
+    fontSize:20,
+    color:'grey',
+    marginVertical:10,
+    
   }
 });
 

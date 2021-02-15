@@ -9,7 +9,13 @@ export default class ActiveRequests extends Component {
 
   state= {
   }
+componentDidMount(){
+  this.retrieveActiveTrips();
+}
 
+retrieveActiveTrips = ()=>{
+
+}
   render(){
     return (
     <View style={styles.container}>

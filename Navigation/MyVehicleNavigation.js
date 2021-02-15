@@ -39,6 +39,7 @@ function myVehicleNavigation(){
               }} />
             <Stack.Screen name='Requests' 
             component={RequestStack}
+            initialParams={{VehicleOwner:true}}
             options={{ 
               headerShown:false,
               headerTintColor:colors.LightBlue

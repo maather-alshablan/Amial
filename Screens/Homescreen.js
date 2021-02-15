@@ -4,7 +4,6 @@ import { StyleSheet, Text, View, Button,Dimensions, Image } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Map from '../Screens/maps'
 import colors from '../Constants/colors'
-import request from '../Screens/myVehicleScreens/requestVehicle'
 
 export default class Homescreen extends Component {
 
