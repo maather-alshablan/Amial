@@ -5,6 +5,8 @@ import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Input from '../components/Input';
 import { OverLay } from '../components/OverLay';
 import { auth, database } from '../Configuration/firebase'
+import {ModalComponent} from '../Constants/Components/Modal'
+
 export default class Registration extends Component {
 
   state = {
@@ -76,15 +78,16 @@ export default class Registration extends Component {
   successfulRegistration = () => {
     this.setState({ loading: true })
     const userid = auth.currentUser.uid;
-    database.collection('users').add({
+    database.collection('users').doc(userid).set({
       name: this.state.name,
       email: this.state.email,
-      password: this.state.password,
+      password: this.state.password, 
       mobileNumber: this.state.mobileNumber,
       nationalID: this.state.nationalID,
-      userid: userid
+      userRating:0,
     }).then(success => {
-      this.props.navigation.navigate('Home');
+      // this is already handled in the navigation so no need for the following line of code
+     // this.props.navigation.navigate('Home');
       this.setState({ loading: false })
     }).catch(e => {
       alert('حصل خطأ ما يرجى المحاولة لاحقا')
@@ -94,6 +97,20 @@ export default class Registration extends Component {
 
   }
 
+  successMessage= ()=> {
+    showMessage({
+      message:"تم الحفظ بنجاح",
+      type: "success",
+    });
+  }
+
+  
+  failureMessage= (message)=> {
+    showMessage({
+      message:  message,
+      type: 'danger'
+    });
+  }
 
   render() {
     return (
@@ -130,6 +147,8 @@ export default class Registration extends Component {
           value={this.state.mobileNumber}
           onChangeText={(mobileNumber) => this.setState({ mobileNumber })}
           iconName={'phone'}
+          keyboardType={"phone-pad"}
+          returnKeyType={'done'}
         />
         <Input
           placeholder="كلمة المرور"
@@ -137,6 +156,7 @@ export default class Registration extends Component {
           onChangeText={(password) => this.setState({ password })}
           iconName={'lock'}
           secureTextEntry={true}
+          
         />
         <Input
           placeholder="تاكيد كلمة المرور"
@@ -154,6 +174,7 @@ export default class Registration extends Component {
           onPress={() => this.props.navigation.navigate('Login')}
         >تسجيل الدخول</Text></Text>
         {this.state.loading ? <OverLay /> : null}
+        <ModalComponent/>
       </View>
     );
 

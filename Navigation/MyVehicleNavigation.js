@@ -5,38 +5,67 @@ import { Text, View } from 'react-native';
 import Vehicle from '../Screens/Vehicle'
 import ManageVehicle from '../Screens/myVehicleScreens/manageVehicle'
 import RequestsNavigation from '../Navigation/RequestsNavigation'
+
 import AddOrEditVehicle from '../Screens/myVehicleScreens/AddOrEditVehicle'
-import { color } from "react-native-reanimated";
 import colors from "../Constants/colors";
 
 
-function myVehicleNavigation() {
+function myVehicleNavigation(){
 
-  const Stack = createStackNavigator();
+    const Stack = createStackNavigator();
+  
+      return (
+          <Stack.Navigator initialRouteName='Vehicle' >
+            <Stack.Screen name='Vehicle' 
+            component={Vehicle} 
+            options={{ 
+              headerTitle: props => <Header {...props} /> ,
+              headerStyle:{
+                height:170
+              },
+              
+              headerStyle: { shadowColor: 'transparent' }
+              }}/>
+            <Stack.Screen name='ManageVehicle' 
+            component={ManageVehicle}
+            options={{ 
+              headerTitle: props => <ManageVehicleHeader {...props} /> ,
+              headerBackTitleVisible:false,
+              headerStyle:{
+                height:170,
+                shadowColor: 'transparent' 
+              },
+              headerTintColor:colors.LightBlue
+              }} />
+            <Stack.Screen name='Requests' 
+            component={RequestStack}
+            options={{ 
+              headerShown:false,
+              headerTintColor:colors.LightBlue
+              }}
+              />
 
-  return (
-    <Stack.Navigator initialRouteName='Vehicle' >
-      <Stack.Screen name='Vehicle'
-        component={Vehicle}
-        options={{
-          headerTitle: props => <Header {...props} />,
-          headerStyle: {
-            height: 170
-          },
+          </Stack.Navigator>
+        )
+      }
+      
 
-          headerStyle: { shadowColor: 'transparent' }
-        }} />
-      <Stack.Screen name='ManageVehicle'
-        component={ManageVehicle}
-        options={{
-          headerTitle: props => <ManageVehicleHeader {...props} />,
-          headerBackTitleVisible: false,
-          headerStyle: {
-            height: 170,
-            shadowColor: 'transparent'
-          }
-        }} />
-      <Stack.Screen name='AddOrEditVehicle'
+
+      //The logic behind nesting tab navigation inside of a stack navigator 
+      // is because tab navigation does not allow implementing headers inside on top of them
+    
+
+      function RequestStack(){
+        const Stack = createStackNavigator();
+        return(
+          <Stack.Navigator initialRouteName='Requests' 
+          screenOptions={{
+          headerTitle:false,
+          headerBackTitleVisible:false,
+          headerStyle:{
+             shadowColor: 'transparent' ,
+          }}}>
+               <Stack.Screen name='AddOrEditVehicle'
         component={AddOrEditVehicle}
         options={{
           headerRight: props => <ManageVehicleHeader {...props} />,
@@ -47,69 +76,43 @@ function myVehicleNavigation() {
             shadowColor: 'transparent'
           }
         }} />
-      <Stack.Screen name='Requests'
-        component={RequestStack}
-        options={{
-          headerShown: false
-        }} />
+            <Stack.Screen name='Requests' 
+            component={RequestsNavigation} 
+            options={{ 
+              headerTitle: props => <RequestHeader {...props} /> ,
+              headerStyle:{
+                height:170
+              },
+              headerTintColor:colors.LightBlue
+              }}/>
+          </Stack.Navigator>
+        )
+      }
 
-    </Stack.Navigator>
-  )
-}
+      function RequestHeader(){
+        return(
+          <View style={{paddingVertical:10}}>
+          <Text style={{fontSize:40,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', alignSelf:'center' }}>مركبتي</Text>
+          <Text style={{fontSize:25,color:'grey', fontFamily:'Tajawal_300Light', alignSelf:'center'}}>الطلبات</Text>
+          </View>
+        )
+      }
 
+      function ManageVehicleHeader(){
+        return(
+          <View style={{paddingVertical:15}}>
+          <Text style={{fontSize:40,color:'#5dbcd2',fontFamily:'Tajawal_400Regular', alignSelf:'center'}}>مركبتي</Text>
+          <Text style={{fontSize:25,color:'grey',fontFamily:'Tajawal_300Light', alignSelf:'center'}}>إدارة البيانات</Text>
+          </View>
+        )
+      }
 
-
-//The logic behind nesting tab navigation inside of a stack navigator 
-// is because tab navigation does not allow implementing headers inside on top of them
-
-
-function RequestStack() {
-  const Stack = createStackNavigator();
-  return (
-    <Stack.Navigator initialRouteName='Requests'
-      screenOptions={{
-        headerTitle: false,
-        headerBackTitleVisible: false,
-        headerStyle: {
-          shadowColor: 'transparent',
-        }
-      }}>
-      <Stack.Screen name='Requests'
-        component={RequestsNavigation}
-        options={{
-          headerTitle: props => <RequestHeader {...props} />,
-          headerStyle: {
-            height: 170
-          }
-        }} />
-    </Stack.Navigator>
-  )
-}
-
-function RequestHeader() {
-  return (
-    <View style={{ paddingVertical: 10 }}>
-      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'center' }}>مركبتي</Text>
-      <Text style={{ fontSize: 25, color: 'grey', fontFamily: 'Tajawal_300Light', alignSelf: 'center' }}>الطلبات</Text>
-    </View>
-  )
-}
-
-function ManageVehicleHeader() {
-  return (
-    <View style={{ paddingVertical: 15 }}>
-      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'center' }}>مركبتي</Text>
-      <Text style={{ fontSize: 25, color: 'grey', fontFamily: 'Tajawal_300Light', alignSelf: 'center' }}>إدارة البيانات</Text>
-    </View>
-  )
-}
-
-function Header() {
-  return (
-    <View >
-      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'center' }}>مركبتي</Text>
-    </View>
-  )
-}
-export default myVehicleNavigation;
-
+      function Header(){
+        return(
+          <View >
+          <Text style={{fontSize:40,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', alignSelf:'center'}}>مركبتي</Text>
+          </View>
+        )
+      }
+      export default myVehicleNavigation;
+  

@@ -7,9 +7,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {MaterialCommunityIcons,FontAwesome, Ionicons} from '../Constants/icons'
 import colors from '../Constants/colors'
 
-import Homescreen from '../Screens/Homescreen'
+import HomeStack from '../Navigation/HomeStack'
 import Vehicle from '../Navigation/MyVehicleNavigation' 
-import Profile from './profileStack'
+import Profile from '../Navigation/profileStack'
 import RequestsNavigation from '../Navigation/RequestsNavigation'
 
 function MainNavigation(){
@@ -44,7 +44,7 @@ function MainNavigation(){
               color={focused ? colors.LightBlue:colors.Subtitle} 
               size={30} />)}}/>
 
-          <Tab.Screen name='Homescreen' component={Homescreen} 
+          <Tab.Screen name='Homescreen' component={HomeStack} 
           
           options={{tabBarLabel:'الرئيسية', tabBarIcon: ({ tintColor, focused }) => (
             <MaterialCommunityIcons

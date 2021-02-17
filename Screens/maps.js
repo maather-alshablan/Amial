@@ -9,12 +9,15 @@ render(){
       <View style={styles.container}>
       <MapView 
       style={styles.map}
-     // provider={PROVIDER_GOOGLE}
-    region={{
+      provider={PROVIDER_GOOGLE}
+      region={{
         latitude:24.7136,
-        longitude:46.6753
-      }}
+        longitude:46.6753,
+        latitudeDelta:0,
+        longitudeDelta:0
+       }}
       showsUserLocation
+      maxZoomLevel={10}
       />
       
       </View>
