@@ -8,7 +8,6 @@ import {firebase, database} from '../../Configuration/firebase'
 import { Rating, } from 'react-native-ratings';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {EvilIcons , FontAwesome5} from '../../Constants/icons'
-import MultiSelect from "multi-select-react-native";
 import { auth,  } from 'firebase';
 
 export default class viewVehicle extends Component {
@@ -28,7 +27,8 @@ export default class viewVehicle extends Component {
       isModalVisible: false,
       calculatedTotalPrice:0,
       sentRequest:false,
-      selectedItems:[]
+      selectedItems:[],
+      selectedDates:[]
     }
   }
 
@@ -90,33 +90,62 @@ export default class viewVehicle extends Component {
     })
   }
 
-  SelectAvailability=()=>{
 
-    const DATA = [
-      {
-        id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-        title: "First Item"
-      },
-      {
-        id: 1,
-        title: "Second Item"
-      },
-      {
-        id: "1a",
-        title: "Third Item"
-      }
-    ];
-    return (
-     // <View style={styles.container}>
-        <MultiSelect
-          data={DATA}
-          selectedItems={this.state.selectedItems}
-          setSelectedItems={(selectedItems)=>{this.setState({selectedItems:selectedItems})}}
-          containerItemsStyle={{margin: 2, padding: 8, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
-        />
-    //  </View>
-    );
-  }
+
+    SelectAvailability = () => {
+
+      return (
+  
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,alignSelf:'flex-end', marginHorizontal:30  }}>
+        {this.state.availability.map(date => {
+              return (<TouchableOpacity
+                style={{ margin: 5 , padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+                onPress={() => {
+
+                  if( this.state.selectedDates==undefined){
+                    console.log('undefined array')
+                    const dates = []
+                    dates.push(date)
+                    console.log(dates)
+
+                    //var newSelection = this.state.selectedDates.push(date)
+                    this.setState({
+                      selectedDates: dates
+                    })
+                    console.log(this.state.selectedDates[0])
+                  }
+                   else if (  this.state.selectedDates.indexOf(date)>=0) {
+                    {console.log('remove element')}
+                    const dates = this.state.selectedDates ;
+                   
+                    var index = dates.indexOf((String(date)))
+                    dates.splice(index,1)
+                    console.log(dates)
+
+                    this.setState({
+                      selectedDates: dates
+                    })}
+                  else{
+                    const dates = this.state.selectedDates ;
+                    dates.push(date);
+                    console.log(dates)
+                    this.setState({
+                      selectedDates: dates
+                    })
+                  }
+                }}
+                style={{ 
+                  borderColor: !(this.state.selectedDates!=undefined && this.state.selectedDates.indexOf(date))? colors.LightBlue : 'black' , 
+                  borderWidth: 1, borderRadius: 10, padding: 12, margin: 4, 
+                backgroundColor: !(this.state.selectedDates!=undefined && this.state.selectedDates.indexOf(date))? colors.LightBlue : '#fff' }}>
+                <Text style={{ fontSize: 14, color: !(this.state.selectedDates!=undefined && this.state.selectedDates.indexOf(date))? '#fff' : colors.Subtitle}}>{date}</Text>
+              </TouchableOpacity>)
+            })}
+          </View>
+        
+      )
+    }
+  
 
     handleRequest=()=>{
 
@@ -209,13 +238,14 @@ export default class viewVehicle extends Component {
             <Text style={styles.requestModalTitle}>طلب حجز المركبة</Text>
 
             <Text style={styles.requestModalLabel}>التواريخ المتاحة </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,alignSelf:'flex-end', marginHorizontal:30  }}>
+            {this.SelectAvailability()}
+            {/* <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,alignSelf:'flex-end', marginHorizontal:30  }}>
             {this.state.availability.map(availability => {
               return (<TouchableOpacity style={{ margin: 5 , padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }} >
                 <Text style={styles.OptionsText}>{availability}</Text>
               </TouchableOpacity>)
             })}
-          </View>
+          </View> */}
 
             <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf:'flex-end', marginHorizontal:30 }}>

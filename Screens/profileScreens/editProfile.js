@@ -58,12 +58,21 @@ export default class editProfile extends Component{
       handleSaveInfo = () => {
         
         //check name constraint
+        if (this.state.name ==='')
+        this.failureMessage('يرجى تعبئة الإسم الكامل')
+
 
         //check email constraint 
+        const regexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (this.state.email ==='' || !regexp.test(this.state.email))
+        this.failureMessage('يرجى إدخال البريد الإلكتروني بالشكل الصحيح')
 
         //check mobile number constraint 
+        const regExp = /^(\+0?1\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/
+        if (this.state.mobileNumber ===''|| regExp.test(this.state.mobileNumber))
+        this.failureMessage('يرجى إدخال رقم التواصل بالشكل الصحيح')
 
-        
 
 
         database.collection('users').doc(this.state.userId).update({
@@ -74,8 +83,8 @@ export default class editProfile extends Component{
           firebase.auth().currentUser.updateEmail(this.state.email);
         }).catch(()=>{
           console.log('failure')
-          this.failureMessage()
-        }).then(()=>{this.successMessage() })
+          this.failureMessage('يرجى محاولة الحفظ مرة أخرى')
+        }).then(()=>{this.successMessage("تم الحفظ بنجاح") })
 
 
       }
@@ -157,17 +166,17 @@ export default class editProfile extends Component{
     }
   };
 
-  successMessage= ()=> {
+  successMessage= (message)=> {
     showMessage({
-      message:"تم الحفظ بنجاح",
+      message:message,
       type: "success",
     });
   }
 
   
-  failureMessage= ()=> {
+  failureMessage= (message)=> {
     showMessage({
-      message:  'يرجى محاولة الحفظ مرة أخرى',
+      message: message,
       type: 'danger'
     });
   }

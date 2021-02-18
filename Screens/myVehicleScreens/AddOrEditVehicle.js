@@ -15,7 +15,7 @@ import { regoins } from '../../dataSet/regoins';
 import { Entypo } from '../../Constants/icons';
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
 import CustomLabel from '../../components/CustomLabel';
-import SelectLocation from './SelelctLocation';
+import SelectLocation from '../myVehicleScreens/SelectLocation';
 import colors from '../../Constants/colors';
 
 const carTypes = [
@@ -51,7 +51,11 @@ export default class AddOrEditVehicle extends Component {
     docId: '',
     years: [],
     transmission: '',
+    payment:'',
+    dailyRate:0,
     year: '',
+    insuranceType:'',
+    InsuranceCompany:'',
     state: '',
     description: '',
     selectedValues: [50, 500],
@@ -85,8 +89,8 @@ export default class AddOrEditVehicle extends Component {
   }
   componentDidMount() {
     console.warn('eeee')
-    database.collection('cars').where('userId', "==", auth.currentUser.uid).onSnapshot(this.onResult, this.onError)
-
+    database.collection('Vehicle').where('userId', "==", auth.currentUser.uid).onSnapshot(this.onResult, this.onError)
+    console.log(this.state.selectedValues)
     this.gnerateYears()
   }
 
@@ -207,13 +211,32 @@ export default class AddOrEditVehicle extends Component {
     if (this.state.edit) {
 
       if (this.state.image.indexOf('http') > -1) {
-        database.collection('cars').doc(this.state.docId).update({
-          carId: this.state.carId,
-          carModel: this.state.carModel,
-          carType: this.state.carType,
-          userId: auth.currentUser.uid,
-          image: this.state.image,
-          availabilities: this.state.availabilities
+        database.collection('Vehicle').doc(this.state.docId).update({
+          vehicleID: ref, //document reference 
+          vehicleRegistration: this.state.carId, 
+          vehicleDetails:{
+            features:this.state.selectedFeatures,
+            description:this.state.description,
+            image: downloadUrl,
+            transmission:this.state.transmission,
+            year:this.state.year,
+            type:this.state.carType,
+            model:this.state.carModel
+          },
+          ownerID: firebase.auth().currentUser.uid,
+          availability: this.state.availabilities,
+          LicensePlateNumber:this.state.carNumber,
+          pickUpOption: this.state.payment,
+          address:{
+            city: this.state.state,
+            coordinates:{}
+          },
+          dailyRate:this.state.selectedValues[0],
+          InsurancePolicy:{
+            type:this.state.insuranceType,
+            company:this.state.InsuranceCompany
+          },
+
         }).then(success => {
           alert('تم تعديل المركبة بنجاح')
           this.setState({ loading: false })
@@ -226,14 +249,33 @@ export default class AddOrEditVehicle extends Component {
         const response = await this.uploadFile(this.state.image);
 
         if (response && response.ref) {
-          const downloadUrl = await response.ref.getDownloadURL()
-          database.collection('cars').doc(this.state.docId).update({
-            carId: this.state.carId,
-            carModel: this.state.carModel,
-            carType: this.state.carType,
-            userId: auth.currentUser.uid,
-            image: downloadUrl,
-            availabilities: this.state.availabilities
+          const downloadUrl = await response.ref.getDownloadURL();
+          database.collection('Vehicle').doc(this.state.docId).update({
+            vehicleID: ref, //document reference 
+            vehicleRegistration: this.state.carId, 
+            vehicleDetails:{
+              features:this.state.selectedFeatures,
+              description:this.state.description,
+              image: downloadUrl,
+              transmission:this.state.transmission,
+              year:this.state.year,
+              type:this.state.carType,
+              model:this.state.carModel
+            },
+            ownerID: firebase.auth().currentUser.uid,
+            availability: this.state.availabilities,
+            LicensePlateNumber:this.state.carNumber,
+            pickUpOption: this.state.payment,
+            address:{
+              city: this.state.state,
+              coordinates:{}
+            },
+            dailyRate:this.state.selectedValues[0],
+            InsurancePolicy:{
+              type:this.state.insuranceType,
+              company:this.state.InsuranceCompany
+            },
+  
           }).then(success => {
             alert('تم تعديل المركبة بنجاح')
             this.setState({ loading: false })
@@ -251,15 +293,39 @@ export default class AddOrEditVehicle extends Component {
     } else {
       const response = await this.uploadFile(this.state.image);
 
+      
       if (response && response.ref) {
         const downloadUrl = await response.ref.getDownloadURL()
-        database.collection('cars').add({
-          carId: this.state.carId,
-          carModel: this.state.carModel,
-          carType: this.state.carType,
-          userId: auth.currentUser.uid,
-          image: downloadUrl,
-          availabilities: this.state.availabilities
+
+        var ref =database.collection('Vehicle').doc().id;
+        this.setState({docId:ref})
+        database.collection('Vehicle').doc(ref).set({
+          vehicleID: ref, //document reference 
+          vehicleRegistration: this.state.carId, 
+          vehicleDetails:{
+            features:this.state.selectedFeatures,
+            description:this.state.description,
+            image: downloadUrl,
+            transmission:this.state.transmission,
+            year:this.state.year,
+            type:this.state.carType,
+            model:this.state.carModel
+          },
+          ownerID: firebase.auth().currentUser.uid,
+          availability: this.state.availabilities,
+          Rating:0,
+          LicensePlateNumber:this.state.carNumber,
+          pickUpOption: this.state.payment,
+          address:{
+            city: this.state.state,
+            coordinates:{}
+          },
+          dailyRate:this.state.selectedValues[0],
+          InsurancePolicy:{
+            type:'شامل',
+            company:'التعاونية'
+          },
+
         }).then(success => {
           alert('تم إضافة المركبة بنجاح')
           this.setState({ loading: false })
@@ -294,6 +360,7 @@ export default class AddOrEditVehicle extends Component {
                   this.setState({
                     selectedFeatures: featurs
                   })
+
                 } else {
                   this.setState({
                     selectedFeatures: { ...this.state.selectedFeatures, [feature.id]: feature }
@@ -326,6 +393,8 @@ export default class AddOrEditVehicle extends Component {
             alignItems: 'center'
           }}>
           <Text style={{ textAlign: 'left', marginBottom: 12 }}>إرفاق صورة المركبة</Text>
+          {/* <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 24,alignSelf:'flex-start', textAlign: 'center', color: 'grey' }}>إرفاق صورة المركبة</Text> */}
+
 
           <TouchableOpacity onPress={this.openImagePickerAsync} >
             <Image
@@ -640,9 +709,12 @@ export default class AddOrEditVehicle extends Component {
           <MultiSlider
             values={[50]}
             sliderLength={Dimensions.get('screen').width - 100}
-            onValuesChange={(val) => this.setState({
+            onValuesChange={(val) => {
+              this.setState({
               selectedValues: val
-            })}
+            })
+            console.log(this.state.selectedValues[0])
+          }}
             min={50}
             max={500}
             step={10}
@@ -681,6 +753,8 @@ export default class AddOrEditVehicle extends Component {
               alignItems: "center",
               alignSelf: "stretch",
               justifyContent: "center",
+              marginTop:5,
+              width:100,
               color: "#ccc",
               borderRadius: 22.5,
               borderWidth: 0.1,
@@ -710,6 +784,18 @@ export default class AddOrEditVehicle extends Component {
               borderColor: "#ccc",
               backgroundColor: "#01b753",
             }}
+            previousBtnTextStyle={{ color: "white", fontSize: 20 }}
+            previousBtnStyle={{
+              flexDirection: "row",
+              alignItems: "center",
+              alignSelf: "stretch",
+              justifyContent: "center",
+              color: "#ccc",
+              borderRadius: 22.5,
+              borderWidth: 0.1,
+              borderColor: "#ccc",
+              backgroundColor: "#01b753",
+            }}
           >
             {this.renderPoking()}
           </ProgressStep>
@@ -722,6 +808,18 @@ export default class AddOrEditVehicle extends Component {
             onSubmit={this.handleCreateCar}
             nextBtnTextStyle={{ color: "white", fontSize: 20 }}
             nextBtnStyle={{
+              flexDirection: "row",
+              alignItems: "center",
+              alignSelf: "stretch",
+              justifyContent: "center",
+              color: "#ccc",
+              borderRadius: 22.5,
+              borderWidth: 0.1,
+              borderColor: "#ccc",
+              backgroundColor: "#01b753",
+            }}
+            previousBtnTextStyle={{ color: "white", fontSize: 20 }}
+            previousBtnStyle={{
               flexDirection: "row",
               alignItems: "center",
               alignSelf: "stretch",

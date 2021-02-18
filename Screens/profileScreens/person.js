@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
 import {firebase} from '../../Configuration/firebase'
 import { Octicons } from '../../Constants/icons';
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { Rating, } from 'react-native-ratings';
 import { auth } from 'firebase';
 
 
@@ -24,10 +24,11 @@ export default class Person extends Component {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     this.setState({ hasCameraPermission: status === "granted" });
 
-
     this.retrieveProfile();
-    
    }
+  componentDidUpdate(){
+    this.retrieveProfile();
+  }
   
 
 
