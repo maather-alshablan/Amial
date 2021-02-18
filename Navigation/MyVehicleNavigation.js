@@ -1,5 +1,6 @@
 import * as React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator , CardStyleInterpolators } from "@react-navigation/stack";
+
 import { Text, View } from 'react-native';
 
 import Vehicle from '../Screens/Vehicle'
@@ -21,10 +22,10 @@ function myVehicleNavigation(){
             options={{ 
               headerTitle: props => <Header {...props} /> ,
               headerStyle:{
-                height:170
+                height:170,
+                shadowColor: 'transparent'
               },
               
-              headerStyle: { shadowColor: 'transparent' }
               }}/>
             <Stack.Screen name='ManageVehicle' 
             component={ManageVehicle}
@@ -33,7 +34,9 @@ function myVehicleNavigation(){
               headerBackTitleVisible:false,
               headerStyle:{
                 height:170,
-                shadowColor: 'transparent' 
+                shadowColor: 'transparent' ,
+                cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS
+
               },
               headerTintColor:colors.LightBlue
               }} />
@@ -42,18 +45,20 @@ function myVehicleNavigation(){
             initialParams={{VehicleOwner:true}}
             options={{ 
               headerShown:false,
-              headerTintColor:colors.LightBlue
+              headerTintColor:colors.LightBlue,
+              cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS
               }}
               />
              <Stack.Screen name='AddOrEditVehicle'
-        component={AddOrEditVehicle}
-        options={{
+          component={AddOrEditVehicle}
+           options={{
           headerRight: props => <ManageVehicleHeader {...props} />,
           headerTitle: null,
           headerBackTitleVisible: false,
           headerStyle: {
             height: 170,
-            shadowColor: 'transparent'
+            shadowColor: 'transparent',
+            cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS
           }
         }} />
 
@@ -111,7 +116,7 @@ function myVehicleNavigation(){
 
       function Header(){
         return(
-          <View >
+          <View style={{paddingVertical:15}}>
           <Text style={{fontSize:40,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', alignSelf:'center'}}>مركبتي</Text>
           </View>
         )

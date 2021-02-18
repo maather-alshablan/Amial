@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, Button, Image, ImageBackgroundBase } from 'reac
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { database } from '../Configuration/firebase';
 import { auth } from 'firebase';
+import colors from '../Constants/colors';
 
 
 export default class Vehicle extends Component {
@@ -16,7 +17,7 @@ export default class Vehicle extends Component {
   async componentDidMount(){
 
    // this.determineUserHasVehicle();
-   this.setState({hasVehicle:false})
+   this.setState({hasVehicle:true})
   }
 
 
@@ -51,19 +52,14 @@ export default class Vehicle extends Component {
 
   userHasVehicle = () => {
 return(
-  <View>{/* image is for mockup purposes */}
-            <Image
-              source={require('../Constants/Logo/PNGLogo.png')}
-              style={styles.logo} />
-            <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
+  <View>
+            <View style={{ flexDirection: 'row-reverse', alignItems: 'center', borderBottomWidth:1, borderColor:colors.LightBlue }}>
               <TouchableOpacity style={styles.Button} onPress={() => this.props.navigation.navigate('ManageVehicle')}>
-                <Text style={{ color: 'white' }}>إدارة المركبة</Text>
+                <Text style={styles.optionText}>إدارة المركبة</Text>
               </TouchableOpacity>
 
-
-
               <TouchableOpacity style={styles.Button} onPress={() => this.props.navigation.navigate('Requests',{VehicleOwner:true})}>
-                <Text style={{ color: 'white' }}>الطلبات</Text>
+                <Text style={styles.optionText}>الطلبات</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -111,7 +107,14 @@ const styles = StyleSheet.create({
     fontSize:20,
     color:'grey',
     marginVertical:10,
-    
+  },
+  optionText:{
+    fontFamily:'Tajawal_500Medium',
+    color:'white',
+    justifyContent:'center',
+    fontSize:18
+
   }
+
 });
 

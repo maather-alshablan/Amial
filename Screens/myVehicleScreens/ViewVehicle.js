@@ -5,10 +5,11 @@ import { StyleSheet, Text, View, TouchableOpacity, Button, ScrollView, Image, } 
 import colors from '../../Constants/colors';
 import Modal from 'react-native-modal';
 import {firebase, database} from '../../Configuration/firebase'
-
+import { Rating, } from 'react-native-ratings';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {EvilIcons , FontAwesome5} from '../../Constants/icons'
-import { auth, firestore } from 'firebase';
+import MultiSelect from "multi-select-react-native";
+import { auth,  } from 'firebase';
 
 export default class viewVehicle extends Component {
 
@@ -16,15 +17,105 @@ export default class viewVehicle extends Component {
     super(props);
     this.state = {
       VehicleOwner:false,
+      vehicleID:'l1dxAcoKpXfqwG95388A',
+      ownerID:'',
+      vehicleDetails:{}, 
+      availability:[],
+      features:[],
+      address:{},
+      Rating:0,
+      InsurancePolicy:{},
       isModalVisible: false,
       calculatedTotalPrice:0,
       sentRequest:false,
+      selectedItems:[]
     }
   }
 
 
-  componentDidMount(){
+  componentDidMount= async()=>{
+    this.retrieveVehicle();
+  }
 
+
+
+  retrieveVehicle = async ()=>{
+
+    var vehicle = database.collection('Vehicle').doc(this.state.vehicleID).get();
+    var vehicleData = (await vehicle).data();
+    this.setState({
+      ownerID: vehicleData.ownerID,
+      vehicleDetails: vehicleData.vehicleDetails,
+      availability:vehicleData.availability,
+      address:vehicleData.address,
+      dailyRate: vehicleData.dailyRate,
+      features:vehicleData.features,
+      Rating: vehicleData.Rating,
+      InsurancePolicy: vehicleData.InsurancePolicy,
+    })
+      //testing output
+    console.log(this.state.ownerID,this.state.vehicleDetails,this.state.address,this.state.availability,
+      this.state.features,this.state.Rating,this.state.InsurancePolicy);
+
+  }
+
+  createfakedata=()=>{
+    var ref =database.collection('Vehicle').doc().id;
+    database.collection('Vehicle').doc(ref).set({
+      ownerID: auth().currentUser.uid,
+      vehicleDetails:{
+        features:['AUX', 'USB Input', 'GPS'],
+        description:"During these trying times we are all looking for some sense of normalcy and escape.  While many entertainment venues are closed, we want to offer something that can still bring a smile to your face.",
+        images:'https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/_sHy9Pm0RbOrhgiKeRW2Pw.2880x1400.jpg',
+        transmission:'manual',
+        year:'2020',
+        model:'mustang'
+      },
+      address:{
+        city:'Riyadh',
+        street:'Turki AlAwal',
+        coordinates:{
+         lat:24.7240805257,
+          lag:46.6453786543
+         }
+      },
+      Rating:0,
+      LicensePlateNumber:"5496 DMB",
+      InsurancePolicy:{
+        type:'شامل',
+        company:'التعاونية'
+      },
+      dailyRate:100,
+      availability:['2020-2-12', '2020-2-12', '2020-2-12',]
+    })
+  }
+
+  SelectAvailability=()=>{
+
+    const DATA = [
+      {
+        id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
+        title: "First Item"
+      },
+      {
+        id: 1,
+        title: "Second Item"
+      },
+      {
+        id: "1a",
+        title: "Third Item"
+      }
+    ];
+    return (
+     // <View style={styles.container}>
+        <MultiSelect
+          data={DATA}
+          selectedItems={this.state.selectedItems}
+          setSelectedItems={(selectedItems)=>{this.setState({selectedItems:selectedItems})}}
+          containerItemsStyle={{margin: 2, padding: 8, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+        />
+    //  </View>
+    );
   }
 
     handleRequest=()=>{
@@ -108,8 +199,9 @@ export default class viewVehicle extends Component {
       width:400,
       marginTop: 'auto',
       backgroundColor:'white' }}>
-                    <EvilIcons name={'close'} size={35} style={{position:'absolute', top:15, left:20}} onPress={()=>this.toggleModal()}/>
-
+        <TouchableOpacity onPress={()=>this.toggleModal()}>
+                    <EvilIcons name={'close'} size={35} style={{position:'absolute', top:20, left:20}} onPress={()=>this.toggleModal()}/>
+                    </TouchableOpacity>
 <View style={{ alignSelf:'center',justifyContent:"center"}}>
             
 
@@ -118,7 +210,7 @@ export default class viewVehicle extends Component {
 
             <Text style={styles.requestModalLabel}>التواريخ المتاحة </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,alignSelf:'flex-end', marginHorizontal:30  }}>
-            {['2020-2-12', '2020-2-12', '2020-2-12',].map(availability => {
+            {this.state.availability.map(availability => {
               return (<TouchableOpacity style={{ margin: 5 , padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }} >
                 <Text style={styles.OptionsText}>{availability}</Text>
               </TouchableOpacity>)
@@ -188,32 +280,34 @@ export default class viewVehicle extends Component {
         </View>
       </View>)
     }
+
+
     return (<View style={{ direction: 'rtl' }}>
-      <View style={{ height: 160, width: '100%' }}>
-        <Image source={{ uri: 'https://www.pngitem.com/pimgs/m/609-6094088_2020-x4m-sav-bmw-x4-hd-png-download.png' }}
-          style={{ width: '100%', height: '100%' }} />
+      <View style={{ height: 160, width: '100%' ,backgroundColor:'transparent'}}>
+        <Image source={{ uri: this.state.vehicleDetails.images  }}
+          style={{ width: '100%', height: '100%',  resizeMode:'cover', }} />
       </View>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 3, marginTop: 5, fontFamily: 'Tajawal_400Regular', }}>
-        <Icon name={"star"} color={'#FFD700'} size={25} />
-        <Icon name={"star"} color={'#FFD700'} size={25} />
-        <Icon name={"star"} color={'#FFD700'} size={25} />
-        <Icon name={"star"} color={'#FFD700'} size={25} />
-        <Icon name={"star"} color={'#FFD700'} size={25} />
-      </View>
-      <Text style={{ fontSize: 18, textAlign: 'center', marginVertical: 8, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }}> ابتداءً من 40 ريال / يوم</Text>
-      <View style={{ flexDirection: 'row', marginHorizontal: 4, fontFamily: 'Tajawal_400Regular' }}>
-        {this.renderCell({ name: 'موديل المركبة', value: 'BMW', })}
-        {this.renderCell({ name: 'سنة الصنع', value: '2020' })}
+
+      <View style={{ flexDirection:'row-reverse', alignItems: 'center', justifyContent: 'space-between', marginVertical:5, marginHorizontal:5, fontFamily: 'Tajawal_400Regular', }}>
+       
+        <Rating showRating type='star' isDisabled={true} ratingBackgroundColor={'#fff'}  imageSize={15}/>
+       
+    
+      <Text style={{ fontSize: 18, textAlign: 'center', marginVertical: 8, marginRight:5, color: '#5dbcd2', fontFamily: 'Tajawal_700Bold' }}> {this.state.dailyRate} ريال / يوم</Text>
       </View>
       <View style={{ flexDirection: 'row', marginHorizontal: 4, fontFamily: 'Tajawal_400Regular' }}>
-        {this.renderCell({ name: 'نوع المركبة', value: 'كبيرة' })}
-        {this.renderCell({ name: 'الجير', value: 'اوتوماتيك' })}
+        {this.renderCell({ name: 'موديل المركبة', value: this.state.vehicleDetails.model, })}
+        {this.renderCell({ name: 'سنة الصنع', value: this.state.vehicleDetails.year })}
+      </View>
+      <View style={{ flexDirection: 'row', marginHorizontal: 4, fontFamily: 'Tajawal_400Regular' }}>
+        {this.renderCell({ name: 'نوع المركبة', value: this.state.vehicleDetails.type })}
+        {this.renderCell({ name: 'الجير', value: this.state.vehicleDetails.transmission })}
       </View>
       <View style={{ flexDirection: 'row', }}>
         <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
         </View>
-        {this.renderCell({ name: 'تامين المركبة', value: "شامل" })}
+        {this.renderCell({ name: 'تامين المركبة', value: this.state.InsurancePolicy.type })}
         <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
         </View>
       </View>
@@ -231,11 +325,11 @@ export default class viewVehicle extends Component {
       </View>
       <View style={{ padding: 12, }}>
         <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>وصف المركبة</Text>
-        <Text style={{ fontSize: 14, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }}>مركبة سريعة ورائعة جدا</Text>
+        <Text style={{ fontSize: 14, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }}>{this.state.vehicleDetails.description}</Text>
       </View>
 
       <View style={{ flexDirection: 'row', }}>
-        {this.renderCell({ name: 'منطقة المركبة', value: "الرياض" })}
+        {this.renderCell({ name: 'منطقة المركبة', value: this.state.address.city})}
         {this.renderCell({ name: "نوع الإستلام", value: "من الموقع" })}
       </View>
 
@@ -245,7 +339,7 @@ export default class viewVehicle extends Component {
         <View style={{ marginBottom: 7 }}>
           <Text style={{ textAlign: 'left', marginBottom: 8, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }} >التواقيت المتاحة للطلب</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-            {['2020-2-12', '2020-2-12', '2020-2-12',].map(availability => {
+            {this.state.availability.map(availability => {
               return (<View style={{ margin: 2, padding: 8, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }} >
                 <Text>{availability}</Text>
               </View>)
