@@ -391,6 +391,8 @@ PODS:
     - React-jsi (= 0.63.4)
   - RNCMaskedView (0.1.10):
     - React
+  - RNCPicker (1.9.11):
+    - React-Core
   - RNFBApp (10.5.0):
     - Firebase/CoreOnly (~> 7.4.0)
     - React-Core
@@ -475,6 +477,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -603,6 +606,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNCPicker:
+    :path: "../node_modules/@react-native-picker/picker"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
@@ -704,6 +709,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
+  RNCPicker: 6780c753e9e674065db90d9c965920516402579d
   RNFBApp: 43a062dc6a1a88edd934d2229d1ba64f25381598
   RNFBAuth: b5b1ba3df98f23b1f41829b762477ccb60b0e747
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
