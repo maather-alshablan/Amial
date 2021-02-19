@@ -9,6 +9,8 @@ import { Rating, } from 'react-native-ratings';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {EvilIcons , FontAwesome5} from '../../Constants/icons'
 import { auth,  } from 'firebase';
+import  { showMessage, hideMessage } from "react-native-flash-message";
+
 
 export default class viewVehicle extends Component {
 
@@ -27,6 +29,7 @@ export default class viewVehicle extends Component {
       isModalVisible: false,
       calculatedTotalPrice:0,
       sentRequest:false,
+      selectedPickUp:'الموقع',
       selectedItems:[],
       selectedDates:[]
     }
@@ -38,6 +41,22 @@ export default class viewVehicle extends Component {
   }
 
 
+
+
+  successMessage= (message)=> {
+    showMessage({
+      message:message,
+      type: "success",
+    });
+  }
+
+  
+  failureMessage= (message)=> {
+    showMessage({
+      message: message,
+      type: 'danger'
+    });
+  }
 
   retrieveVehicle = async ()=>{
 
@@ -86,7 +105,7 @@ export default class viewVehicle extends Component {
         company:'التعاونية'
       },
       dailyRate:100,
-      availability:['2020-2-12', '2020-2-12', '2020-2-12',]
+      availability:['2020-2-12', '2020-8-12', '2020-9-12','2020-4-12','2020-10-12']
     })
   }
 
@@ -94,8 +113,20 @@ export default class viewVehicle extends Component {
 
     SelectAvailability = () => {
 
+      const calculateTotalPrice = async () =>{
+        if(this.state.selectedDates != undefined){
+      var price = this.state.selectedDates.length * this.state.dailyRate;
+      var tax = price*0.15;
+      var totalAmount = price+tax; 
+       this.state.calculatedTotalPrice = totalAmount;
+      console.log(this.state.calculatedTotalPrice)}
+      }
+
       return (
-  
+  <ScrollView 
+  horizontal={true}
+  showsHorizontalScrollIndicator={true}
+  centerContent={true}>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,alignSelf:'flex-end', marginHorizontal:30  }}>
         {this.state.availability.map(date => {
               return (<TouchableOpacity
@@ -129,33 +160,54 @@ export default class viewVehicle extends Component {
                     const dates = this.state.selectedDates ;
                     dates.push(date);
                     console.log(dates)
+                    
                     this.setState({
                       selectedDates: dates
                     })
                   }
+                  calculateTotalPrice();
+
+                  
                 }}
                 style={{ 
-                  borderColor: !(this.state.selectedDates!=undefined && this.state.selectedDates.indexOf(date))? colors.LightBlue : 'black' , 
+                  borderColor: (this.state.selectedDates!=undefined && this.state.selectedDates.includes(date))? colors.LightBlue : 'black' , 
                   borderWidth: 1, borderRadius: 10, padding: 12, margin: 4, 
-                backgroundColor: !(this.state.selectedDates!=undefined && this.state.selectedDates.indexOf(date))? colors.LightBlue : '#fff' }}>
-                <Text style={{ fontSize: 14, color: !(this.state.selectedDates!=undefined && this.state.selectedDates.indexOf(date))? '#fff' : colors.Subtitle}}>{date}</Text>
+                backgroundColor: (this.state.selectedDates!=undefined && this.state.selectedDates.includes(date))? colors.LightBlue : '#fff' }}>
+                <Text style={{ fontSize: 15,fontFamily:'Tajawal_300Light', color: (this.state.selectedDates!=undefined && this.state.selectedDates.includes(date))? '#fff' : 'black'}}>{date}</Text>
               </TouchableOpacity>)
             })}
           </View>
+          </ScrollView>
         
       )
     }
   
 
+    sortCalender = () =>{
+
+      console.log('sorting calender ')
+      this.state.selectedDates.sort(function(a,b){
+        // Turn your strings into dates, and then subtract them
+        // to get a value that is either negative, positive, or zero.
+        return new Date(b.date) - new Date(a.date);
+      });
+    }
+
     handleRequest=()=>{
 
+      if (this.state.selectedDates === undefined)
+      this.failureMessage('يرجى اختيار احدى المواعيد المتاحة لحجز المركبة')
+      else{
+      this.sortCalender(); }
+
+      
 
         //create request 
        var tripDocument= database.collection('Trips').doc();
 
        var requestID= tripDocument.id;
-       var vehicleID=0
-       var ownerID= 0
+       var vehicleID= this.state.vehicleID;
+       var ownerID= this.state.VehicleOwner;
        var borrowerID= auth().currentUser.uid;
 
        var tripRequest = {
@@ -167,8 +219,8 @@ export default class viewVehicle extends Component {
            details:{
                pickupDate:'',
                dropoffDate:'',
-               pickupOption:'',
-               pickUplocation:''
+               pickupOption:this.state.selectedPickUp,
+               pickUplocation:this.state.address.coordinates 
            },
            totalAmount:this.state.calculatedTotalPrice,
        }
@@ -239,33 +291,37 @@ export default class viewVehicle extends Component {
 
             <Text style={styles.requestModalLabel}>التواريخ المتاحة </Text>
             {this.SelectAvailability()}
-            {/* <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,alignSelf:'flex-end', marginHorizontal:30  }}>
-            {this.state.availability.map(availability => {
-              return (<TouchableOpacity style={{ margin: 5 , padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }} >
-                <Text style={styles.OptionsText}>{availability}</Text>
-              </TouchableOpacity>)
-            })}
-          </View> */}
+        
 
             <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
+            <ScrollView 
+  horizontal={true}
+  centerContent={true}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf:'flex-end', marginHorizontal:30 }}>
             {[ 'توصيل', 'من الموقع',].map(availability => {
-              return (<TouchableOpacity style={{  margin:5 ,padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2',justifyContent:'space-between' }} >
+              return (<TouchableOpacity style={{  borderWidth: 1, borderRadius: 10, padding: 12, margin: 4, color: '#5dbcd2',justifyContent:'space-between' }} onPress={ ()=>{
+                 // select one of two option 
+              }} >
                <Text 
                style={styles.OptionsText}> {availability}</Text>
                
               </TouchableOpacity>)
             })}
           </View>
+          </ScrollView>
             <Text style={[styles.requestModalLabel, {fontSize:20, }]}>المجموع</Text>
             <Text style={[styles.requestModalLabel, {fontSize:25, fontFamily:'Tajawal_500Medium',bottom:20}]}> {this.state.calculatedTotalPrice} ريال</Text>
+
+
+            <View style={{marginBottom:13}}>
             <TouchableOpacity style={styles.Button} onPress={()=> this.setState({isModalVisible:true}) }>
           <Text style={styles.RequestButtonText} 
             onPress={ ()=> { 
-                 //this.handleRequest()}
+                this.handleRequest()
                 this.setState({sentRequest:true})}}
               > إرسال الطلب </Text>
           </TouchableOpacity>
+          </View>
            
           </View>}
             </View> 
@@ -319,12 +375,15 @@ export default class viewVehicle extends Component {
       </View>
 
 
-      <View style={{ flexDirection:'row-reverse', alignItems: 'center', justifyContent: 'space-between', marginVertical:5, marginHorizontal:5, fontFamily: 'Tajawal_400Regular', }}>
-       
-        <Rating showRating type='star' isDisabled={true} ratingBackgroundColor={'#fff'}  imageSize={15}/>
-       
+      <View style={{  alignItems: 'baseline', marginVertical:5, marginHorizontal:5, fontFamily: 'Tajawal_400Regular',flexDirection:'row-reverse' }}>
     
-      <Text style={{ fontSize: 18, textAlign: 'center', marginVertical: 8, marginRight:5, color: '#5dbcd2', fontFamily: 'Tajawal_700Bold' }}> {this.state.dailyRate} ريال / يوم</Text>
+    <View style={{alignSelf:'flex-end' , marginHorizontal:10, flexDirection:'row-reverse',justifyContent:'center' }}> 
+      <FontAwesome5 name={'star'} size={25} />
+  <Text style={{fontSize:25, marginHorizontal:5}}>{this.state.Rating}</Text>
+  </View>
+        <View style={{marginRight:200}}>
+      <Text style={{ fontSize: 20, margin:10 ,color: '#5dbcd2', fontFamily: 'Tajawal_700Bold' }}> {this.state.dailyRate} ريال / يوم</Text>
+      </View>
       </View>
       <View style={{ flexDirection: 'row', marginHorizontal: 4, fontFamily: 'Tajawal_400Regular' }}>
         {this.renderCell({ name: 'موديل المركبة', value: this.state.vehicleDetails.model, })}
@@ -364,7 +423,7 @@ export default class viewVehicle extends Component {
       </View>
 
 
-      <View style={{ padding: 12, }}>
+      {/* <View style={{ padding: 12, }}>
         <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>تفاصيل الحجز </Text>
         <View style={{ marginBottom: 7 }}>
           <Text style={{ textAlign: 'left', marginBottom: 8, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }} >التواقيت المتاحة للطلب</Text>
@@ -377,17 +436,7 @@ export default class viewVehicle extends Component {
           </View>
         </View>
 
-      </View>
-      {/* <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
-<Icon name={"star"} color={'yellow'} size={25} />
-<Icon name={"star"} color={'yellow'} size={25} />
-<Icon name={"star"} color={'yellow'} size={25} />
-<Icon name={"star"} color={'yellow'} size={25} />
-<Icon name={"star"} color={'yellow'} size={25} />
-</View>
-<View style={{ marginBottom: 8 }}>
-<Text style={{ fontSize: 18, textAlign: 'center' }}>40 ريال / يوم</Text>
-</View> */}
+      </View> */}
 
     </View>)
   }
@@ -419,7 +468,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginHorizontal: 140,
-        marginBottom:5,
+        margin:10,
         width: 150,
         height: 30,
         borderRadius: 10,
