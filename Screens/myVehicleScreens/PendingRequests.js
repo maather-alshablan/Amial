@@ -69,7 +69,7 @@ export default class PendingRequests extends Component {
           }}
           style={{ padding: 8, borderRadius: 6, borderColor: '#3fc250', borderWidth: 1, flexDirection: 'row', alignItems: 'center' }}>
           <Image source={{ uri: 'https://img.icons8.com/color/452/whatsapp--v1.png' }} style={{ width: 24, height: 24 }} />
-          <Text style={{ marginLeft: 8, }}>تواصل مع المستأجر</Text>
+          <Text style={{ marginLeft: 8, fontFamily: 'Tajawal_400Regular',  }}>تواصل مع المستأجر</Text>
         </TouchableOpacity>
       </View>
 
