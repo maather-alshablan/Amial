@@ -122,7 +122,13 @@ export default class ActiveRequests extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.state.hasRequest ? this.renderRequest() :
+        {this.state.hasRequest ? 
+        
+        <FlatList
+        data={this.state.request}
+        renderItem={this.renderRequest}
+        contentContainerStyle={{ alignItems: 'center' }}
+      />   :
            this.userHasNoRequests()
         }
         <ModalComponent />

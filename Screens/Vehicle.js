@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableHighlight, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Button,Dimensions, Image, TouchableHighlight, FlatList } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { database } from '../Configuration/firebase';
 import { auth } from 'firebase';
@@ -46,7 +46,7 @@ export default class Vehicle extends Component {
       console.log('true')
 
       if (doc.empty) {
-        console.log('true')
+        console.log('user has no vehicles listed')
         this.setState({ hasVehicle: false });
       }
       else {
@@ -55,9 +55,8 @@ export default class Vehicle extends Component {
         doc.forEach((vehicle)=>{
           vehicles.push(vehicle.data())
         })
-        this.setState({ hasVehicle: true });
-
-        this.setState({ vehicles: vehicles }); 
+        this.setState({ hasVehicle: true , vehicles: vehicles }); 
+        console.log(vehicles)
       }
     
     }).catch((error) => {
@@ -116,6 +115,66 @@ export default class Vehicle extends Component {
     )
   }
 
+  renderVehicle = ({ item, index }) => {
+    return (<TouchableOpacity
+      activeOpacity={1}
+      onPress={() => {
+        // navigate to view
+      }}
+      style={{
+        backgroundColor: '#fff',
+        width: Dimensions.get('screen').width - 40,
+        margin: 10,
+        shadowColor: '#000',
+        shadowOpacity: 0.12,
+        fontFamily: 'Tajawal_400Regular',
+        shadowRadius: 6,
+        shadowOffset: {
+          height: 3,
+          width: 0
+        },
+        borderRadius: 20,
+        direction: 'rtl',
+        padding: 12,
+        alignSelf: 'center'
+      }}>
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      }}>
+          <View style={{ padding: 8 }}>
+          <View style={styles.inputRow}>
+          <Text style={styles.label}>نوع المركبة </Text>
+          <Text style={styles.input}> {item.vehicleDetails.model}</Text>
+          </View>
+
+          <View style={styles.inputRow}>
+          <Text style={styles.label}> لوحة المركبة</Text>
+          <Text style={styles.input}> {item.LicensePlateNumber}</Text>
+          </View>
+
+
+          <View style={styles.inputRow}>
+          <Text style={styles.label}>السعر اليومي</Text>
+          <Text style={styles.input}> {item.dailyRate}</Text>
+          </View>
+          <View style={styles.inputRow}>
+          <Text style={styles.label}>التقييم</Text>
+          <Text style={styles.input}> {item.Rating}</Text>
+          </View>
+        </View>
+        <View style={{ width: 120, height: 80 }}>
+          <Image source={{ uri: item.vehicleDetails.image }} style={{ width: '100%', height: '100%' }} />
+        </View>
+      </View>
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+
+      </View>
+
+    </TouchableOpacity>)
+  }
+
+
   renderItem = ({ item, index }) => {
     return (
       <View style={{ flexDirection: 'row', direction: 'rtl', flex: 1,top:100 }}>
@@ -143,20 +202,23 @@ export default class Vehicle extends Component {
 
           <TouchableOpacity style={styles.Button} onPress={() => this.props.
           navigation.navigate('Requests', 
-          { screen: 'Pending',
-            params:{VehicleOwner: true} 
+          { screen: 'Pending'
             })}>
             <Text style={styles.optionText}>الطلبات</Text>
           </TouchableOpacity>
         </View>
      
+        <FlatList
+            data={this.state.vehicles}
+            renderItem={this.renderVehicle}
+            contentContainerStyle={{ alignItems: 'center' }}
+           /> 
 
           <TouchableOpacity style={styles.addVehicleButton}    
           onPress={() => {
         this.props.navigation.navigate('AddOrEditVehicle')
       }}>
-            <Ionicons name={'add'} color={'white'} size={25} style={{marginBottom:3, right:7}}/>
-          <Text style={styles.ButtonText}> إضافة مركبة </Text>
+            <Ionicons name={'add'} color={'white'} size={50} style={{left:3}}/>
 
           </TouchableOpacity>
        
@@ -224,19 +286,32 @@ const styles = StyleSheet.create({
 
 },
 addVehicleButton:{
-  flexDirection:'row-reverse',
     backgroundColor: '#5dbcd2',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+        shadowOffset: {
+          height: 3,
+          width: 0
+        },
     alignItems: 'center',
-    marginHorizontal:90,
-    marginVertical:60,
-    width: 200,
-    height: 40,
-    borderRadius: 10,
+    margin:20,
+    width: 70,
+    height: 70,
+    borderRadius: 60,
     color: 'white',
+},  inputRow:{
+  flexDirection:'row',
+  margin:7,
+  justifyContent:'flex-start'
+},
 
-  
-}
+label:{
+alignSelf:'flex-end', textAlign: 'right', fontFamily: 'Tajawal_400Regular', fontSize: 20 
+},
+input:{textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 , color:colors.LightBlue, marginHorizontal:5}
+
 
 });
 
