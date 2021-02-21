@@ -46,7 +46,7 @@ export default class ActiveRequests extends Component {
     })
   }
 
-  renderRequest = () => {
+  renderRequest = ({ item, index }) => {
     return (<TouchableOpacity
       activeOpacity={1}
       onPress={() => {
@@ -113,9 +113,7 @@ export default class ActiveRequests extends Component {
   userHasNoRequests = () => {
     return (
       <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
-
-
-           <MaterialCommunityIcons name={'road-variant'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
+           <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
         <Text style={styles.emptyTripsText}> لا توجد لديك رحلة نشطة</Text>
       </View>
     )

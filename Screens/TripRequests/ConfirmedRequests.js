@@ -49,7 +49,7 @@ export default class ConfirmedRequests extends Component {
   userHasNoRequests = () => {
     return (
       <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 280 }}>
-         <MaterialCommunityIcons name={'road-variant'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
+         <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
 
          <Text style={styles.emptyTripsText}> لا يوجد لديك رحلة مؤكدة</Text>
 
