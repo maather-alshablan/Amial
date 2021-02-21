@@ -81,7 +81,7 @@ size={20} />
 mapView = () => {
 
 return (
-<View style={{ 20, marginRight: 300 }} >
+<View style={{  marginRight: 300 }} >
 <Map />
 </View>
 )
@@ -100,7 +100,7 @@ direction: 'rtl',
 width: 320,
 height: 220,
 backgroundColor: '#fff',
-12,
+
 shadowColor: '#000',
 shadowOpacity: 0.12,
 fontFamily: 'Tajawal_400Regular',
@@ -112,7 +112,7 @@ width: 0
 borderRadius: 16,
 padding: 12
 }}>
-<View style={{ justifyContent: 'flex-start', alignItems: 'flex-start', 4 }}>
+<View style={{ justifyContent: 'flex-start', alignItems: 'flex-start'}}>
 <View style={{ padding: 4, borderRadius: 4, backgroundColor: '#ffb815', flexDirection: 'row', alignItems: 'center' }}>
 <Text style={{ color: '#fff' }}> x {item.Rating}</Text>
 <FontAwesome5 name="star" color="#fff" />
@@ -188,14 +188,12 @@ Button: {
 backgroundColor: colors.LightBlue,
 justifyContent: 'center',
 alignItems: 'center',
-10,
 width: 150,
 height: 30,
 borderRadius: 10,
 color: 'white'
 },
 ViewSelection: {
-5,
 flexDirection: 'row',
 alignItems: 'center',
 justifyContent: 'center',
