@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Dimensions, Linking, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Dimensions, Linking, FlatList } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { database, auth } from '../../Configuration/firebase';
+import { MaterialCommunityIcons } from '../../Constants/icons';
 
 
 export default class ActiveRequests extends Component {
@@ -21,41 +22,31 @@ export default class ActiveRequests extends Component {
     this.retrieveActiveTrips();
   }
 
+ 
+  retrieveActiveTrips =  () => {
+ 
+            console.log('user is borrower')
+              database.collection('Trips')
+            .where("borrowerID",'==',auth.currentUser.uid)
+            .where('status','==','active')
+            .get().then((querySnapshot)=>{
+            if (!querySnapshot.empty){
+              let requests = []
+              console.log(querySnapshot.size,' Active Requests found')
 
-  retrieveActiveTrips =  async () => {
-    
-    // user is a vehicle owner
-      console.log('user is owner')
-
-      await database.collection('Trips')
-      .where("ownerID",'==',auth.currentUser.uid)
-      .where('status','==','active')
-      .get().then((querySnapshot)=>{
-      if (!querySnapshot.empty){
-        let requests = []
-        console.log(querySnapshot.size,' Active Requests found')
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-          requests.push(doc.data());
-      });
-      this.setState({request: requests,hasRequest:true});
-      console.log('array > ', this.state.request)
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                //console.log(doc.id, " => ", doc.data());
+                requests.push(doc.data());
+            });
+            this.setState({request: requests, hasRequest:true});
+            console.log('array > ', this.state.request)
       } else console.log('No Active requests found')
-      })
-    
+            
+    })
   }
 
-  userHasNoRequests = () => {
-    return (
-      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
-           <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
-        <Text style={styles.emptyTripsText}> لا توجد لديك رحلة نشطة</Text>
-      </View>
-    )
-  }
-
-  renderRequest = () => {
+  renderRequest = ({ item, index }) => {
     return (<TouchableOpacity
       activeOpacity={1}
       onPress={() => {
@@ -119,11 +110,25 @@ export default class ActiveRequests extends Component {
     </TouchableOpacity>)
   }
 
+  userHasNoRequests = () => {
+    return (
+      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
+           <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
+        <Text style={styles.emptyTripsText}> لا توجد لديك رحلة نشطة</Text>
+      </View>
+    )
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        {this.state.hasRequest ? this.renderRequest() :
-           this.userHasNoRequests()
+        
+        {this.state.hasRequest  ?
+            <FlatList
+              data={this.state.request}
+              renderItem={this.renderRequest}
+              contentContainerStyle={{ alignItems: 'center' }}
+            />  : this.userHasNoRequests()
         }
         <ModalComponent />
       </View>
@@ -138,8 +143,9 @@ const styles = StyleSheet.create({
   }, //for mockup
   emptyTripsText: {
     color: colors.Subtitle,
-    fontSize: 20,
-    fontFamily: 'Tajawal_500Medium'
+    textAlign:'center',
+    fontSize: 25,
+    fontFamily: "Tajawal_500Medium"
   }
 
 });

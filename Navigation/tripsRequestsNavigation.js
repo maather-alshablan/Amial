@@ -1,11 +1,11 @@
 import * as React from "react";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import PendingRequests from '../Screens/myVehicleScreens/PendingRequests'
-import ConfirmedRequests from '../Screens/myVehicleScreens/ConfirmedRequest'
-import ActiveRequests from '../Screens/myVehicleScreens/ActiveRequests'
+import PendingRequests from '../Screens/TripRequests/PendingRequests'
+import ConfirmedRequests from '../Screens/TripRequests/ConfirmedRequests'
+import ActiveRequests from '../Screens/TripRequests/ActiveRequests'
 
 
-export default function RequestsNavigation(){
+export default function TripRequestsNavigation(){
    
     const Tab = createMaterialTopTabNavigator();
   

@@ -6,6 +6,7 @@ import { showMessage } from 'react-native-flash-message';
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { database, auth } from '../../Configuration/firebase';
+import { MaterialCommunityIcons } from '../../Constants/icons';
 
 
 export default class PendingRequests extends Component {
@@ -24,32 +25,39 @@ export default class PendingRequests extends Component {
 
 
   retreiveRequests = async ()=>{
-  
-    // user is a vehicle owner
-      console.log('owner type')
 
-        await database.collection('Trips')
-      .where("ownerID",'==',auth.currentUser.uid)
-      .where('status','==','pending')
-      .get().then((querySnapshot)=>{
-      if (!querySnapshot.empty){
-        let requests = []
-        console.log(querySnapshot.size,' Pending Requests found')
 
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-          requests.push(doc.data());
-      });
-      this.setState({request: requests,hasRequest:true});
-      console.log('array > ', this.state.request)
-      } else console.log('No Active requests found')
-      })
-          
+            console.log('user is borrower')
+            await  database.collection('Trips')
+            .where("borrowerID",'==',auth.currentUser.uid)
+            .where('status','==','pending')
+            .get().then((querySnapshot)=>{
+            if (!querySnapshot.empty){
+              let requests = []
+              console.log(querySnapshot.size,' Pending Requests found')
+
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                //console.log(doc.id, " => ", doc.data());
+                requests.push(doc.data());
+            });
+            this.setState({request: requests, hasRequest:true});
+            console.log('array > ', this.state.request)
+      } else console.log('No Pending requests found')
+            })
   }
 
+  userHasNoRequests = () => {
+    return (
+      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 280 }}>
+         <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
+        <Text style={styles.emptyTripsText}> لا يوجد لديك رحلة معلقة</Text>
 
-  renderRequest = () => {
+      </View>
+    )
+  }
+
+  renderRequest = ({ item, index }) => {
     
    
     return (
@@ -80,23 +88,33 @@ export default class PendingRequests extends Component {
         justifyContent: 'space-between',
       }}>
         <View style={{ padding: 10 }}>
-          <Text style={styles.label}>نوع المركبة BMW</Text>
-          <Text style={styles.label}>نوع التسليم 
-          {/* {vehicle.details.pickupOption} */}
-          </Text>
-          <Text style={styles.label}>اسم المستأجر  Faisal</Text>
-          <Text style={styles.label}>الحالة  لم يتم الدفع</Text>
+          <View style={styles.inputRow}>
+          <Text style={styles.label}>نوع المركبة </Text>
+          <Text style={styles.input}> BMW</Text>
+          </View>
+          <View style={styles.inputRow}>
+          <Text style={styles.label}> نوع التسليم </Text>
+          <Text style={styles.input}> {item.details.pickupOption}</Text>
+          </View>
+          <View style={styles.inputRow}>
+          <Text style={styles.label}>اسم المستأجر</Text>
+          <Text style={styles.input}> Faisal</Text>
+          </View>
+
+          <View style={styles.inputRow}>
+          <Text style={styles.label}>الحالة</Text>
+          <Text style={styles.input}> لم يتم الدفع</Text>
+          </View>
         </View>
         <View style={{ width: 120, height: 80 }}>
-          <Image source={{ uri: 'https://pngimg.com/uploads/maserati/maserati_PNG81.png'
-            // vehicle.image 
+          <Image source={{ uri: item.image
             }} style={{ width: '100%', height: '100%' }} />
         </View>
       </View>
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ justifyContent: 'center', alignItems: 'flex-end' }}>
         <TouchableOpacity
           onPress={() => {
-            const phone = "05555555"
+            const phone = "05555555" //retrieve user phone
             Linking.canOpenURL('https://api.whatsapp.com/send?' + 'phone=' + phone)
               .then(supported => {
                 if (!supported) {
@@ -119,16 +137,6 @@ export default class PendingRequests extends Component {
     </TouchableOpacity>)
      
   }
-  userHasNoRequests = () => {
-    return (
-      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 280 }}>
-   
-   <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
-        <Text style={styles.emptyTripsText}> لا توجد لديك رحلات معلقة</Text>
-
-      </View>
-    )
-  }
 
   render() {
     return (
@@ -138,8 +146,7 @@ export default class PendingRequests extends Component {
             data={this.state.request}
             renderItem={this.renderRequest}
             contentContainerStyle={{ alignItems: 'center' }}
-           /> :  
-          this.userHasNoRequests()
+          />  :      this.userHasNoRequests()
         }
         <ModalComponent />
       </View>
@@ -159,10 +166,16 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontFamily: "Tajawal_500Medium"
   },
+  inputRow:{
+      flexDirection:'row',
+      margin:7,
+      justifyContent:'space-evenly'
+  },
+
   label:{
      textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 
   },
-  input:{textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 , color:colors.LightBlue}
+  input:{textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 , color:colors.LightBlue, marginHorizontal:5}
 
 });
 
