@@ -2,14 +2,56 @@ import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, FlatList, Dimensions, Image, TouchableOpacity } from 'react-native';
 import colors from '../../Constants/colors';
+import { database, auth } from '../../Configuration/firebase';
+import { MaterialCommunityIcons } from '../../Constants/icons';
 
 
 export default class ConfirmedRequests extends Component {
-  //amount of requests
-  state = {
-    requests: [{}, {}, {}]
+  constructor(props) {
+    super(props);
+    this.state = {
+    requests: [{}, {}, {}],
+    hasRequest:false
+  }}
+  componentDidMount() {
+    this.retrieveConfirmedTrips();
   }
 
+ 
+
+   retrieveConfirmedTrips = async () => {
+    // user is a vehicle owner
+      console.log('user is owner')
+
+      await database.collection('Trips')
+      .where("ownerID",'==',auth.currentUser.uid)
+      .where('status','==','confirmed')
+      .get().then((querySnapshot)=>{
+      if (!querySnapshot.empty){
+        let requests = []
+        console.log(querySnapshot.size,' Confirmed Requests found')
+
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+          requests.push(doc.data());
+      });
+      this.setState({request: requests,hasRequest:true});
+      console.log('array > ', this.state.request)
+      } else console.log('No confirmed requests found')
+      })
+  }
+
+  userHasNoRequests = () => {
+    return (
+      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 280 }}>
+   
+   <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
+        <Text style={styles.emptyTripsText}> لا توجد لديك رحلة مؤكدة</Text>
+
+      </View>
+    )
+  }
   renderRequest = ({ item, index }) => {
     return (<TouchableOpacity
       activeOpacity={1}
@@ -50,15 +92,13 @@ export default class ConfirmedRequests extends Component {
     return (
       <View style={styles.container}>
 
-        {this.state.requests.length ?
+        {this.state.hasRequest  ?
           <FlatList
             data={this.state.requests}
             renderItem={this.renderRequest}
             contentContainerStyle={{ alignItems: 'center' }}
           />
-          : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={styles.emptyTripsText}> لا يوجد رحلات..</Text>
-          </View>
+          : this.userHasNoRequests()
         }
 
       </View>
@@ -73,7 +113,8 @@ const styles = StyleSheet.create({
   },
   emptyTripsText: {
     color: colors.Subtitle,
-    fontSize: 20,
+    textAlign:'center',
+    fontSize: 25,
     fontFamily: "Tajawal_500Medium"
   }
 

@@ -362,7 +362,7 @@ selectedFeatures: { ...this.state.selectedFeatures, [feature.id]: feature }
 })
 }
 }}
-style={{ borderColor: '#01b753', borderWidth: 1, borderRadius: 10, padding: 12, 4, backgroundColor: this.state.selectedFeatures[feature.id] ? '#01b753' : '#fff' }}>
+style={{ borderColor: '#01b753', borderWidth: 1, borderRadius: 10, padding: 12,  backgroundColor: this.state.selectedFeatures[feature.id] ? '#01b753' : '#fff' }}>
 <Text style={{ fontSize: 14, color: this.state.selectedFeatures[feature.id] ? '#fff' : '#01b753' }}>{feature.label}</Text>
 </TouchableOpacity>)
 })}
@@ -657,7 +657,7 @@ direction: 'rtl',
 <Text style={{ textAlign: 'left' }} >الأوقات المتاحة للعرض</Text>
 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
 {this.state.availabilities.map(availability => {
-return (<View style={{ 2, padding: 8, borderColor: 'black', borderRadius: 2, borderWidth: 1 }} >
+return (<View style={{  padding: 8, borderColor: 'black', borderRadius: 2, borderWidth: 1 }} >
 <Text>{availability}</Text>
 </View>)
 })}

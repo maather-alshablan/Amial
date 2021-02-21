@@ -99,7 +99,7 @@ return (
 <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
 {this.state.availability.map(date => {
 return (<TouchableOpacity
-style={{ 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+style={{  padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
 onPress={() => {
 
 if (this.state.selectedDates == undefined) {
@@ -137,7 +137,7 @@ selectedDates: dates
 }}
 style={{
 borderColor: !(this.state.selectedDates != undefined && this.state.selectedDates.indexOf(date)) ? colors.LightBlue : 'black',
-borderWidth: 1, borderRadius: 10, padding: 12, 4,
+borderWidth: 1, borderRadius: 10, padding: 12, 
 backgroundColor: !(this.state.selectedDates != undefined && this.state.selectedDates.indexOf(date)) ? colors.LightBlue : '#fff'
 }}>
 <Text style={{ fontSize: 14, color: !(this.state.selectedDates != undefined && this.state.selectedDates.indexOf(date)) ? '#fff' : colors.Subtitle }}>{date}</Text>
@@ -253,7 +253,7 @@ return (<TouchableOpacity style={{ 5 , padding: 10, borderColor: 'black', border
 <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
 <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
 {['توصيل', 'من الموقع',].map(availability => {
-return (<TouchableOpacity style={{ 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', justifyContent: 'space-between' }} >
+return (<TouchableOpacity style={{  padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', justifyContent: 'space-between' }} >
 <Text
 style={styles.OptionsText}> {availability}</Text>
 
@@ -284,7 +284,7 @@ renderCell = (data = {}) => {
 return (
 <View
 style={{
-padding: 12, flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', borderRadius: 20, 4,
+padding: 12, flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', borderRadius: 20, 
 shadowColor: '#000',
 shadowOpacity: 0.12,
 fontFamily: 'Tajawal_400Regular',
@@ -340,14 +340,14 @@ style={{ width: '100%', height: '100%', resizeMode: 'cover', }} />
 {this.renderCell({ name: 'الجير', value: this.state.vehicleDetails.transmission })}
 </View>
 <View style={{ flexDirection: 'row', }}>
-<View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
+<View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
 </View>
 {this.renderCell({ name: 'تامين المركبة', value: this.state.InsurancePolicy.type })}
-<View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
+<View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20,borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
 </View>
 </View>
 <View style={{
-padding: 12, backgroundColor: '#fff', borderRadius: 20, 8, shadowColor: '#000',
+padding: 12, backgroundColor: '#fff', borderRadius: 20, shadowColor: '#000',
 shadowOpacity: 0.12,
 shadowRadius: 6,
 shadowOffset: {
