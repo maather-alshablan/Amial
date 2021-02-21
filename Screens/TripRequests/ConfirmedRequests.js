@@ -10,44 +10,48 @@ export default class ConfirmedRequests extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    requests: [{}, {}, {}]
+    requests: [{}, {}, {}], //remove this later
+    hasRequest:false
   }}
   componentDidMount() {
     this.retrieveConfirmedTrips();
   }
 
- 
+
+
 
    retrieveConfirmedTrips = async () => {
-    // user is a vehicle owner
-      console.log('user is owner')
+   
+            console.log('user is borrower')
+            await  database.collection('Trips')
+            .where("borrowerID",'==',auth.currentUser.uid)
+            .where('status','==','confirmed')
+            .get().then((querySnapshot)=>{
+            if (!querySnapshot.empty){
+              let requests = []
+              console.log(querySnapshot.size,' Confirmed Requests found')
 
-      await database.collection('Trips')
-      .where("ownerID",'==',auth.currentUser.uid)
-      .where('status','==','confirmed')
-      .get().then((querySnapshot)=>{
-      if (!querySnapshot.empty){
-        let requests = []
-        console.log(querySnapshot.size,' Confirmed Requests found')
-
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-          requests.push(doc.data());
-      });
-      this.setState({request: requests});
-      console.log('array > ', this.state.request)
-      } else console.log('No confirmed requests found')
-      })
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                //console.log(doc.id, " => ", doc.data());
+                requests.push(doc.data());
+            });
+            this.setState
+            ({request: requests,
+                hasRequest:true
+            });
+            console.log('array > ', this.state.request)
+      } else console.log('No Confirmed requests found')
+            })
+    
   }
 
   userHasNoRequests = () => {
     return (
       <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 280 }}>
-      <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle}/>
+         <MaterialCommunityIcons name={'road-variant'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
 
-      <Text style={styles.emptyTripsText}> لا توجد لديك رحلة نشطة</Text>
-
+         <Text style={styles.emptyTripsText}> لا يوجد لديك رحلة مؤكدة</Text>
 
       </View>
     )
@@ -92,12 +96,12 @@ export default class ConfirmedRequests extends Component {
     return (
       <View style={styles.container}>
 
-        {this.state.requests.length ?
+{this.state.hasRequest  ?
           <FlatList
-            data={this.state.requests}
+            data={this.state.request}
             renderItem={this.renderRequest}
             contentContainerStyle={{ alignItems: 'center' }}
-          />
+          /> 
           : this.userHasNoRequests()
         }
 
@@ -113,7 +117,8 @@ const styles = StyleSheet.create({
   },
   emptyTripsText: {
     color: colors.Subtitle,
-    fontSize: 20,
+    textAlign:'center',
+    fontSize: 25,
     fontFamily: "Tajawal_500Medium"
   }
 

@@ -5,19 +5,54 @@ import { showMessage } from 'react-native-flash-message';
 
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
+import { database, auth } from '../../Configuration/firebase';
 
 
 export default class ActiveRequests extends Component {
-
-  state = {
-    request: {}
+  constructor(props) {
+    super(props);
+    this.state={
+    request: {},
+    hasRequest:false
   }
-  componentDidMount() {
+}
+
+  componentDidMount= ()=> {
     this.retrieveActiveTrips();
   }
 
-  retrieveActiveTrips = () => {
 
+  retrieveActiveTrips =  async () => {
+    
+    // user is a vehicle owner
+      console.log('user is owner')
+
+      await database.collection('Trips')
+      .where("ownerID",'==',auth.currentUser.uid)
+      .where('status','==','active')
+      .get().then((querySnapshot)=>{
+      if (!querySnapshot.empty){
+        let requests = []
+        console.log(querySnapshot.size,' Active Requests found')
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+          requests.push(doc.data());
+      });
+      this.setState({request: requests,hasRequest:true});
+      console.log('array > ', this.state.request)
+      } else console.log('No Active requests found')
+      })
+    
+  }
+
+  userHasNoRequests = () => {
+    return (
+      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
+           <MaterialCommunityIcons name={'road-variant'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
+        <Text style={styles.emptyTripsText}> لا توجد لديك رحلة نشطة</Text>
+      </View>
+    )
   }
 
   renderRequest = () => {
@@ -87,10 +122,8 @@ export default class ActiveRequests extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.state.request ? this.renderRequest() :
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={styles.emptyTripsText}> لا يوجد رحلات..</Text>
-          </View>
+        {this.state.hasRequest ? this.renderRequest() :
+           this.userHasNoRequests()
         }
         <ModalComponent />
       </View>
@@ -106,7 +139,7 @@ const styles = StyleSheet.create({
   emptyTripsText: {
     color: colors.Subtitle,
     fontSize: 20,
-    fontFamily: "Tajawal_500Medium"
+    fontFamily: 'Tajawal_500Medium'
   }
 
 });

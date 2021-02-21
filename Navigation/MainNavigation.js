@@ -1,5 +1,7 @@
 import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
 import { Text, View,} from 'react-native';
 
 
@@ -10,7 +12,7 @@ import colors from '../Constants/colors'
 import HomeStack from '../Navigation/HomeStack'
 import Vehicle from '../Navigation/MyVehicleNavigation' 
 import Profile from '../Navigation/profileStack'
-import RequestsNavigation from '../Navigation/RequestsNavigation'
+import TripRequestsNavigation from '../Navigation/tripsRequestsNavigation'
 
 function MainNavigation(){
 
@@ -38,7 +40,8 @@ function MainNavigation(){
               name={focused ? "car" : "car-outline"}
               color={focused ? colors.LightBlue:colors.Subtitle} 
               size={30} />)}}/>
-          <Tab.Screen name='Trips' component={TripStack} options={{tabBarLabel:'رحلاتي', tabBarIcon: ({ tintColor, focused }) => (
+          <Tab.Screen name='Trips' component={TripStack} 
+            options={{tabBarLabel:'رحلاتي', tabBarIcon: ({ tintColor, focused }) => (
             <FontAwesome
               name={focused ? "road" : "road"}
               color={focused ? colors.LightBlue:colors.Subtitle} 
@@ -73,7 +76,8 @@ function MainNavigation(){
           },
         }}}>
           <Stack.Screen name='Requests' 
-          component={RequestsNavigation} 
+          component={TripRequestsNavigation} 
+
           options={{ 
             headerTitle: props => <RequestHeader {...props} /> ,
             headerStyle:{
@@ -83,6 +87,8 @@ function MainNavigation(){
         </Stack.Navigator>
       )
     }
+
+    
 
     function RequestHeader(){
       return(

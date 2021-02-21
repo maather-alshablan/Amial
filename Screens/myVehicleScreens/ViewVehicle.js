@@ -7,7 +7,7 @@ import Modal from 'react-native-modal';
 import {firebase, database} from '../../Configuration/firebase'
 import { Rating, } from 'react-native-ratings';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {EvilIcons , FontAwesome5} from '../../Constants/icons'
+import {EvilIcons , FontAwesome5, MaterialIcons} from '../../Constants/icons'
 import { auth,  } from 'firebase';
 import  { showMessage, hideMessage } from "react-native-flash-message";
 
@@ -29,7 +29,8 @@ export default class viewVehicle extends Component {
       isModalVisible: false,
       calculatedTotalPrice:0,
       sentRequest:false,
-      selectedPickUp:'الموقع',
+      failedRequest:false,
+      selectedPickUp:[],
       selectedItems:[],
       selectedDates:[]
     }
@@ -38,10 +39,20 @@ export default class viewVehicle extends Component {
 
   componentDidMount= async()=>{
     this.retrieveVehicle();
+
+    this.IsVehicleRequested();
   }
 
 
+  IsVehicleRequested = async ()=>{
 
+   let query = await database.collection('Trips').where("borrowerID",'==',auth().currentUser.uid).where('vehicleID','==',this.state.vehicleID).where('status','==','pending').get();
+
+   if (!query.empty){
+     console.log('User has requested this vehicle')
+     this.state.sentRequest = true;
+   }
+  }
 
   successMessage= (message)=> {
     showMessage({
@@ -181,11 +192,58 @@ export default class viewVehicle extends Component {
         
       )
     }
+
+
+    SelectPickUpOption = () => {
+
+  
+
+      return (
+ 
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,alignSelf:'flex-end', marginHorizontal:30  }}>
+        {[ 'توصيل', 'من الموقع',].map(option => {
+              return (<TouchableOpacity
+                style={{ margin: 5 , padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+                onPress={() => {
+                  console.log('here')
+
+                  if( this.state.selectedPickUp ){
+                    const selection = []
+                    selection.push(option)
+
+                    //var newSelection = this.state.selectedDates.push(date)
+                    this.setState({
+                      selectedPickUp: selection
+                    })
+                    console.log(this.state.selectedPickUp[0])
+                  }
+                   else if (  this.state.selectedPickUp.indexOf(option)>=0) {
+                    {console.log('remove element')}
+                    const selection = this.state.selectedPickUp ;
+                   
+                    var index = selection.indexOf((String(option)))
+                    selection.splice(index,1)
+
+                    this.setState({
+                      selectedPickUp: selection
+                    })} }}
+                style={{ 
+                  borderColor: (this.state.selectedPickUp!=undefined && this.state.selectedPickUp.includes(option))? colors.LightBlue : 'black' , 
+                  borderWidth: 1, borderRadius: 10, padding: 12, margin: 4, 
+                backgroundColor: (this.state.selectedPickUp!=undefined && this.state.selectedPickUp.includes(option))? colors.LightBlue : '#fff' }}>
+                <Text style={{ fontSize: 15,fontFamily:'Tajawal_300Light', color: (this.state.selectedPickUp!=undefined && this.state.selectedPickUp.includes(option))? '#fff' : 'black'}}>{option}</Text>
+              </TouchableOpacity>)
+            })}
+          </View>
+        
+      )
+    }
+  
   
 
     sortCalender = () =>{
 
-      console.log('sorting calender ')
+      console.log('sorting calender.. ')
       this.state.selectedDates.sort(function(a,b){
         // Turn your strings into dates, and then subtract them
         // to get a value that is either negative, positive, or zero.
@@ -200,14 +258,15 @@ export default class viewVehicle extends Component {
       else{
       this.sortCalender(); }
 
-      
+      console.log('handling request..')
+
 
         //create request 
        var tripDocument= database.collection('Trips').doc();
 
        var requestID= tripDocument.id;
        var vehicleID= this.state.vehicleID;
-       var ownerID= this.state.VehicleOwner;
+       var ownerID= this.state.ownerID;
        var borrowerID= auth().currentUser.uid;
 
        var tripRequest = {
@@ -219,9 +278,11 @@ export default class viewVehicle extends Component {
            details:{
                pickupDate:'',
                dropoffDate:'',
-               pickupOption:this.state.selectedPickUp,
+               bookedDates: this.state.selectedDates,
+               pickupOption:this.state.selectedPickUp[0],
                pickUplocation:this.state.address.coordinates 
            },
+           image: this.state.vehicleDetails.image, 
            totalAmount:this.state.calculatedTotalPrice,
        }
         //send to firestore
@@ -237,9 +298,11 @@ export default class viewVehicle extends Component {
         batch.set(borrowerRequests,tripRequest);
 
         batch.commit().then(()=>
-
         // on success
-        this.setState({sentRequest:true}) )
+        this.setState({sentRequest:true}) ).catch(()=>{
+          console.log('failed request')
+          this.setState({failedRequest:true})
+        })
 
 
     }
@@ -255,19 +318,31 @@ export default class viewVehicle extends Component {
 
                 <View style={{alignSelf:'center',marginVertical:150}}>
                 <FontAwesome5 name={'check-circle'} size={80} color={'green'} style={{alignSelf:'center',marginVertical:15}}/>
-                <Text style={styles.successfulRequestText} >تم إرسال الطلب بنجاح</Text>
+                <Text style={styles.RequestText} >تم إرسال الطلب بنجاح</Text>
                 </View>
             </View>
         )
     }
+
+    unsuccessfulRequest = () =>{
+      return(
+          <View style={{flexDirection:'column', alignSelf:'center' ,justifyContent:'center'}}>
+
+              <View style={{alignSelf:'center',marginVertical:150}}>
+              <MaterialIcons name={'error'} size={80} color={colors.Subtitle} style={{alignSelf:'center',marginVertical:15}}/>
+              <Text style={styles.RequestText} >تعذر إرسال الطلب، يرجى المحاولة مرة اخرى</Text>
+              </View>
+          </View>
+      )
+  }
 
     requestVehicleModal= ()=>{
         return(
                 < View >
           <TouchableOpacity style={styles.Button} onPress={()=> this.setState({isModalVisible:true}) }>
           <Text style={styles.RequestButtonText}> حجز </Text>
-
           </TouchableOpacity>
+
           <Modal 
         onBackdropPress={() => this.toggleModal()}
         onSwipeComplete={() => this.toggleModal()}
@@ -294,9 +369,14 @@ export default class viewVehicle extends Component {
         
 
             <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
+           
             <ScrollView 
   horizontal={true}
   centerContent={true}>
+{                this.SelectPickUpOption()
+}
+
+{/* 
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf:'flex-end', marginHorizontal:30 }}>
             {[ 'توصيل', 'من الموقع',].map(availability => {
               return (<TouchableOpacity style={{  borderWidth: 1, borderRadius: 10, padding: 12, margin: 4, color: '#5dbcd2',justifyContent:'space-between' }} onPress={ ()=>{
@@ -307,7 +387,7 @@ export default class viewVehicle extends Component {
                
               </TouchableOpacity>)
             })}
-          </View>
+          </View> */}
           </ScrollView>
             <Text style={[styles.requestModalLabel, {fontSize:20, }]}>المجموع</Text>
             <Text style={[styles.requestModalLabel, {fontSize:25, fontFamily:'Tajawal_500Medium',bottom:20}]}> {this.state.calculatedTotalPrice} ريال</Text>
@@ -317,8 +397,8 @@ export default class viewVehicle extends Component {
             <TouchableOpacity style={styles.Button} onPress={()=> this.setState({isModalVisible:true}) }>
           <Text style={styles.RequestButtonText} 
             onPress={ ()=> { 
-                this.handleRequest()
-                this.setState({sentRequest:true})}}
+                this.handleRequest();
+              }}
               > إرسال الطلب </Text>
           </TouchableOpacity>
           </View>
@@ -423,21 +503,6 @@ export default class viewVehicle extends Component {
       </View>
 
 
-      {/* <View style={{ padding: 12, }}>
-        <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>تفاصيل الحجز </Text>
-        <View style={{ marginBottom: 7 }}>
-          <Text style={{ textAlign: 'left', marginBottom: 8, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }} >التواقيت المتاحة للطلب</Text>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-            {this.state.availability.map(availability => {
-              return (<View style={{ margin: 2, padding: 8, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }} >
-                <Text>{availability}</Text>
-              </View>)
-            })}
-          </View>
-        </View>
-
-      </View> */}
-
     </View>)
   }
 
@@ -513,7 +578,7 @@ const styles = StyleSheet.create({
             fontSize:25,
             fontFamily:'Tajawal_300Light',
             },
-        successfulRequestText:{
+        RequestText:{
             fontSize:25,
             fontFamily:'Tajawal_500Medium'
         }})

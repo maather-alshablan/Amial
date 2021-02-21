@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createStackNavigator , CardStyleInterpolators } from "@react-navigation/stack";
+import { createStackNavigator  } from "@react-navigation/stack";
 
 import { Text, View } from 'react-native';
 
@@ -35,18 +35,16 @@ function myVehicleNavigation(){
               headerStyle:{
                 height:170,
                 shadowColor: 'transparent' ,
-                cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS
 
               },
               headerTintColor:colors.LightBlue
               }} />
             <Stack.Screen name='Requests' 
             component={RequestStack}
-            initialParams={{VehicleOwner:true}}
             options={{ 
               headerShown:false,
               headerTintColor:colors.LightBlue,
-              cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS
+              
               }}
               />
              <Stack.Screen name='AddOrEditVehicle'
@@ -58,7 +56,6 @@ function myVehicleNavigation(){
           headerStyle: {
             height: 170,
             shadowColor: 'transparent',
-            cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS
           }
         }} />
 
