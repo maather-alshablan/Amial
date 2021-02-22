@@ -5,7 +5,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Button, ScrollView, Image, } 
 import colors from '../../Constants/colors';
 import Modal from 'react-native-modal';
 import { firebase, database } from '../../Configuration/firebase'
-import { Rating, } from 'react-native-ratings';
+import { Rating, AirbnbRating, } from 'react-native-ratings';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {EvilIcons , FontAwesome5, MaterialIcons} from '../../Constants/icons'
 import { auth,  } from 'firebase';
@@ -18,7 +18,7 @@ export default class viewVehicle extends Component {
     super(props);
     this.state = {
       VehicleOwner:true,
-      vehicleID:'l1dxAcoKpXfqwG95388A',
+      vehicleID: props?.route?.params?.vehicleID,
       ownerID:'',
       vehicleDetails:{}, 
       availability:[],
@@ -421,8 +421,8 @@ export default class viewVehicle extends Component {
             width: 0
           }
         }}>
-        {data.icon && data.icon != "" ? <Icon name={data.icon} color={'#01b753'} size={18} style={{ marginRight: 8 }} /> : <Text style={{ fontSize: 16, textAlign: 'left', fontFamily: 'Tajawal_400Regular' }}>{data.name} : </Text>}
-        <Text style={{ fontSize: 14, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }}>{data.value}</Text>
+        {data.icon && data.icon != "" ? <Icon name={data.icon} color={'#01b753'} size={18} style={{ marginRight: 8 }} /> : <Text style={{ fontSize: 17, textAlign: 'left', fontFamily: 'Tajawal_400Regular' }}> {data.name}   </Text>}
+        <Text style={{ fontSize: 17, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' ,marginHorizontal:3}}> {data.value}</Text>
       </View>
     )
   }
@@ -453,9 +453,10 @@ export default class viewVehicle extends Component {
 
       <View style={{  alignItems: 'baseline', marginVertical:5, marginHorizontal:5, fontFamily: 'Tajawal_400Regular',flexDirection:'row-reverse' }}>
     
-    <View style={{alignSelf:'flex-end' , marginHorizontal:10, flexDirection:'row-reverse',justifyContent:'center' }}> 
-      <FontAwesome5 name={'star'} size={25} />
-  <Text style={{fontSize:25, marginHorizontal:5}}>{this.state.Rating}</Text>
+    <View style={{alignSelf:'flex-end' , flexDirection:'row-reverse',justifyContent:'center' }}> 
+   
+  <Rating type='star' ratingCount={1} readonly={true} imageSize={28} startingValue={1} style={{marginBottom:5}}/>
+  <Text style={{color:'#f1c40f', fontSize:25, fontFamily:'Tajawal_300Light', marginHorizontal:5,marginTop:3}}>{this.state.Rating}/5</Text>
   </View>
         <View style={{marginRight:200}}>
       <Text style={{ fontSize: 20, margin:10 ,color: '#5dbcd2', fontFamily: 'Tajawal_700Bold' }}> {this.state.dailyRate} ريال / يوم</Text>
@@ -490,11 +491,11 @@ export default class viewVehicle extends Component {
       </View>
       <View style={{ padding: 12, }}>
         <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>وصف المركبة</Text>
-        <Text style={{ fontSize: 14, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }}>{this.state.vehicleDetails.description}</Text>
+        <Text style={{ fontSize: 16, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }}>{this.state.vehicleDetails.description}</Text>
       </View>
 
       <View style={{ flexDirection: 'row', }}>
-        {this.renderCell({ name: 'منطقة المركبة', value: this.state.address.city})}
+        {this.renderCell({ name: 'المنطقة ', value: this.state.address.city})}
         {this.renderCell({ name: "نوع الإستلام", value: "من الموقع" })}
       </View>
 
@@ -505,7 +506,7 @@ export default class viewVehicle extends Component {
 render() {
 return (
 <View style={styles.container}>
-<ScrollView style={{ backgroundColor: '#F0EEF0' }}>
+<ScrollView style={{ backgroundColor: 'fff' }}>
 
 {this.renderVehicleDetails()}
 {this.state.VehicleOwner ? <View></View> :

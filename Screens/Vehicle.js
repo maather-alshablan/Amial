@@ -34,7 +34,7 @@ export default class Vehicle extends Component {
 
    async componentDidMount() {
 
-  //   await this.determineUserHasVehicle();
+     await this.determineUserHasVehicle();
      
   }
 

@@ -21,23 +21,36 @@ cars: []
 
 onResult = (queury) => {
 let car = null
-let docId = ''
+//let docId = ''
 const cars = [];
 queury.forEach(element => {
 car = element.data();
-docId = element.id
-cars.push({
-carId: docId,
-...car
-})
+cars.push(car)
 });
-this.setState({ cars })
+this.setState({ cars: cars })
 }
-onError = (e) => {
-console.log(e, "===")
+
+// onError = (e) => {
+// console.log(e, "===")
+// }
+
+async componentDidMount() {
+//await database.collection('Vehicle').onSnapshot(this.onResult, this.onError)
+await this.retreiveVehicles();
 }
-componentDidMount() {
-database.collection('Vehicle').onSnapshot(this.onResult, this.onError)
+
+retreiveVehicles=()=>{
+
+ database.collection('Vehicle').get().then((doc)=>{
+    let vehicles =[]
+    doc.forEach((vehicle)=>{
+      vehicles.push(vehicle.data())
+    })
+    this.setState({cars:vehicles})
+}).catch((error) => {
+    console.log("Error getting document:", error);
+  });
+
 }
 
 
@@ -94,7 +107,7 @@ const { image = "", model = "" } = item.vehicleDetails || {}
 return (<TouchableOpacity
 activeOpacity={1}
 onPress={() => {
-this.props.navigation.navigate('VehicleView', { vehicleID: item.carId })
+this.props.navigation.navigate('VehicleView', { vehicleID: item.vehicleID })
 }}
 style={{
 direction: 'rtl',

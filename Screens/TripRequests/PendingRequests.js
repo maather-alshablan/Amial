@@ -65,7 +65,7 @@ export default class PendingRequests extends Component {
   };
 
 
-  showDetails = ()=>{
+  showDetails = ({item})=>{
     return(
       <Modal 
       onBackdropPress={() => this.toggleModal()}
@@ -144,10 +144,10 @@ export default class PendingRequests extends Component {
           <Text style={styles.label}> نوع التسليم </Text>
           <Text style={styles.input}> {item.details.pickupOption}</Text>
           </View>
-          <View style={styles.inputRow}>
+          {/* <View style={styles.inputRow}>
           <Text style={styles.label}>اسم المستأجر</Text>
           <Text style={styles.input}> Faisal</Text>
-          </View>
+          </View> */}
 
           <View style={styles.inputRow}>
           <Text style={styles.label}>الحالة</Text>
