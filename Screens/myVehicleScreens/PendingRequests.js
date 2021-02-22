@@ -6,6 +6,7 @@ import { showMessage } from 'react-native-flash-message';
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { database, auth } from '../../Configuration/firebase';
+import { MaterialCommunityIcons } from '../../Constants/icons';
 
 
 export default class PendingRequests extends Component {
@@ -85,7 +86,7 @@ export default class PendingRequests extends Component {
           {/* {vehicle.details.pickupOption} */}
           </Text>
           <Text style={styles.label}>اسم المستأجر  Faisal</Text>
-          <Text style={styles.label}>الحالة  لم يتم الدفع</Text>
+          <Text style={[styles.label, {color:colors.Subtitle}]}>الحالة  لم يتم الدفع</Text>
         </View>
         <View style={{ width: 120, height: 80 }}>
           <Image source={{ uri: 'https://pngimg.com/uploads/maserati/maserati_PNG81.png'

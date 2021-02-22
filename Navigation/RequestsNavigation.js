@@ -2,7 +2,7 @@ import * as React from "react";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import PendingRequests from '../Screens/myVehicleScreens/PendingRequests'
 import ConfirmedRequests from '../Screens/myVehicleScreens/ConfirmedRequest'
-import ActiveRequests from '../Screens/myVehicleScreens/ActiveRequests'
+import PreviousRequests from '../Screens/myVehicleScreens/PreviousRequests'
 
 
 export default function RequestsNavigation(){
@@ -22,10 +22,9 @@ export default function RequestsNavigation(){
             labelStyle:tabText
           }}
           style={{backgroundColor:'white',borderTopWidth: 0}}>
-
+            <Tab.Screen name='Previous' component={PreviousRequests} options={{ tabBarLabel: "ماضية"}}/>
             <Tab.Screen name='Confirmed' component={ConfirmedRequests}options={{ 
               tabBarLabel: "مؤكدة" }}/>
-            <Tab.Screen name='Active' component={ActiveRequests} options={{ tabBarLabel: "نشطة"}}/>
             <Tab.Screen name='Pending' component={PendingRequests} options={{ tabBarLabel: "معلقة"}}/>
 
           </Tab.Navigator>

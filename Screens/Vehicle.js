@@ -5,14 +5,14 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { database } from '../Configuration/firebase';
 import { auth } from 'firebase';
 import colors from '../Constants/colors';
-import { Ionicons } from '../Constants/icons';
+import { Ionicons, FontAwesome5 } from '../Constants/icons';
 
 
 export default class Vehicle extends Component {
   constructor(props){
     super(props);
   this.state = {
-    hasVehicle: null,
+    hasVehicle: false,
     vehicles: [],
     //add as much as u like
     items: [
@@ -34,8 +34,8 @@ export default class Vehicle extends Component {
 
    async componentDidMount() {
 
-     await this.determineUserHasVehicle();
-    //this.setState({ hasVehicle: false })
+  //   await this.determineUserHasVehicle();
+     
   }
 
 
@@ -102,11 +102,11 @@ export default class Vehicle extends Component {
          contentContainerStyle={{ paddingTop: 5 }}
        />
 
-         <TouchableOpacity style={styles.addVehicleButton}    
+         <TouchableOpacity style={styles.EmptyaddVehicleButton}    
          onPress={() => {
        this.props.navigation.navigate('AddOrEditVehicle')
      }}>
-           <Ionicons name={'add'} color={'white'} size={25} style={{marginBottom:3, right:7}}/>
+           <Ionicons name={'add'} color={'white'} size={28} style={{top:3}}/>
          <Text style={styles.ButtonText}> إضافة مركبة </Text>
 
          </TouchableOpacity>
@@ -159,8 +159,7 @@ export default class Vehicle extends Component {
           <Text style={styles.input}> {item.dailyRate}</Text>
           </View>
           <View style={styles.inputRow}>
-          <Text style={styles.label}>التقييم</Text>
-          <Text style={styles.input}> {item.Rating}</Text>
+    <Text style={styles.input}> {<FontAwesome5 name={'star'} size={20}/>}{item.Rating} </Text>
           </View>
         </View>
         <View style={{ width: 120, height: 80 }}>
@@ -286,7 +285,7 @@ const styles = StyleSheet.create({
 
 },
 addVehicleButton:{
-    backgroundColor: '#5dbcd2',
+    backgroundColor: colors.Green,
     justifyContent: 'center',
     shadowColor: '#000',
     shadowOpacity: 0.25,
@@ -295,22 +294,37 @@ addVehicleButton:{
           height: 3,
           width: 0
         },
-    alignItems: 'center',
+      },
+EmptyaddVehicleButton:{
+          backgroundColor: colors.Green,
+          flexDirection:"row-reverse",
+          shadowColor: '#000',
+          shadowOpacity: 0.25,
+          shadowRadius: 6,
+              shadowOffset: {
+                height: 3,
+                width: 0
+              },
+    justifyContent:'center',
+    alignSelf:'center',
+    marginBottom:35,
     margin:20,
-    width: 70,
-    height: 70,
-    borderRadius: 60,
+    width: 180,
+    height: 40,
+    borderRadius: 10,
     color: 'white',
-},  inputRow:{
+},  
+inputRow:{
   flexDirection:'row',
   margin:7,
   justifyContent:'flex-start'
 },
-
-label:{
+label:
+{
 alignSelf:'flex-end', textAlign: 'right', fontFamily: 'Tajawal_400Regular', fontSize: 20 
 },
-input:{textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 , color:colors.LightBlue, marginHorizontal:5}
+input:
+{textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 , color:colors.Green, marginHorizontal:5}
 
 
 });

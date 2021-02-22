@@ -343,11 +343,11 @@ renderVehicleFeatures = () => {
 
 return (
 <View style={{ marginBottom: 16 }}>
-<Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 16, textAlign: 'right', color: 'grey' }}>{'مميزات المركبة'}</Text>
+<Text style={styles.SectionLabel}>{'مميزات المركبة'}</Text>
 
 <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
 {vehicleFeatures.map(feature => {
-return (<TouchableOpacity
+return (<TouchableOpacity 
 onPress={() => {
 if (this.state.selectedFeatures[feature.id]) {
 const featurs = { ...this.state.selectedFeatures };
@@ -362,8 +362,9 @@ selectedFeatures: { ...this.state.selectedFeatures, [feature.id]: feature }
 })
 }
 }}
-style={{ borderColor: '#01b753', borderWidth: 1, borderRadius: 10, padding: 12,  backgroundColor: this.state.selectedFeatures[feature.id] ? '#01b753' : '#fff' }}>
-<Text style={{ fontSize: 14, color: this.state.selectedFeatures[feature.id] ? '#fff' : '#01b753' }}>{feature.label}</Text>
+style={{ borderColor: '#01b753', borderWidth: 1, margin:2,borderRadius: 10, padding: 12,  backgroundColor: this.state.selectedFeatures[feature.id] ? '#01b753' : '#fff' }}>
+<Text style={{ fontSize: 14, 
+fontFamily:"Tajawal_400Regular",color: this.state.selectedFeatures[feature.id] ? '#fff' : '#01b753' }}>{feature.label}</Text>
 </TouchableOpacity>)
 })}
 </View>
@@ -387,17 +388,17 @@ direction: 'rtl',
 justifyContent: 'center',
 alignItems: 'center'
 }}>
-<Text style={{ textAlign: 'left', marginBottom: 12 }}>إرفاق صورة المركبة</Text>
+<Text style={styles.pictureAlignLabel}>إرفاق صورة المركبة</Text>
 {/* <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 24,alignSelf:'flex-start', textAlign: 'center', color: 'grey' }}>إرفاق صورة المركبة</Text> */}
 
 
-<TouchableOpacity onPress={this.openImagePickerAsync} >
+<TouchableOpacity onPress={this.openImagePickerAsync} style={{alignSelf:'center',justifyContent:'center'} }>
 <Image
-style={{ width: 120, height: 120, borderRadius: 60, marginBottom: 20, backgroundColor: '#F0EEF0' }}
+style={{ width: 250, height: 120, borderRadius: 10, marginBottom: 20, backgroundColor: '#F0EEF0' }}
 source={{
 uri: this.state.image
 }} />
-<Entypo name="plus" color={'white'} size={50} style={{ position: 'absolute', top: 35, left: 35 }} />
+<Entypo name="plus" color={colors.Green} size={50} style={{ position:'absolute', top:30,left:100, opacity:0.8}} />
 </TouchableOpacity>
 {/* <TouchableOpacity
 onPress={this.openImagePickerAsync}
@@ -410,13 +411,13 @@ style={{ width: 80, height: 80, borderRadius: 4, borderWidth: 1, borderColor: 'g
 </TouchableOpacity> */}
 </View>
 
-<Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 24, textAlign: 'right', color: 'grey' }}>{'معلومات المركبة'}</Text>
+<Text style={styles.SectionLabel}>{'معلومات المركبة'}</Text>
 
 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
 <Picker
 itemStyle={{
 height: 50,
-
+fontFamily:"Tajawal_400Regular"
 }}
 selectedValue={this.state.carType}
 style={{
@@ -432,7 +433,7 @@ color={item.value == this.state.carType ? colors.LightBlue : '#000'}
 />)}
 </Picker>
 <Picker
-itemStyle={{ height: 50 }}
+itemStyle={{ height: 50 , fontFamily:"Tajawal_400Regular"}}
 selectedValue={this.state.year}
 style={{ height: 50, width: '50%', }}
 onValueChange={(itemValue, itemIndex) =>
@@ -448,7 +449,7 @@ color={item.value == this.state.year ? colors.LightBlue : '#000'}
 
 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
 <Picker
-itemStyle={{ height: 50 }}
+itemStyle={{ height: 50 , fontFamily:"Tajawal_400Regular"}}
 selectedValue={this.state.state}
 style={{ height: 50, width: '50%', }}
 onValueChange={(itemValue, itemIndex) =>
@@ -460,9 +461,9 @@ color={item.name_ar == this.state.state ? colors.LightBlue : '#000'}
 />)}
 </Picker>
 <Picker
-itemStyle={{ height: 50 }}
+itemStyle={{ height: 50, fontFamily:"Tajawal_400Regular" }}
 selectedValue={this.state.transmission}
-style={{ height: 50, width: '50%', }}
+style={{ height: 50, width: '50%' }}
 onValueChange={(itemValue, itemIndex) =>
 this.setState({ transmission: itemValue })
 }>
@@ -484,6 +485,7 @@ containerStyle={{ flex: 1, paddingRight: 16, }}
 value={this.state.carModel}
 onChangeText={(carModel) => this.setState({ carModel })}
 placeholder="موديل المركبة"
+
 style={{ width: '100%', backgroundColor: '#F0EEF0', borderBottomWidth: 0, height: 50, borderRadius: 10 }}
 containerStyle={{ flex: 1, paddingRight: 16, }}
 />
@@ -610,10 +612,7 @@ if (this.state.carNumber != "") {
 const check = await this.checkDataBase(this.state.carNumber);
 if (!check) {
 return;
-}
-console.warn(check)
-}
-console.warn('after')
+}}
 this.setState({
 errors: false,
 });
@@ -654,7 +653,8 @@ marginBottom: 20,
 direction: 'rtl',
 }}>
 <View style={{ padding: 16, paddingTop: 0 }}>
-<Text style={{ textAlign: 'left' }} >الأوقات المتاحة للعرض</Text>
+<Text style={{ textAlign: 'left' , 
+fontFamily:"Tajawal_400Regular"}} >الأوقات المتاحة للعرض</Text>
 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
 {this.state.availabilities.map(availability => {
 return (<View style={{  padding: 8, borderColor: 'black', borderRadius: 2, borderWidth: 1 }} >
@@ -696,7 +696,8 @@ this.setState(prevState => ({
 availabilities: [...prevState.availabilities, this.state.date]
 }))
 }} style={{ marginLeft: 8, padding: 12, borderWidth: 1, borderRadius: 4, borderColor: '#01b753', justifyContent: 'center', alignItems: 'center' }}>
-<Text style={{ textAlign: 'left', color: '#01b753' }}>إضافة</Text>
+<Text style={{ textAlign: 'left', color: '#01b753',
+fontFamily:"Tajawal_400Regular" }}>إضافة</Text>
 </TouchableOpacity>
 </View>
 
@@ -706,7 +707,8 @@ availabilities: [...prevState.availabilities, this.state.date]
 
 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
 <Picker
-itemStyle={{ height: 50 }}
+itemStyle={{ height: 50, 
+    fontFamily:"Tajawal_400Regular" }}
 selectedValue={this.state.pickUpOption}
 style={{ height: 50, width: '100%', }}
 onValueChange={(itemValue, itemIndex) =>
@@ -719,7 +721,8 @@ this.setState({ pickUpOption: itemValue })
 {/* <Icon name={"car"} color={'#01b753'} size={25} style={{ marginLeft: 8 }} /> */}
 </View>
 {this.state.pickUpOption == "التوصيل لموقع المستأجر" ? <View style={{ direction: 'ltr' }}>
-<Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 24, textAlign: 'right', color: 'grey' }}>{'سعر التوصيل' + ` ${this.state.pickUpOptionCost[0]} ريال`}</Text>
+<Text style={{ fontSize: 17, fontWeight: 'bold', marginBottom: 24, textAlign: 'right', color: 'grey',
+fontFamily:"Tajawal_400Regular" }}>{'سعر التوصيل' + ` ${this.state.pickUpOptionCost[0]} ريال`}</Text>
 
 <MultiSlider
 values={[15]}
@@ -743,7 +746,8 @@ selectedStyle={{ backgroundColor: "#01b753" }}
 </View>
 : null}
 <View style={{ direction: 'ltr' }}>
-<Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 24, textAlign: 'right', color: 'grey' }}>{'السعر' + ` ${this.state.selectedValues[0]} ريال`}</Text>
+<Text style={{ fontSize: 16, 
+fontFamily:"Tajawal_400Regular",fontWeight: 'bold', marginBottom: 24, textAlign: 'right', color: 'grey' }}>{'السعر' + ` ${this.state.selectedValues[0]} ريال`}</Text>
 
 <MultiSlider
 values={[50]}
@@ -780,14 +784,17 @@ return (
 <ProgressSteps
 activeStepIconBorderColor={'#01b753'}
 activeLabelColor={'#01b753'}
+
 completedProgressBarColor={'#01b753'}
 completedStepIconColor={'#01b753'}
 >
 <ProgressStep
 label="معلومات المركبة"
 nextBtnText="التالي"
-nextBtnTextStyle={{ color: "white", fontSize: 20 }}
+nextBtnTextStyle={{ color: "white", fontSize: 20, 
+fontFamily:"Tajawal_400Regular" }}
 nextBtnStyle={{
+fontFamily:"Tajawal_400Regular",
 flexDirection: "row",
 alignItems: "center",
 alignSelf: "stretch",
@@ -811,7 +818,8 @@ previousBtnText="السابق"
 nextBtnText="التالي"
 onNext={this.onNextsecondtStep}
 errors={this.state.errors}
-nextBtnTextStyle={{ color: "white", fontSize: 20 }}
+nextBtnTextStyle={{ color: "white", fontSize: 20 , 
+fontFamily:"Tajawal_400Regular"}}
 nextBtnStyle={{
 flexDirection: "row",
 alignItems: "center",
@@ -823,7 +831,8 @@ borderWidth: 0.1,
 borderColor: "#ccc",
 backgroundColor: "#01b753",
 }}
-previousBtnTextStyle={{ color: "white", fontSize: 20 }}
+previousBtnTextStyle={{ color: "white", fontSize: 20, 
+fontFamily:"Tajawal_400Regular" }}
 previousBtnStyle={{
 flexDirection: "row",
 alignItems: "center",
@@ -845,8 +854,9 @@ previousBtnText="السابق"
 finishBtnText="اضافة مركبة"
 isComplete={true}
 onSubmit={this.handleSaveData}
-nextBtnTextStyle={{ color: "white", fontSize: 20 }}
+nextBtnTextStyle={{ color: "white", fontSize: 20 , }}
 nextBtnStyle={{
+
 flexDirection: "row",
 alignItems: "center",
 alignSelf: "stretch",
@@ -857,7 +867,7 @@ borderWidth: 0.1,
 borderColor: "#ccc",
 backgroundColor: "#01b753",
 }}
-previousBtnTextStyle={{ color: "white", fontSize: 20 }}
+previousBtnTextStyle={{ color: "white", fontSize: 20, }}
 previousBtnStyle={{
 flexDirection: "row",
 alignItems: "center",
@@ -892,6 +902,8 @@ direction: 'rtl'
 //alignItems: 'center',
 //justifyContent: 'center',
 },
+pictureAlignLabel:{ textAlign: 'left', marginBottom: 12, color:colors.Subtitle,fontFamily:"Tajawal_400Regular" },
+SectionLabel:{ fontSize: 20, fontWeight: 'bold', marginBottom: 24, textAlign: 'right', color: 'grey',fontFamily:'Tajawal_700Bold' }
 
 });
 

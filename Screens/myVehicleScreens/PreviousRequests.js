@@ -6,6 +6,7 @@ import { showMessage } from 'react-native-flash-message';
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { database, auth } from '../../Configuration/firebase';
+import { MaterialCommunityIcons } from '../../Constants/icons';
 
 
 export default class ActiveRequests extends Component {
@@ -49,7 +50,7 @@ export default class ActiveRequests extends Component {
   userHasNoRequests = () => {
     return (
       <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
-           <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
+      <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
         <Text style={styles.emptyTripsText}> لا توجد لديك رحلة نشطة</Text>
       </View>
     )
@@ -144,7 +145,8 @@ const styles = StyleSheet.create({
   }, //for mockup
   emptyTripsText: {
     color: colors.Subtitle,
-    fontSize: 20,
+    textAlign:'center',
+    fontSize: 25,
     fontFamily: 'Tajawal_500Medium'
   }
 

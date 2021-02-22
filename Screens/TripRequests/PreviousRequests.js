@@ -22,6 +22,11 @@ export default class ActiveRequests extends Component {
     this.retrieveActiveTrips();
   }
 
+  componentDidUpdate=()=>{
+    this.retrieveActiveTrips();
+
+  }
+
  
   retrieveActiveTrips =  () => {
  
@@ -32,7 +37,7 @@ export default class ActiveRequests extends Component {
             .get().then((querySnapshot)=>{
             if (!querySnapshot.empty){
               let requests = []
-              console.log(querySnapshot.size,' Active Requests found')
+              console.log(querySnapshot.size,' Previous Requests found')
 
               querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
@@ -41,7 +46,7 @@ export default class ActiveRequests extends Component {
             });
             this.setState({request: requests, hasRequest:true});
             console.log('array > ', this.state.request)
-      } else console.log('No Active requests found')
+      } else console.log('No previous requests found')
             
     })
   }
@@ -81,7 +86,7 @@ export default class ActiveRequests extends Component {
 
         </View>
         <View style={{ width: 120, height: 80 }}>
-          <Image source={{ uri: 'http://pngimg.com/uploads/land_rover/land_rover_PNG82.png' }} style={{ width: '100%', height: '100%' }} />
+          <Image source={{ uri:  item.image }} style={{ width: '100%', height: '100%' }} />
         </View>
       </View>
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>

@@ -34,11 +34,13 @@ carId: docId,
 this.setState({ cars })
 }
 onError = (e) => {
-console.warn(e, "===")
+console.log(e, "===")
 }
 componentDidMount() {
 database.collection('Vehicle').onSnapshot(this.onResult, this.onError)
 }
+
+
 switchSelector = () => {
 
 return (
@@ -88,7 +90,6 @@ return (
 }
 
 renderCar = ({ item, index }) => {
-console.warn(item)
 const { image = "", model = "" } = item.vehicleDetails || {}
 return (<TouchableOpacity
 activeOpacity={1}
@@ -100,9 +101,10 @@ direction: 'rtl',
 width: 320,
 height: 220,
 backgroundColor: '#fff',
-
+marginVertical:10,
+borderWidth:0.2,
 shadowColor: '#000',
-shadowOpacity: 0.12,
+shadowOpacity: 0.15,
 fontFamily: 'Tajawal_400Regular',
 shadowRadius: 6,
 shadowOffset: {
@@ -123,7 +125,7 @@ padding: 12
 </View>
 <View style={{ padding: 4 }}>
 <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'left' }}>{model}</Text>
-<Text style={{ fontSize: 14, textAlign: 'left', color: '#929090' }}>{`السعر : ${item.dailyRate}/يوم`}</Text>
+<Text style={{ fontSize: 14, fontFamily:'Tajawal_400Regular', textAlign: 'left', color: '#929090', marginVertical:5 }}>{`السعر : ${item.dailyRate} ريال/يوم`}</Text>
 </View>
 </TouchableOpacity>)
 }

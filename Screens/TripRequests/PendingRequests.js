@@ -2,11 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity, Image,FlatList, Dimensions, Linking } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
+import Modal from 'react-native-modal';
+
 
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { database, auth } from '../../Configuration/firebase';
-import { MaterialCommunityIcons } from '../../Constants/icons';
+import { MaterialCommunityIcons, EvilIcons } from '../../Constants/icons';
 
 
 export default class PendingRequests extends Component {
@@ -14,6 +16,7 @@ export default class PendingRequests extends Component {
     super(props);
     this.state ={
     request: [],
+    isModalVisible: false,
     hasRequest:false
 
   }}
@@ -49,11 +52,56 @@ export default class PendingRequests extends Component {
 
   userHasNoRequests = () => {
     return (
-      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 280 }}>
+      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
          <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
         <Text style={styles.emptyTripsText}> لا يوجد لديك رحلة معلقة</Text>
 
       </View>
+    )
+  }
+
+  toggleModal = () => {
+    this.setState({isModalVisible: !this.state.isModalVisible});
+  };
+
+
+  showDetails = ()=>{
+    return(
+      <Modal 
+      onBackdropPress={() => this.toggleModal()}
+      onSwipeComplete={() => this.toggleModal()}
+      swipeDirection='down'
+      isVisible={this.state.isModalVisible}
+        style={styles.Modal}
+        >
+        <View style={{
+    height: Dimensions.get('screen').height-400,
+    width:Dimensions.get('screen').width-40,
+    alignSelf:'center',
+    backgroundColor:'white' }}>
+      <TouchableOpacity onPress={()=>this.toggleModal()}>
+                  <EvilIcons name={'close'} size={30} style={{position:'absolute', top:20, left:20}} onPress={()=>this.toggleModal()}/>
+                  </TouchableOpacity>
+
+                  <View style={{ alignSelf:'center',justifyContent:"center"}}>
+                 
+            <Text style={styles.ModalTitle}>تفاصيل طلب المركبة</Text>
+
+            <Text style={styles.ModalLabel}>تاريخ حجز المركبة  </Text>
+
+            <Text style={styles.ModalLabel}>نوع الإستلام   </Text>
+
+            <Text style={styles.ModalLabel}>العنوان  </Text>
+
+            <Text style={styles.ModalLabel}> المبلغ الإجمالي   </Text>
+            
+
+
+                    </View>
+                    
+                    </View>
+                    </Modal>
+
     )
   }
 
@@ -64,7 +112,7 @@ export default class PendingRequests extends Component {
     <TouchableOpacity
       activeOpacity={1}
       onPress={() => {
-        // navigate to view
+        this.setState({isModalVisible:true})
       }}
       style={{
         backgroundColor: '#fff',
@@ -103,7 +151,7 @@ export default class PendingRequests extends Component {
 
           <View style={styles.inputRow}>
           <Text style={styles.label}>الحالة</Text>
-          <Text style={styles.input}> لم يتم الدفع</Text>
+          <Text style={[styles.label, {color:colors.Subtitle}]}> لم يتم الدفع</Text>
           </View>
         </View>
         <View style={{ width: 120, height: 80 }}>
@@ -148,6 +196,8 @@ export default class PendingRequests extends Component {
             contentContainerStyle={{ alignItems: 'center' }}
           />  :      this.userHasNoRequests()
         }
+
+        {this.state.isModalVisible? this.showDetails():<View></View>}
         <ModalComponent />
       </View>
     );
@@ -165,12 +215,32 @@ const styles = StyleSheet.create({
     textAlign:'center',
     fontSize: 25,
     fontFamily: "Tajawal_500Medium"
-  },
+  },  Modal:{
+    // backgroundColor:'white',
+    alignSelf:'center',
+     color: '#5dbcd2',
+     fontFamily: 'Tajawal_400Regular'
+ },
   inputRow:{
       flexDirection:'row',
       margin:7,
       justifyContent:'space-evenly'
-  },
+  },ModalTitle:{
+    fontFamily:'Tajawal_500Medium',
+    fontSize:30,
+    marginVertical:30,
+    marginLeft:25,
+    color:colors.LightBlue,
+    textAlign:'right'},
+    ModalLabel:
+            {
+            alignSelf:'flex-end',
+            marginVertical:20,
+            marginHorizontal:30,
+            marginLeft:150,
+            fontSize:25,
+            fontFamily:'Tajawal_300Light',
+            },
 
   label:{
      textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 

@@ -17,7 +17,7 @@ export default class viewVehicle extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      VehicleOwner:false,
+      VehicleOwner:true,
       vehicleID:'l1dxAcoKpXfqwG95388A',
       ownerID:'',
       vehicleDetails:{}, 
@@ -39,18 +39,18 @@ export default class viewVehicle extends Component {
 
   componentDidMount= async()=>{
     this.retrieveVehicle();
+    this.IsVehicleOwner();
 
-    this.IsVehicleRequested();
   }
 
 
-  IsVehicleRequested = async ()=>{
+  IsVehicleOwner =  ()=>{
 
-   let query = await database.collection('Trips').where("borrowerID",'==',auth().currentUser.uid).where('vehicleID','==',this.state.vehicleID).where('status','==','pending').get();
+   let query =  database.collection('Vehicle').where("ownerID",'==',auth().currentUser.uid).get();
 
    if (!query.empty){
-     console.log('User has requested this vehicle')
-     this.state.sentRequest = true;
+     console.log('User is owner of vehicle')
+     this.state.VehicleOwner = true;
    }
   }
 
@@ -253,11 +253,16 @@ export default class viewVehicle extends Component {
 
     handleRequest=()=>{
 
-      if (this.state.selectedDates === undefined)
+      if (this.state.selectedDates[0] == null){
       this.failureMessage('يرجى اختيار احدى المواعيد المتاحة لحجز المركبة')
+      return;
+      }
       else{
       this.sortCalender(); }
-
+      
+      if (this.state.selectedPickUp[0]==null)
+      this.state.selectedPickUp[0] = 'من الموقع'
+      
       console.log('handling request..')
 
 
@@ -302,6 +307,8 @@ export default class viewVehicle extends Component {
         this.setState({sentRequest:true}) ).catch(()=>{
           console.log('failed request')
           this.setState({failedRequest:true})
+
+          this.unsuccessfulRequest();
         })
 
 
@@ -338,7 +345,8 @@ export default class viewVehicle extends Component {
 
     requestVehicleModal= ()=>{
         return(
-                < View >
+               this.state.VehicleOwner ? <View></View> :
+               <View>
           <TouchableOpacity style={styles.Button} onPress={()=> this.setState({isModalVisible:true}) }>
           <Text style={styles.RequestButtonText}> حجز </Text>
           </TouchableOpacity>
@@ -376,18 +384,6 @@ export default class viewVehicle extends Component {
 {                this.SelectPickUpOption()
 }
 
-{/* 
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf:'flex-end', marginHorizontal:30 }}>
-            {[ 'توصيل', 'من الموقع',].map(availability => {
-              return (<TouchableOpacity style={{  borderWidth: 1, borderRadius: 10, padding: 12, margin: 4, color: '#5dbcd2',justifyContent:'space-between' }} onPress={ ()=>{
-                 // select one of two option 
-              }} >
-               <Text 
-               style={styles.OptionsText}> {availability}</Text>
-               
-              </TouchableOpacity>)
-            })}
-          </View> */}
           </ScrollView>
             <Text style={[styles.requestModalLabel, {fontSize:20, }]}>المجموع</Text>
             <Text style={[styles.requestModalLabel, {fontSize:25, fontFamily:'Tajawal_500Medium',bottom:20}]}> {this.state.calculatedTotalPrice} ريال</Text>
@@ -450,7 +446,7 @@ export default class viewVehicle extends Component {
 
     return (<View style={{ direction: 'rtl' }}>
       <View style={{ height: 160, width: '100%' ,backgroundColor:'transparent'}}>
-        <Image source={{ uri: this.state.vehicleDetails.images  }}
+        <Image source={{ uri: this.state.vehicleDetails.image }}
           style={{ width: '100%', height: '100%',  resizeMode:'cover', }} />
       </View>
 

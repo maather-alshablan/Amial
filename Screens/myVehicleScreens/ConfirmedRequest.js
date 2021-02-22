@@ -43,10 +43,10 @@ export default class ConfirmedRequests extends Component {
 
   userHasNoRequests = () => {
     return (
-      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 280 }}>
-      <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle}/>
+      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
+      <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
 
-      <Text style={styles.emptyTripsText}> لا توجد لديك رحلة نشطة</Text>
+      <Text style={styles.emptyTripsText}> لا توجد لديك رحلة مؤكدة</Text>
 
 
       </View>
@@ -83,7 +83,7 @@ export default class ConfirmedRequests extends Component {
         <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>الحالة : مؤكدة</Text>
       </View>
       <View style={{ width: 120, height: 80 }}>
-        <Image source={{ uri: 'https://pngimg.com/uploads/maserati/maserati_PNG81.png' }} style={{ width: '100%', height: '100%' }} />
+        <Image source={{ uri: item.vehicleDetails.image}} style={{ width: '100%', height: '100%' }} />
       </View>
     </TouchableOpacity>)
   }

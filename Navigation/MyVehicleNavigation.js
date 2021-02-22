@@ -50,8 +50,8 @@ function myVehicleNavigation(){
              <Stack.Screen name='AddOrEditVehicle'
           component={AddOrEditVehicle}
            options={{
-          headerRight: props => <ManageVehicleHeader {...props} />,
-          headerTitle: null,
+          headerRight: null,
+          headerTitle: props => <ManageVehicleHeader {...props} />,
           headerBackTitleVisible: false,
           headerStyle: {
             height: 170,
@@ -104,7 +104,7 @@ function myVehicleNavigation(){
 
       function ManageVehicleHeader(){
         return(
-          <View style={{paddingVertical:15}}>
+          <View style={{paddingVertical:15 , alignSelf:'center'}}>
           <Text style={{fontSize:40,color:'#5dbcd2',fontFamily:'Tajawal_400Regular', alignSelf:'center'}}>مركبتي</Text>
           <Text style={{fontSize:25,color:'grey',fontFamily:'Tajawal_300Light', alignSelf:'center'}}>إدارة البيانات</Text>
           </View>
