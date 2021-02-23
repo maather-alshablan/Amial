@@ -17,7 +17,7 @@ export default class viewVehicle extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      VehicleOwner:true,
+      VehicleOwner:null,
       vehicleID: props?.route?.params?.vehicleID,
       ownerID:'',
       vehicleDetails:{}, 
@@ -32,7 +32,8 @@ export default class viewVehicle extends Component {
       failedRequest:false,
       selectedPickUp:[],
       selectedItems:[],
-      selectedDates:[]
+      selectedDates:[],
+
     }
   }
 
@@ -44,13 +45,15 @@ export default class viewVehicle extends Component {
   }
 
 
-  IsVehicleOwner =  ()=>{
+  IsVehicleOwner =  (user)=>{
 
-   let query =  database.collection('Vehicle').where("ownerID",'==',auth().currentUser.uid).get();
-
-   if (!query.empty){
+   
+   if (user == auth().currentUser.uid){
      console.log('User is owner of vehicle')
      this.state.VehicleOwner = true;
+   }else{
+    this.state.VehicleOwner = false;
+
    }
   }
 
@@ -73,6 +76,7 @@ export default class viewVehicle extends Component {
 
     var vehicle = database.collection('Vehicle').doc(this.state.vehicleID).get();
     var vehicleData = (await vehicle).data();
+    this.IsVehicleOwner(vehicleData.ownerID);
     this.setState({
       ownerID: vehicleData.ownerID,
       vehicleDetails: vehicleData.vehicleDetails,
@@ -265,6 +269,8 @@ export default class viewVehicle extends Component {
       
       console.log('handling request..')
 
+      var requestTime = new Date();
+     
 
         //create request 
        var tripDocument= database.collection('Trips').doc();
@@ -278,6 +284,7 @@ export default class viewVehicle extends Component {
            tripID: requestID,
            ownerID: ownerID ,
            borrowerID: borrowerID,
+           requestTime: requestTime.toLocaleString(),
            status:'pending',
            vehicleID: vehicleID,
            details:{

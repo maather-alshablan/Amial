@@ -46,11 +46,12 @@ export default class Vehicle extends Component {
       console.log('true')
 
       if (doc.empty) {
+        
         console.log('user has no vehicles listed')
         this.setState({ hasVehicle: false });
       }
       else {
-
+        console.log(doc.metadata)
         let vehicles =[]
         doc.forEach((vehicle)=>{
           vehicles.push(vehicle.data())
@@ -217,7 +218,7 @@ export default class Vehicle extends Component {
           onPress={() => {
         this.props.navigation.navigate('AddOrEditVehicle')
       }}>
-            <Ionicons name={'add'} color={'white'} size={50} style={{left:3}}/>
+            <Ionicons name={'add'} color={'white'} size={55} style={{left:3}}/>
 
           </TouchableOpacity>
        
@@ -281,8 +282,6 @@ const styles = StyleSheet.create({
     fontSize:23,
     alignSelf:'center',
     justifyContent:'center',
-    
-
 },
 addVehicleButton:{
     backgroundColor: colors.Green,
@@ -294,6 +293,11 @@ addVehicleButton:{
           height: 3,
           width: 0
         },
+        alignItems:'center',
+        marginBottom:35,
+        width: 70,
+        height: 70,
+        borderRadius: 60,
       },
 EmptyaddVehicleButton:{
           backgroundColor: colors.Green,

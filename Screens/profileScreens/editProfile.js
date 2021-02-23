@@ -75,7 +75,7 @@ export default class editProfile extends Component{
 
 
 
-        database.collection('users').doc(this.state.userId).update({
+        database.collection('users').doc(auth().currentUser.uid).update({
           name: this.state.name,
           email: this.state.email,
           mobileNumber: this.state.mobileNumber,

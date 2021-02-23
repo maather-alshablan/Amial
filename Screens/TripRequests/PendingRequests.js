@@ -1,14 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image,FlatList, Dimensions, Linking } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableOpacity, Image,FlatList,Animated, Dimensions, Linking } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import Modal from 'react-native-modal';
+import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 
 
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { database, auth } from '../../Configuration/firebase';
-import { MaterialCommunityIcons, EvilIcons } from '../../Constants/icons';
+import { MaterialCommunityIcons, EvilIcons,  } from '../../Constants/icons';
 
 
 export default class PendingRequests extends Component {
@@ -16,6 +17,7 @@ export default class PendingRequests extends Component {
     super(props);
     this.state ={
     request: [],
+    currentRequest:null,
     isModalVisible: false,
     hasRequest:false
 
@@ -25,6 +27,9 @@ export default class PendingRequests extends Component {
     
     this.retreiveRequests();
   }
+
+
+
 
 
   retreiveRequests = async ()=>{
@@ -64,8 +69,89 @@ export default class PendingRequests extends Component {
     this.setState({isModalVisible: !this.state.isModalVisible});
   };
 
+  handleRequestRemove =() => {
+    Alert.alert(
+      "إلغاء الطلب",
+      "هل أنت متأكد من إلغاء الطلب لحجز المركبة؟ ",
+      [{
+        text: "  إلغاء الطلب ",
+        onPress: () => {
+        database.collection('Trips').doc(this.state.currentRequest.tripID)
+      .delete()
+      .then( ()=>{
+        console.log("Request successfully deleted!");
+        this.componentDidUpdate();
+      })
+        },
+        style: "cancel"
+        
+      },
+        { text: "لا", onPress: () => console.log("OK Pressed") },
+        
+      ],
+      { 
+        cancelable: false },
+ 
+    );
+  }
 
-  showDetails = ({item})=>{
+   TimerComponent = () => {
+    
+     var countDownDate = new Date(this.state.currentRequest.requestTime);
+     var expiry = new Date().setHours(countDownDate.getHours()+12);
+
+     var remainingTime = expiry - countDownDate;
+
+// // Update the count down every 1 second
+//   var x = setInterval(function() {
+
+//   // Get today's date and time
+//   var now = new Date().getTime();
+
+//   // Find the distance between now and the count down date
+//   var distance = countDownDate - now;
+
+//   // Time calculations for days, hours, minutes and seconds
+//   var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+//   var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+//   var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+//   var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+// })
+
+
+    const children = ({remainingTime} ) => {
+
+      const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((remainingTime % 3600) / 60)
+      const seconds = remainingTime % 60
+      return `${hours}:${minutes}:${seconds}`
+    }
+    
+     return(
+    <CountdownCircleTimer
+      isPlaying
+      size={90}
+      onComplete={() => {
+        
+        //cancel and keep or delete ? 
+        return [true, 1500] // repeat animation in 1.5 seconds
+      }}
+      duration={remainingTime}
+      colors={[
+        ['#004777', 0.4],
+        ['#F7B801', 0.4],
+        ['#A30000', 0.2],
+      ]}
+    >
+      {({ remainingTime, animatedColor }) => (
+        <Animated.Text style={{ color: animatedColor }}>
+          {children({remainingTime})}
+        </Animated.Text>
+      )}
+    </CountdownCircleTimer>)
+   }
+
+  showDetails = ()=>{
     return(
       <Modal 
       onBackdropPress={() => this.toggleModal()}
@@ -75,7 +161,7 @@ export default class PendingRequests extends Component {
         style={styles.Modal}
         >
         <View style={{
-    height: Dimensions.get('screen').height-400,
+    height: Dimensions.get('screen').height-300,
     width:Dimensions.get('screen').width-40,
     alignSelf:'center',
     backgroundColor:'white' }}>
@@ -88,15 +174,27 @@ export default class PendingRequests extends Component {
             <Text style={styles.ModalTitle}>تفاصيل طلب المركبة</Text>
 
             <Text style={styles.ModalLabel}>تاريخ حجز المركبة  </Text>
+            <Text style={[styles.ModalLabel,styles.ModalInput]}>{this.state.currentRequest.details.bookedDates} </Text>
 
             <Text style={styles.ModalLabel}>نوع الإستلام   </Text>
-
-            <Text style={styles.ModalLabel}>العنوان  </Text>
-
+            <Text style={[styles.ModalLabel,styles.ModalInput]}>{this.state.currentRequest.details.pickupOption} </Text>
+       
             <Text style={styles.ModalLabel}> المبلغ الإجمالي   </Text>
+            <Text style={[styles.ModalLabel,styles.ModalInput]}>{this.state.currentRequest.totalAmount} ريال </Text>
+
+            <Text style={[styles.ModalLabel,{marginTop:40} ]}> الوقت المتبقي لتأكيد الطلب </Text>
+            {this.TimerComponent()}
+          
             
+            {/* //cancel request button  */}
+            <TouchableOpacity style={[styles.Button,{borderColor:'grey',borderWidth:1,}]}    
+              onPress={() => {
+               this.handleRequestRemove();
+                }}>
+         <Text style={[styles.ButtonText,{color:'grey'}]}> إلغاء الطلب  </Text>
 
-
+         </TouchableOpacity>
+                   
                     </View>
                     
                     </View>
@@ -112,7 +210,9 @@ export default class PendingRequests extends Component {
     <TouchableOpacity
       activeOpacity={1}
       onPress={() => {
-        this.setState({isModalVisible:true})
+        this.state.currentRequest= item;
+        this.setState({
+          isModalVisible:true})
       }}
       style={{
         backgroundColor: '#fff',
@@ -225,27 +325,61 @@ const styles = StyleSheet.create({
       flexDirection:'row',
       margin:7,
       justifyContent:'space-evenly'
-  },ModalTitle:{
+  },
+  ModalinputRow:{
+    flexDirection:'column',
+    justifyContent:"center"
+},
+  ModalTitle:{
     fontFamily:'Tajawal_500Medium',
     fontSize:30,
     marginVertical:30,
     marginLeft:25,
     color:colors.LightBlue,
     textAlign:'right'},
-    ModalLabel:
+  
+  ModalLabel:
             {
             alignSelf:'flex-end',
-            marginVertical:20,
+            marginTop:20,
             marginHorizontal:30,
             marginLeft:150,
             fontSize:25,
             fontFamily:'Tajawal_300Light',
             },
-
   label:{
-     textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 
-  },
-  input:{textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 , color:colors.LightBlue, marginHorizontal:5}
+      textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 
+      },
+  input:
+  {textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 , color:colors.LightBlue, marginHorizontal:5},
+  ModalInput:
+  { fontFamily: 'Tajawal_400Regular',
+   fontSize: 22 ,
+    marginBottom:5,
+    color:colors.LightBlue,
+    },
+ Button:{
+  shadowColor: '#000',
+  shadowOpacity: 0.25,
+  shadowRadius: 6,
+  shadowOffset: {
+    height: 3,
+    width: 0 },
+  justifyContent:'center',
+  alignSelf:'center',
+  width: 180,
+  height: 40,
+  borderRadius: 10,
+  color: 'white',
+},   
+ButtonText:{
+  fontFamily:'Tajawal_500Medium',
+  fontSize:18,
+  alignSelf:'center',
+  justifyContent:'center',
+},
+
+    
 
 });
 

@@ -41,7 +41,8 @@ export default class Person extends Component {
     .then(snapshot =>{
       this.setState({
         name:snapshot.data().name ,
-        userRating: snapshot.data().userRating})
+        userRating: snapshot.data().userRating
+      })
     })
     .catch(()=>{
       console.log('error getting user firestore reference')
