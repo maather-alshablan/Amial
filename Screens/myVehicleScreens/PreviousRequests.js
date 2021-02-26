@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Dimensions, Linking, Alert } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image, Dimensions, Linking, Alert } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
 import colors from '../../Constants/colors';
@@ -13,24 +13,39 @@ export default class ActiveRequests extends Component {
   constructor(props) {
     super(props);
     this.state={
-    request: {},
+    request: [],
+    currentRequest:null,
     hasRequest:false
   }
 }
 
   componentDidMount= ()=> {
-    this.retrieveActiveTrips();
+    this.retrievePreviousTrips();
+    database.collection('users').doc(auth.currentUser.uid).collection('Requests')
+    .where("ownerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            this.retrievePreviousTrips();
+          }
+          if (change.type === "modified") {
+            this.retrievePreviousTrips();
+          }
+          if (change.type === "removed") {
+            this.retrievePreviousTrips();
+          }
+      });
+    });
   }
 
 
-  retrieveActiveTrips =  async () => {
+  retrievePreviousTrips =  async () => {
     
     // user is a vehicle owner
       console.log('user is owner')
 
-      await database.collection('Trips')
+      await database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("ownerID",'==',auth.currentUser.uid)
-      .where('status','==','active')
+      .where('status','==','completed')
       .get().then((querySnapshot)=>{
       if (!querySnapshot.empty){
         let requests = []
@@ -51,16 +66,38 @@ export default class ActiveRequests extends Component {
     return (
       <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
       <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
-        <Text style={styles.emptyTripsText}> لا توجد لديك رحلة نشطة</Text>
+        <Text style={styles.emptyTripsText}> لا توجد لديك رحلات ماضية</Text>
       </View>
     )
   }
 
-  renderRequest = () => {
-    return (<TouchableOpacity
+  renderRequest = ({ item, index }) => {
+    
+var status=item.status+'';
+var button =(<TouchableOpacity style={[styles.Button,{borderColor:colors.Subtitle,borderWidth:1,width:150,marginHorizontal:10, alignSelf:'flex-start'}]}    
+onPress={() => {
+  this.props.navigation.navigate('RequestDetails', { currentRequest: item })
+
+  }}>
+  <Text style={[styles.ButtonText,{color:colors.Subtitle}]}> تفاصيل الطلب  </Text>
+  </TouchableOpacity>)
+
+var statusColor =''
+  switch (status){
+    case 'completed': status='مكتملة' 
+    statusColor=colors.Subtitle
+
+    break;
+
+  }
+
+
+    return (
+    <TouchableOpacity
       activeOpacity={1}
       onPress={() => {
-        // navigate to view
+        this.props.navigation.navigate('RequestDetails', { currentRequest: item })
+
       }}
       style={{
         backgroundColor: '#fff',
@@ -84,40 +121,31 @@ export default class ActiveRequests extends Component {
         justifyContent: 'space-between',
       }}>
         <View style={{ padding: 10 }}>
-          <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>نوع المركبة: range rover</Text>
-          <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>اسم المستأجر : Saad</Text>
-          <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>طريقة التسليم: توصيل</Text>
-          <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>الحالة :تم الدفع</Text>
-
+          <View style={styles.inputRow}>
+          <Text style={styles.label}>موديل المركبة </Text>
+          <Text style={styles.input}> {item.model}</Text>
+          </View>
+          <View style={styles.inputRow}>
+          <Text style={styles.label}> نوع التسليم </Text>
+          <Text style={styles.input}> {item.details.pickupOption}</Text>
+          </View>
+         
+          <View style={styles.inputRow}>
+          <Text style={styles.label}>حالة الطلب</Text>
+        <Text style={[styles.label, {color:statusColor}]}> {status}</Text>
+          </View>
         </View>
         <View style={{ width: 120, height: 80 }}>
-          <Image source={{ uri: 'http://pngimg.com/uploads/land_rover/land_rover_PNG82.png' }} style={{ width: '100%', height: '100%' }} />
+          <Image source={{ uri: item.image
+            }} style={{ width: '100%', height: '100%' }} />
         </View>
       </View>
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <TouchableOpacity
-          onPress={() => {
-            const phone = "05555555"
-            Linking.canOpenURL('https://api.whatsapp.com/send?' + 'phone=' + phone)
-              .then(supported => {
-                if (!supported) {
-                  showMessage({
-                    message: 'يرجى تنزيل برنامج الواتس اب',
-                    type: 'danger',
-                    style: {}
-                  });
-                } else {
-                  return Linking.openURL('https://api.whatsapp.com/send?' + 'phone=' + phone).catch(e => console.warn(e));
-                }
-              })
-          }}
-          style={{ padding: 8, borderRadius: 6, borderColor: '#3fc250', borderWidth: 1, flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={{ uri: 'https://img.icons8.com/color/452/whatsapp--v1.png' }} style={{ width: 24, height: 24 }} />
-          <Text style={{ marginLeft: 8, fontFamily: 'Tajawal_400Regular', }}>تواصل مع المستأجر</Text>
-        </TouchableOpacity>
+      <View style={{  alignSelf:'center'}}>
+      {button}
       </View>
 
     </TouchableOpacity>)
+     
   }
 
   render() {
@@ -128,6 +156,7 @@ export default class ActiveRequests extends Component {
         <FlatList
         data={this.state.request}
         renderItem={this.renderRequest}
+        keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={{ alignItems: 'center' }}
       />   :
            this.userHasNoRequests()
@@ -142,13 +171,45 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  }, //for mockup
+
+  },
   emptyTripsText: {
     color: colors.Subtitle,
     textAlign:'center',
     fontSize: 25,
-    fontFamily: 'Tajawal_500Medium'
-  }
+    fontFamily: "Tajawal_500Medium"
+  },  
+  inputRow:{
+      flexDirection:'row',
+      margin:7,
+      justifyContent:'space-evenly'
+  },
+  
+  label:{
+      textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 
+      },
+  input:
+  {textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 , color:colors.LightBlue, marginHorizontal:5},
+  
+ Button:{
+  shadowColor: '#000',
+  shadowOpacity: 0.25,
+  shadowRadius: 6,
+  shadowOffset: {
+    height: 3,
+    width: 0 },
+  justifyContent:'center',
+  alignSelf:'center',
+  width: 180,
+  height: 40,
+  borderRadius: 10,
+  color: 'white',
+},   
+ButtonText:{
+  fontFamily:'Tajawal_500Medium',
+  fontSize:18,
+  alignSelf:'center',
+  justifyContent:'center',
+},  
 
 });
-

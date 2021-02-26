@@ -20,14 +20,13 @@ function HomeStack (){
         component={Homescreen} 
         unmountOnBlur={true}
         options={{ 
-          headerTitle: null ,
-         
+          headerShown: false
             }}
         />
 
           <Stack.Screen name="VehicleView" component={VehicleView}
            options={{ 
-            headerTitle:props => <ViewVehicleHeader {...props} />,
+            headerTitle:({name ,props}) => <ViewVehicleHeader name={name} {...props} />,
             headerBackTitleVisible:false,
             headerBackTitleStyle:{color:'#5dbcd2'},
             headerTintColor:colors.LightBlue,
@@ -43,10 +42,10 @@ function HomeStack (){
 
 
 
-  function ViewVehicleHeader(){
+  function ViewVehicleHeader({name, ...props}){
     return(
       <View >
-      <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>المركبة
+      <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>{name}
 </Text>
       </View>
     )

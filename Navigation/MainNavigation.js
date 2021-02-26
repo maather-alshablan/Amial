@@ -13,6 +13,7 @@ import HomeStack from '../Navigation/HomeStack'
 import Vehicle from '../Navigation/MyVehicleNavigation' 
 import Profile from '../Navigation/profileStack'
 import TripRequestsNavigation from '../Navigation/tripsRequestsNavigation'
+import TripRequestDetails from '../Screens/TripRequests/TripRequestDetails'
 
 function MainNavigation(){
 
@@ -84,6 +85,17 @@ function MainNavigation(){
               height:150
             }
             }}/>
+                <Stack.Screen name='RequestDetails' 
+            component={TripRequestDetails}
+            options={{ 
+              headerTitle: props => <RequestDetailsHeader {...props} /> ,
+              headerBackTitleStyle:{color:colors.LightBlue},
+              headerStyle:{
+                height:170,
+                shadowColor: 'transparent'
+              },
+              
+              }}/>
         </Stack.Navigator>
       )
     }
@@ -97,7 +109,13 @@ function MainNavigation(){
         </View>
       )
     }
-
+    function RequestDetailsHeader(){
+      return(
+        <View style={{paddingVertical:15}}>
+        <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', alignSelf:'center'}}>تفاصيل طلب المركبة</Text>
+        </View>
+      )
+    }
 
     
     export default MainNavigation;

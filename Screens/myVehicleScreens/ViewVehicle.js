@@ -39,12 +39,31 @@ export default class viewVehicle extends Component {
 
 
   componentDidMount= async()=>{
-    this.retrieveVehicle();
-    this.IsVehicleOwner();
-
+    
+    await this.retrieveVehicle();
+    this.setHeader();
   }
 
+  setHeader=()=>{
 
+    var model = this.state.vehicleDetails.model+'';
+    model = model.toUpperCase();
+
+const ViewVehicleHeader= ()=>{
+  return(
+    <View >
+    <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>
+    {model} {this.state.vehicleDetails.year}
+</Text>
+    </View>
+  )
+}
+    this.props.navigation.setOptions({
+      headerTitle: (props) => <ViewVehicleHeader {...props} />
+    })
+    }
+  
+  
   IsVehicleOwner =  (user)=>{
 
    
@@ -286,6 +305,7 @@ export default class viewVehicle extends Component {
            borrowerID: borrowerID,
            requestTime: requestTime.toLocaleString(),
            status:'pending',
+           model: this.state.vehicleDetails.model,
            vehicleID: vehicleID,
            details:{
                pickupDate:'',
@@ -469,8 +489,12 @@ export default class viewVehicle extends Component {
       <Text style={{ fontSize: 20, margin:10 ,color: '#5dbcd2', fontFamily: 'Tajawal_700Bold' }}> {this.state.dailyRate} ريال / يوم</Text>
       </View>
       </View>
+      <View style={{ padding: 12, }}>
+        <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>وصف المركبة</Text>
+        <Text style={{ fontSize: 16, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }}>{this.state.vehicleDetails.description}</Text>
+      </View>
       <View style={{ flexDirection: 'row', marginHorizontal: 4, fontFamily: 'Tajawal_400Regular' }}>
-        {this.renderCell({ name: 'موديل المركبة', value: this.state.vehicleDetails.model, })}
+        {this.renderCell({ name: 'الموديل ', value: this.state.vehicleDetails.model, })}
         {this.renderCell({ name: 'سنة الصنع', value: this.state.vehicleDetails.year })}
       </View>
       <View style={{ flexDirection: 'row', marginHorizontal: 4, fontFamily: 'Tajawal_400Regular' }}>
@@ -480,7 +504,7 @@ export default class viewVehicle extends Component {
       <View style={{ flexDirection: 'row', }}>
         <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
         </View>
-        {this.renderCell({ name: 'تامين المركبة', value: this.state.InsurancePolicy.type })}
+        {this.renderCell({ name: 'نوع التأمين ', value: this.state.InsurancePolicy.type })}
         <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
         </View>
       </View>
@@ -496,10 +520,7 @@ export default class viewVehicle extends Component {
         <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>خصائص المركبة</Text>
         {features}
       </View>
-      <View style={{ padding: 12, }}>
-        <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>وصف المركبة</Text>
-        <Text style={{ fontSize: 16, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }}>{this.state.vehicleDetails.description}</Text>
-      </View>
+      
 
       <View style={{ flexDirection: 'row', }}>
         {this.renderCell({ name: 'المنطقة ', value: this.state.address.city})}

@@ -145,7 +145,7 @@ export default class Vehicle extends Component {
       }}>
           <View style={{ padding: 8 }}>
           <View style={styles.inputRow}>
-          <Text style={styles.label}>نوع المركبة </Text>
+          <Text style={styles.label}>موديل المركبة </Text>
           <Text style={styles.input}> {item.vehicleDetails.model}</Text>
           </View>
 
@@ -159,7 +159,7 @@ export default class Vehicle extends Component {
           <Text style={styles.label}>السعر اليومي</Text>
           <Text style={styles.input}> {item.dailyRate}</Text>
           </View>
-          <View style={styles.inputRow}>
+          <View style={[styles.inputRow]}>
     <Text style={styles.input}> {<FontAwesome5 name={'star'} size={20}/>}{item.Rating} </Text>
           </View>
         </View>
@@ -210,7 +210,8 @@ export default class Vehicle extends Component {
      
         <FlatList
             data={this.state.vehicles}
-            renderItem={this.renderVehicle}
+            renderItem={(item, index) => this.renderVehicle(item,index)}
+            keyExtractor={( index) => index.toString()}
             contentContainerStyle={{ alignItems: 'center' }}
            /> 
 

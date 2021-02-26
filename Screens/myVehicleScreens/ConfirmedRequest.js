@@ -10,10 +10,27 @@ export default class ConfirmedRequests extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    requests: [{}, {}, {}]
+    request: [],
+    currentRequest:null,
+    hasRequest:false
   }}
   componentDidMount() {
     this.retrieveConfirmedTrips();
+
+    database.collection('users').doc(auth.currentUser.uid).collection('Requests')
+    .where("ownerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            this.retrieveConfirmedTrips();
+          }
+          if (change.type === "modified") {
+            this.retrieveConfirmedTrips();
+          }
+          if (change.type === "removed") {
+            this.retrieveConfirmedTrips();
+          }
+      });
+    });
   }
 
  
@@ -22,12 +39,12 @@ export default class ConfirmedRequests extends Component {
     // user is a vehicle owner
       console.log('user is owner')
 
-      await database.collection('Trips')
+      await  database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("ownerID",'==',auth.currentUser.uid)
       .where('status','==','confirmed')
       .get().then((querySnapshot)=>{
       if (!querySnapshot.empty){
-        let requests = []
+        let requests= []
         console.log(querySnapshot.size,' Confirmed Requests found')
 
         querySnapshot.forEach((doc) => {
@@ -35,7 +52,7 @@ export default class ConfirmedRequests extends Component {
           console.log(doc.id, " => ", doc.data());
           requests.push(doc.data());
       });
-      this.setState({request: requests});
+      this.setState({request: requests,   hasRequest:true});
       console.log('array > ', this.state.request)
       } else console.log('No confirmed requests found')
       })
@@ -46,17 +63,46 @@ export default class ConfirmedRequests extends Component {
       <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
       <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
 
-      <Text style={styles.emptyTripsText}> لا توجد لديك رحلة مؤكدة</Text>
+      <Text style={styles.emptyTripsText}> لا توجد لديك رحلات مؤكدة</Text>
 
 
       </View>
     )
   }
   renderRequest = ({ item, index }) => {
-    return (<TouchableOpacity
+    //Status Pending & Waiting for owners reply > 'قيد المراجعة'
+   //Status Pending & accepted by owner > 'مقبولة'
+  //Status Pending & rejected by owner > 'مرفوضة'
+var status=item.status+'';
+var button =(<TouchableOpacity style={[styles.Button,{borderColor:colors.Subtitle,borderWidth:1,width:150,marginHorizontal:10, alignSelf:'flex-start'}]}    
+onPress={() => {
+  this.props.navigation.navigate('RequestDetails', { currentRequest: item })
+
+  }}>
+  <Text style={[styles.ButtonText,{color:colors.Subtitle}]}> تفاصيل الطلب  </Text>
+  </TouchableOpacity>)
+
+var statusColor =''
+  switch (status){
+    case 'confirmed': status='مؤكدة' 
+    statusColor=colors.LightBlue
+    break;
+
+    case 'active': status='نشطة' 
+    statusColor = colors.Green
+    break;
+
+    default: status='مؤكدة' 
+    statusColor=colors.Subtitle
+  }
+
+
+    return (
+    <TouchableOpacity
       activeOpacity={1}
       onPress={() => {
-        // navigate to view to open the trip / vehicle info
+        this.props.navigation.navigate('RequestDetails', { currentRequest: item })
+
       }}
       style={{
         backgroundColor: '#fff',
@@ -71,21 +117,40 @@ export default class ConfirmedRequests extends Component {
           width: 0
         },
         borderRadius: 20,
-        flexDirection: 'row',
         direction: 'rtl',
         padding: 12,
+        alignSelf: 'center'
+      }}>
+      <View style={{
+        flexDirection: 'row',
         justifyContent: 'space-between',
       }}>
-      <View style={{ padding: 10 }}>
-        <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>نوع المركبة: Maserati</Text>
-        <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>اسم المستأجر : Nouf</Text>
-        <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>طريقة التسليم: توصيل</Text>
-        <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>الحالة : مؤكدة</Text>
+        <View style={{ padding: 10 }}>
+          <View style={styles.inputRow}>
+          <Text style={styles.label}>موديل المركبة </Text>
+          <Text style={styles.input}> {item.model}</Text>
+          </View>
+          <View style={styles.inputRow}>
+          <Text style={styles.label}> نوع التسليم </Text>
+          <Text style={styles.input}> {item.details.pickupOption}</Text>
+          </View>
+         
+          <View style={styles.inputRow}>
+          <Text style={styles.label}>حالة الطلب</Text>
+        <Text style={[styles.label, {color:statusColor}]}> {status}</Text>
+          </View>
+        </View>
+        <View style={{ width: 120, height: 80 }}>
+          <Image source={{ uri: item.image
+            }} style={{ width: '100%', height: '100%' }} />
+        </View>
       </View>
-      <View style={{ width: 120, height: 80 }}>
-        <Image source={{ uri: item.vehicleDetails.image}} style={{ width: '100%', height: '100%' }} />
+      <View style={{  alignSelf:'center'}}>
+      {button}
       </View>
+
     </TouchableOpacity>)
+     
   }
 
   render() {
@@ -94,8 +159,9 @@ export default class ConfirmedRequests extends Component {
 
         {this.state.hasRequest  ?
           <FlatList
-            data={this.state.requests}
+            data={this.state.request}
             renderItem={this.renderRequest}
+            keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={{ alignItems: 'center' }}
           />
           : this.userHasNoRequests()
@@ -110,13 +176,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+
   },
   emptyTripsText: {
     color: colors.Subtitle,
     textAlign:'center',
     fontSize: 25,
     fontFamily: "Tajawal_500Medium"
-  }
+  },  
+  inputRow:{
+      flexDirection:'row',
+      margin:7,
+      justifyContent:'space-evenly'
+  },
+  
+  label:{
+      textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 
+      },
+  input:
+  {textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 , color:colors.LightBlue, marginHorizontal:5},
+  
+ Button:{
+  shadowColor: '#000',
+  shadowOpacity: 0.25,
+  shadowRadius: 6,
+  shadowOffset: {
+    height: 3,
+    width: 0 },
+  justifyContent:'center',
+  alignSelf:'center',
+  width: 180,
+  height: 40,
+  borderRadius: 10,
+  color: 'white',
+},   
+ButtonText:{
+  fontFamily:'Tajawal_500Medium',
+  fontSize:18,
+  alignSelf:'center',
+  justifyContent:'center',
+},  
 
 });
 

@@ -148,14 +148,8 @@ return (
 <FlatList
 data={this.state.cars}
 renderItem={this.renderCar}
+keyExtractor={(item, index) => index.toString()}
 />
-// < View style={{ marginTop: 300 }} >
-// <TouchableOpacity style={styles.Button} onPress={() => this.props.navigation.navigate('VehicleView')}>
-// <Text>
-// Request Vehicle
-// </Text>
-// </TouchableOpacity>
-// </View>
 )
 }
 
