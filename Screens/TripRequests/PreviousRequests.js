@@ -15,7 +15,8 @@ export default class ActiveRequests extends Component {
     this.state={
     request: [],
     currentRequest:null,
-    hasRequest:false
+    hasRequest:false,
+
   }
 }
 
@@ -23,7 +24,10 @@ export default class ActiveRequests extends Component {
     this.retrievePreviousTrips();
 
     database.collection('users').doc(auth.currentUser.uid).collection('Requests')
-    .where("borrowerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
+    .where("ownerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
+      if(snapshot.empty)
+      this.retrievePreviousTrips();
+
       snapshot.docChanges().forEach((change) => {
           if (change.type === "added") {
             this.retrievePreviousTrips();
@@ -46,7 +50,7 @@ export default class ActiveRequests extends Component {
             console.log('user is borrower')
            await    database.collection('users').doc(auth.currentUser.uid).collection('Requests')
             .where("borrowerID",'==',auth.currentUser.uid)
-            .where('status','==','completed')
+            .where('status','in',['completed','rejected','cancelled'])
             .get().then((querySnapshot)=>{
             if (!querySnapshot.empty){
               let requests = []
@@ -81,7 +85,13 @@ export default class ActiveRequests extends Component {
         statusColor=colors.Subtitle
     
         break;
-    
+        case 'rejected': status ='مرفوضة'
+        statusColor = '#fa4353'
+        break;
+
+        case 'cancelled': status ='ملغية'
+        statusColor = '#fa4353'
+        break;
       }
     
     

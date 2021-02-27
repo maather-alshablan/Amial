@@ -23,6 +23,9 @@ export default class ActiveRequests extends Component {
     this.retrievePreviousTrips();
     database.collection('users').doc(auth.currentUser.uid).collection('Requests')
     .where("ownerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
+      if(snapshot.empty)
+      this.retrievePreviousTrips();
+
       snapshot.docChanges().forEach((change) => {
           if (change.type === "added") {
             this.retrievePreviousTrips();
@@ -45,11 +48,11 @@ export default class ActiveRequests extends Component {
 
       await database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("ownerID",'==',auth.currentUser.uid)
-      .where('status','==','completed')
+      .where('status','in',['completed','rejected','cancelled'])
       .get().then((querySnapshot)=>{
       if (!querySnapshot.empty){
         let requests = []
-        console.log(querySnapshot.size,' Active Requests found')
+        console.log(querySnapshot.size,' previous Requests found')
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, " => ", doc.data());
@@ -57,7 +60,7 @@ export default class ActiveRequests extends Component {
       });
       this.setState({request: requests,hasRequest:true});
       console.log('array > ', this.state.request)
-      } else console.log('No Active requests found')
+      } else console.log('No previous requests found')
       })
     
   }

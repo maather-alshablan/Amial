@@ -67,27 +67,32 @@ this.setState({image:url})
   }
 
   TimerComponent = () => {
-    
-    var countDownDate = new Date(this.state.currentRequest.requestTime);
-    var expiry = new Date();
-    countDownDate = countDownDate.setHours(countDownDate.getHours()+12);
 
-   // var remainingTime =  countDownDate-expiry;
 
-// // Update the count down every 1 second
-//   var x = setInterval(function() {
+    Date.prototype.addHours = function(h) {
+      this.setTime(this.getTime() + (h*60*60*1000));
+      return this;
+    }
 
-//   // Get today's date and time
-//   var now = new Date().getTime();
+    var countdown=0;
 
-//   // Find the distance between now and the count down date
-//   var distance =  now- countDownDate;
+    switch(this.state.currentRequest.status){
+      case 'pending': 
+      countdown = new Date (new Date(this.state.currentRequest.requestTime).addHours(12)).getTime() - new Date().getTime();
+      
+      break;
+      case 'accepted':
+        countdown = new Date (new Date(this.state.currentRequest.requestAcceptTime).addHours(12)).getTime() - new Date().getTime();
+      break;
 
-//   // Time calculations for days, hours, minutes and seconds
-//   var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-//   var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-//   var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-// })
+      case 'rejected': 
+      case 'cancelled':
+      countdown = 0;
+
+    }
+      console.log('countdown> ', new Date (new Date(this.state.currentRequest.requestTime).addHours(12)).getTime() - new Date().getTime())
+
+
 
 const children = ({ remainingTime }) => {
  const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -102,11 +107,13 @@ const children = ({ remainingTime }) => {
      isPlaying
      size={80}
      onComplete={() => {
-       this.handleCancelRequest();
-       //cancel and keep or delete ? 
+       if(this.state.currentRequest.status != 'pending' || this.state.currentRequest.status != 'accepted'   )
+       return
+
+       this.handleCancelRequest(true);
        return [true, 1500] // repeat animation in 1.5 seconds
      }}
-     duration={10000}
+     duration={this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' ? countdown : 0 }
      colors={[
        ['#004777', 0.4],
        ['#F7B801', 0.4],
@@ -120,9 +127,28 @@ const children = ({ remainingTime }) => {
      )}
    </CountdownCircleTimer>)
   }
-  handleCancelRequest =() => {
+  handleCancelRequest =(automatically ) => {
 
-    console.log('in cancel request module')
+    if(automatically){
+      var batch = database.batch();
+
+      var trip =  database.collection('Trips').doc(this.state.currentRequest.tripID);
+                   batch.update(trip,{status:'cancelled'} );
+
+       var borrowerRequest = database.collection('users').doc( auth.currentUser.uid)
+       .collection('Requests').doc(this.state.currentRequest.tripID);
+                             batch.update(borrowerRequest,{status:'cancelled'} );
+
+       var ownerRequest = database.collection('users').doc(this.state.currentRequest.ownerID)
+       .collection('Requests').doc(this.state.currentRequest.tripID);
+        batch.update(ownerRequest,{status:'cancelled'} );
+
+        batch.commit().then(()=>{
+        // on success
+      
+        this.props.navigation.pop();
+      return;})
+    }else{
     Alert.alert(
       "إلغاء الطلب",
       "هل أنت متأكد من إلغاء الطلب لحجز المركبة؟ ",
@@ -167,6 +193,7 @@ const children = ({ remainingTime }) => {
         cancelable: false },
  
     );
+      }
   }
 
   handleDeleteRequest =()=>{
@@ -354,25 +381,29 @@ var statusColor =''
 
           
             <View style={{flexDirection:'row-reverse', marginHorizontal:20,marginVertical:15}} >
-            {this.state.currentRequest.status =='pending'? 
+
+    {this.state.currentRequest.status =='pending'? 
             <View>
               <Text style={[styles.ModalTitle,{fontSize:20,marginHorizontal:10,flexWrap:'wrap'}]}> الوقت المتبقي لقبول المؤجر للطلب </Text>
                 </View> : 
                     <View>
                     <Text style={[styles.ModalTitle,{fontSize:20,marginHorizontal:10,flexWrap:'wrap-reverse'}]}> الوقت المتبقي لتأكيدك للطلب </Text>
-                     </View> }
+    </View> }
+    </View>
 
-           </View>
+          
            <View style={{alignSelf:'flex-end', marginRight:40, marginVertical:10}}>
             {this.TimerComponent()}
             </View>
+            
+           
 
 
             <View style={{flexDirection:'row-reverse', alignSelf:'center'}}>
               {this.actionButton()}
 
          {//dont show cancel request button if the request is already rejected 
-         this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' ? <View>
+         this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' || this.state.currentRequest.status == 'confirmed'? <View>
               <TouchableOpacity style={[styles.Button,{borderColor:'grey',borderWidth:1,}]}    
               onPress={() => {
                 console.log('cancel button')

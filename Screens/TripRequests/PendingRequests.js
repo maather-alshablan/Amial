@@ -23,7 +23,10 @@ export default class PendingRequests extends Component {
     this.retreiveRequests();
 
     database.collection('users').doc(auth.currentUser.uid).collection('Requests')
-    .where("borrowerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
+    .where("ownerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
+      if(snapshot.empty)
+      this.retreiveRequests();
+
       snapshot.docChanges().forEach((change) => {
           if (change.type === "added") {
             this.retreiveRequests();
@@ -36,6 +39,7 @@ export default class PendingRequests extends Component {
           }
       });
     });
+ 
   }
 
   
@@ -46,7 +50,7 @@ export default class PendingRequests extends Component {
             console.log('user is borrower')
               database.collection('users').doc(auth.currentUser.uid).collection('Requests')
             .where("borrowerID",'==',auth.currentUser.uid)
-            .where('status','in',['pending','accepted','rejected','cancelled'])
+            .where('status','in',['pending','accepted',])
             .onSnapshot((querySnapshot)=>{
             if (!querySnapshot.empty){
               let requests = []
@@ -103,9 +107,6 @@ var statusColor =''
     statusColor = colors.Green
  
     break;
-    case 'rejected': status ='مرفوضة'
-    case 'cancelled': status ='ملغية'
-    statusColor = '#fa4353'
     
     break;
     default: status='قيد المراجعة' ;

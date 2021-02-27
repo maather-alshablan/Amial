@@ -6,11 +6,10 @@ import Map from '../Screens/maps'
 import colors from '../Constants/colors'	
 import { Entypo, FontAwesome5, Ionicons } from '../Constants/icons';	
 import SwitchSelector from "react-native-switch-selector";	
-import { color } from 'react-native-reanimated';	
+
 import { database } from '../Configuration/firebase';	
 import ExploreScreen from './ExploreScreen';	
 import Modal from 'react-native-modal';	
-import { Picker } from '@react-native-picker/picker';	
 import DatePicker from 'react-native-datepicker'	
 const carTypes = [	
 { id: 1, label: 'فخمة', value: 'فخمة' },	
@@ -156,15 +155,10 @@ return (
 <FlatList	
 data={this.state.cars}	
 renderItem={this.renderCar}	
+keyExtractor={( index) => index.toString()}
 contentContainerStyle={{ alignItems: 'center' }}	
 />	
-// < View style={{ marginTop: 300 }} >	
-// <TouchableOpacity style={styles.Button} onPress={() => this.props.navigation.navigate('VehicleView')}>	
-// <Text>	
-// Request Vehicle	
-// </Text>	
-// </TouchableOpacity>	
-// </View>	
+
 )	
 }	
 toggleModal = () => {	

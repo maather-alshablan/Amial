@@ -2,7 +2,7 @@ import React , {Component} from 'react';
 import { StyleSheet, Text, View, Button, Image,Platform } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
-import {firebase} from '../../Configuration/firebase'
+import {firebase, database} from '../../Configuration/firebase'
 import { Octicons } from '../../Constants/icons';
 import { Rating, } from 'react-native-ratings';
 import { auth } from 'firebase';
@@ -26,22 +26,20 @@ export default class Person extends Component {
 
     this.retrieveProfile();
    }
-  componentDidUpdate(){
-    this.retrieveProfile();
-  }
-  
+ 
 
 
-   retrieveProfile(){
+   retrieveProfile=  ()=>{
     // this is profile or someone else profile
     var personID = firebase.auth().currentUser.uid
 
     //1 . Retrieve User Name
-    const userSnapshot = firebase.firestore().collection('users').doc(personID).get()
+    const userSnapshot = database.collection('users').doc(personID).get()
     .then(snapshot =>{
       this.setState({
         name:snapshot.data().name ,
-        userRating: snapshot.data().userRating
+        userRating: snapshot.data().userRating,
+        mobileNumber:snapshot.data().mobileNumber
       })
     })
     .catch(()=>{
@@ -49,7 +47,7 @@ export default class Person extends Component {
     })
 
     // 2. Retrieve Profile Image
-    var ref =firebase
+    var ref =   firebase
     .storage()
     .ref()
     .child('userImages/'+personID);
@@ -99,26 +97,21 @@ ref.getDownloadURL()
                 uri: image
               }}/>
               </View>
-              <Text style={styles.Name}>
-                 {this.state.name}
-              </Text> 
+              
+              <View style={{flexDirection:'column',alignSelf:'center',alignItems:'center',}}>
+        <View style={{flexDirection:'row-reverse', alignItems:'center'}}>
+        <Rating type='star' ratingCount={1} readonly={true} imageSize={20} startingValue={1} style={{marginBottom:5}}/>
+        <Text style={{color:'#f1c40f', fontSize:20, fontFamily:'Tajawal_300Light', marginHorizontal:5,marginTop:3}}>{this.state.userRating}/5</Text>
 
-              <View style={{flexDirection:'row', marginBottom:10}}>
-                <Octicons name='location' style={{marginRight:10}}/>
-              <Text style={styles.Location}>
-                  الرياض
-              </Text>
+        <Text style={styles.Name}>
+           {this.state.name}
+        </Text> 
+        </View>
+        <Text style={styles.Location}>
+            {this.state.mobileNumber}
+        </Text>
               </View>
             
-              <Rating
-            type='star'
-            ratingCount={5}
-            imageSize={30}
-            startingValue={this.state.userRating.valueOf()}
-            //readonly={false}
-            isDisabled={true}
-            onFinishRating={this.ratingCompleted}
-            />
           </View>
       )
   }

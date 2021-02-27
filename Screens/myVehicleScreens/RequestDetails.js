@@ -68,26 +68,23 @@ this.setState({image:url})
 
   TimerComponent = () => {
     
-    // var countDownDate = new Date(this.state.currentRequest.requestTime);
-    // var expiry = new Date();
-    // countDownDate = countDownDate.setHours(countDownDate.getHours()+12);
+    
+    Date.prototype.addHours = function(h) {
+      this.setTime(this.getTime() + (h*60*60*1000));
+      return this;
+    }
 
-    // var remainingTime =  expiry- countDownDate;
+    var countdown;
+    switch(this.state.currentRequest.status){
+      case 'pending': 
+      countdown = new Date(this.state.currentRequest.requestTime).addHours(12);
+      break;
+      case 'rejected': 
+      case 'cancelled':
+     countdown = 0;
 
-// // Update the count down every 1 second
-//   var x = setInterval(function() {
+    }
 
-//   // Get today's date and time
-//   var now = new Date().getTime();
-
-//   // Find the distance between now and the count down date
-//   var distance =  now- countDownDate;
-
-//   // Time calculations for days, hours, minutes and seconds
-//   var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-//   var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-//   var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-// })
 
 const children = ({ remainingTime }) => {
  const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -102,10 +99,13 @@ const children = ({ remainingTime }) => {
      isPlaying
      size={80}
      onComplete={() => {
-       this.handleCancelRequest('cancelled')
+      if(this.state.currentRequest.status != 'pending' || this.state.currentRequest.status != 'accepted'   )
+      return
+
+       this.handleCancelRequest('cancelled', true)
        return [true, 1500] // repeat animation in 1.5 seconds
      }}
-     duration={10000}
+     duration={this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' ? countdown : 0 }
      colors={[
        ['#004777', 0.4],
        ['#F7B801', 0.4],
@@ -119,7 +119,27 @@ const children = ({ remainingTime }) => {
      )}
    </CountdownCircleTimer>)
   }
-  handleCancelRequest =(status) => {
+
+  handleCancelRequest =(status, automatically) => {
+
+    if (automatically){
+      var batch = database.batch();
+
+       var trip =  database.collection('Trips').doc(this.state.currentRequest.tripID);
+                    batch.update(trip,{status:status} );
+
+        var borrowerRequest = database.collection('users').doc(this.state.currentRequest.borrowerID)
+        .collection('Requests').doc(this.state.currentRequest.tripID);
+                              batch.update(borrowerRequest,{status:status} );
+
+        var ownerRequest = database.collection('users').doc(auth.currentUser.uid)
+        .collection('Requests').doc(this.state.currentRequest.tripID);
+         batch.update(ownerRequest,{status:status} );
+         batch.commit().then(()=>{
+          this.props.navigation.pop();
+         })
+         
+    }else{
     Alert.alert(
       "إلغاء الطلب",
       "هل أنت متأكد من رفض الطلب ؟ ",
@@ -162,6 +182,7 @@ const children = ({ remainingTime }) => {
         cancelable: false },
  
     );
+      }
   }
 
   handleDeleteRequest = ()=>{
@@ -200,15 +221,15 @@ const children = ({ remainingTime }) => {
     var batch = database.batch();
 
     var trip =  database.collection('Trips').doc(this.state.currentRequest.tripID);
-                 batch.update(trip,{status:'accepted'} );
+                 batch.update(trip,{status:'accepted', requestAcceptTime: new Date()} );
 
      var borrowerRequest = database.collection('users').doc( auth.currentUser.uid)
      .collection('Requests').doc(this.state.currentRequest.tripID);
-                           batch.update(borrowerRequest,{status:'accepted'} );
+                           batch.update(borrowerRequest,{status:'accepted',requestAcceptTime: new Date()} );
 
      var ownerRequest = database.collection('users').doc(this.state.currentRequest.ownerID)
      .collection('Requests').doc(this.state.currentRequest.tripID);
-      batch.update(ownerRequest,{status:'accepted'} );
+      batch.update(ownerRequest,{status:'accepted',requestAcceptTime: new Date()} );
     
     
     batch.commit().then(()=>{

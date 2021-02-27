@@ -18,7 +18,10 @@ export default class ConfirmedRequests extends Component {
     this.retrieveConfirmedTrips();
 
     database.collection('users').doc(auth.currentUser.uid).collection('Requests')
-    .where("borrowerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
+    .where("ownerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
+      if(snapshot.empty)
+      this.retrieveConfirmedTrips();
+
       snapshot.docChanges().forEach((change) => {
           if (change.type === "added") {
             this.retrieveConfirmedTrips();
@@ -41,7 +44,7 @@ export default class ConfirmedRequests extends Component {
             console.log('user is borrower')
             await  database.collection('users').doc(auth.currentUser.uid).collection('Requests')
             .where("borrowerID",'==',auth.currentUser.uid)
-            .where('status','==','confirmed')
+            .where('status','in',['confirmed','active'])
             .get().then((querySnapshot)=>{
             if (!querySnapshot.empty){
               let requests = []
