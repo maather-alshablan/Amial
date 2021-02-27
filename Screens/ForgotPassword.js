@@ -4,6 +4,7 @@ import { StyleSheet, Text, SafeAreaView, Image, View, Button, ImageBackground, A
 import { auth, firebase } from '../Configuration/firebase';
 import Icon from 'react-native-vector-icons/Entypo';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import CustomButton from '../components/CustomButton';
 
 export default class ForgotPassword extends Component {
 
@@ -35,38 +36,43 @@ export default class ForgotPassword extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ImageBackground
+        source={require('../images/b2.png')}
+        style={{ width: '100%', height: '100%' }}
+      >
+        <View style={styles.container}>
 
-        <View style={{ marginBottom: 40 }}>
-          <Image source={require('../images/resetIcon.png')} />
-        </View>
+          <View style={{ marginBottom: 40 }}>
+            <Image source={require('../images/resetIcon.png')} style={{ width: 200, height: 200, resizeMode: "contain" }} />
+          </View>
 
-        <View style={styles.InputView}>
+          <View style={styles.InputView}>
 
-          <Icon name='mail' color={'#0093e5'} size={25} />
+            <Icon name='mail' color={'#01b753'} size={30} />
 
-          <TextInput
-            style={styles.InputField}
-            placeholder='البريد الإلكتروني'
-            onChangeText={email => this.setState({ email })}
-            value={this.state.email}
+            <TextInput
+              style={styles.InputField}
+              placeholder='البريد الإلكتروني'
+              onChangeText={email => this.setState({ email })}
+              value={this.state.email}
+            />
+
+          </View>
+
+          <CustomButton
+            onPress={() => this.handlePasswordReset()}
+            title="إعادة ضبط كلمة المرور"
+            style={{}}
           />
 
+          <TouchableOpacity onPress={() => this.props.navigation.pop()} >
+            <Text style={{ color: 'gray', marginTop: 20, fontSize: 18, fontFamily: 'Tajawal_300Light', }}>العودة إلى صفحة الدخول</Text>
+            <View style={{ height: 1, width: '100%', backgroundColor: 'gray' }}></View>
+          </TouchableOpacity>
+
+
         </View>
-
-
-        <TouchableOpacity style={styles.Reset} onPress={() => this.handlePasswordReset()} >
-          <Text style={{ color: 'white', fontWeight: '800' }}> إعادة ضبط كلمة المرور</Text>
-
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.props.navigation.pop()} >
-          <Text style={{ color: 'gray', fontWeight: '500', marginTop: 20 }}>العودة إلى صفحة الدخول</Text>
-
-        </TouchableOpacity>
-
-
-      </View>
-
+      </ImageBackground>
     );
 
   }
@@ -75,9 +81,8 @@ export default class ForgotPassword extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 120
   },
   Reset: {
     backgroundColor: '#01b753',
@@ -99,13 +104,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     textAlign: 'right',
     color: 'black',
+    fontFamily: 'Tajawal_400Regular',
     height: 30,
     borderColor: 'gray',
     borderWidth: 1,
-    width: 200,
+    width: 250,
     borderStartColor: 'white',
     borderEndColor: 'white',
-    borderTopColor: 'white'
+    borderTopColor: 'white',
+    fontSize: 20
   },
 });
 

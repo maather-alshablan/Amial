@@ -19,18 +19,19 @@ function Authuntication() {
   return (
     // to login/sign up navigation
     //<NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{ headerShown: false }}>
-        
-        <Stack.Screen name="Login" component={Login} unmountOnBlur={true}/>
-        <Stack.Screen name="ForgotPassword" component={ForgotPassword} unmountOnBlur={true}/>
-        <Stack.Screen name="Registration" component={Registration} unmountOnBlur={true}/>
+    <Stack.Navigator
+      initialRouteName="Login"
+      screenOptions={{ headerShown: false }}>
+
+      <Stack.Screen name="Login" component={Login} unmountOnBlur={true} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPassword} unmountOnBlur={true} />
+      <Stack.Screen name="Registration" component={Registration} unmountOnBlur={true} />
       {/* <Stack.Screen name="MainNavigation" component={MainNavigation} unmountOnBlur={true}/> */}
 
-      </Stack.Navigator>
+    </Stack.Navigator>
     //</NavigationContainer>
   );
 }
+
 
 export default Authuntication;

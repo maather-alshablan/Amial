@@ -7,107 +7,113 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 
 export default class SelectLocation extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            latitude: 0,
-            longitude: 0,
-        }
-        this.mapNormal = React.createRef();
-    }
-    componentDidMount() {
-        this.currentLocationBtn()
-    }
-    currentLocationBtn = async () => {
-        let { status } = await Location.requestPermissionsAsync();
-        if (status !== 'granted') {
-            alert('Permission to access location was denied');
-            return;
-        }
+constructor(props) {
+super(props);
+this.state = {
+latitude: 0,
+longitude: 0,
+}
+this.mapNormal = React.createRef();
+}
+componentDidMount() {
+this.currentLocationBtn()
+}
+currentLocationBtn = async () => {
+let { status } = await Location.requestPermissionsAsync();
+if (status !== 'granted') {
+alert('Permission to access location was denied');
+return;
+}
 
-        let location = await Location.getCurrentPositionAsync({});
-        this.moveToPoint({
-            latitude: location.latitude,
-            longitude: location.longitude
-        })
+let location = await Location.getCurrentPositionAsync({});
+this.moveToPoint({
+latitude: location.latitude,
+longitude: location.longitude
+})
 
-    };
+};
 
-    moveToPoint = async ({ latitude, longitude }) => {
+moveToPoint = async ({ latitude, longitude }) => {
 
-        const region = {
-            latitude: latitude,
-            longitude: longitude,
-            latitudeDelta: 0.012,
-            longitudeDelta: 0.012,
-        };
-        this.mapNormal.current.animateToRegion(region, 500);
-    };
+const region = {
+latitude: latitude,
+longitude: longitude,
+latitudeDelta: 0.012,
+longitudeDelta: 0.012,
+};
+this.mapNormal.current.animateToRegion(region, 500);
+};
 
 
-    handleChangeRegion = (regoin) => {
-        this.setState({
-            latitude: parseFloat(regoin.latitude.toFixed(6)),
-            longitude: parseFloat(regoin.longitude.toFixed(6))
-        })
-    }
+handleChangeRegion = (regoin) => {
+this.setState({
+latitude: parseFloat(regoin.latitude.toFixed(6)),
+longitude: parseFloat(regoin.longitude.toFixed(6))
+})
+if (this.props.setCoordinates) {
+this.props.setCoordinates({
+latitude: parseFloat(regoin.latitude.toFixed(6)),
+longitude: parseFloat(regoin.longitude.toFixed(6))
+})
+}
+}
 
-    render() {
-        return (
-            <>
-                <View style={styles.mapSize}>
-                    {/* <GooglePlacesAutocomplete
-            placeholder="Search"
-            query={{
-              key: "AIzaSyDHUWPfalHhfjfnxRcyd-PfIUN_sMhdxo4",
-              language: 'ar', // language of the results
-            }}
-            onPress={(data, details = null) => {
-              console.warn("+++++", data, details)
-            }}
-            onFail={(error) => console.error(error)}
-            renderRow={(data) => <TouchableOpacity
-              onPress={() => console.warn('eeeee', data)}
-              style={{ height: 22, width: '100%', backgroundColor: 'red' }}></TouchableOpacity>}
-          /> */}
-                </View>
-                <View style={styles.container}>
-                    <MapView
-                        style={styles.map}
-                        // provider={PROVIDER_GOOGLE}
-                        initialRegion={{
-                            latitude: parseFloat(this.state.latitude != "" ? this.state.latitude : 37.78825),
-                            longitude: parseFloat(this.state.longitude != "" ? this.state.longitude : -122.4324),
-                            latitudeDelta: 0.00922,
-                            longitudeDelta: 0.00421,
-                        }}
-                        showsUserLocation
-                        onRegionChange={this.handleChangeRegion}
+render() {
+return (
+<>
+<View style={styles.mapSize}>
+{/* <GooglePlacesAutocomplete
+placeholder="Search"
+query={{
+key: "AIzaSyDHUWPfalHhfjfnxRcyd-PfIUN_sMhdxo4",
+language: 'ar', // language of the results
+}}
+onPress={(data, details = null) => {
+console.warn("+++++", data, details)
+}}
+onFail={(error) => console.error(error)}
+renderRow={(data) => <TouchableOpacity
+onPress={() => console.warn('eeeee', data)}
+style={{ height: 22, width: '100%', backgroundColor: 'red' }}></TouchableOpacity>}
+/> */}
+</View>
+<View style={styles.container}>
+<MapView
+style={styles.map}
+// provider={PROVIDER_GOOGLE}
+initialRegion={{
+latitude: parseFloat(this.state.latitude != "" ? this.state.latitude : 37.78825),
+longitude: parseFloat(this.state.longitude != "" ? this.state.longitude : -122.4324),
+latitudeDelta: 0.00922,
+longitudeDelta: 0.00421,
+}}
+showsUserLocation
+onRegionChange={this.handleChangeRegion}
 
-                    >
-                        <Marker
-                            title="موقع المركبة"
-                            coordinate={{ latitude: this.state.latitude, longitude: this.state.longitude }}
-                        // image={require('../assets/pin.png')}
-                        />
-                    </MapView>
+>
+<Marker
+title="موقع المركبة"
+coordinate={{ latitude: this.state.latitude, longitude: this.state.longitude }}
+// image={require('../assets/pin.png')}
+/>
+</MapView>
 
-                </View>
-            </>
-        )
-    }
+</View>
+</>
+)
+}
 }
 
 
 const styles = StyleSheet.create({
-    container: {
-        ...StyleSheet.absoluteFillObject,
-        height: Dimensions.get('screen').width,
-        width: Dimensions.get('screen').width,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    map: {
-        ...StyleSheet.absoluteFillObject,
-    },
+container: {
+...StyleSheet.absoluteFillObject,
+height: Dimensions.get('screen').width,
+width: Dimensions.get('screen').width,
+justifyContent: 'center',
+alignItems: 'center',
+},
+map: {
+...StyleSheet.absoluteFillObject,
+},
 });

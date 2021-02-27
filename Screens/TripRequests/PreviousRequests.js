@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image,FlatList, Dimensions, Linking } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Dimensions, Linking, FlatList } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
 import colors from '../../Constants/colors';
@@ -9,52 +9,50 @@ import { database, auth } from '../../Configuration/firebase';
 import { MaterialCommunityIcons } from '../../Constants/icons';
 
 
-export default class PendingRequests extends Component {
+export default class ActiveRequests extends Component {
   constructor(props) {
     super(props);
-    this.state ={
-    request: [],
-    hasRequest:false
+    this.state = {
+      request: {},
+      hasRequest: false
+    }
+  }
 
-  }}
+  componentDidMount = () => {
+    this.retrieveActiveTrips();
+  }
 
-  componentDidMount = async () =>{
-    
-    this.retreiveRequests();
+  componentDidUpdate = () => {
+    this.retrieveActiveTrips();
+
   }
 
 
-  retreiveRequests = async ()=>{
-  
-    // user is a vehicle owner
-      console.log('owner type')
+  retrieveActiveTrips = () => {
 
-        await database.collection('Trips')
-      .where("ownerID",'==',auth.currentUser.uid)
-      .where('status','==','pending')
-      .get().then((querySnapshot)=>{
-      if (!querySnapshot.empty){
-        let requests = []
-        console.log(querySnapshot.size,' Pending Requests found')
+    console.log('user is borrower')
+    database.collection('Trips')
+      .where("borrowerID", '==', auth.currentUser.uid)
+      .where('status', '==', 'active')
+      .get().then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          let requests = []
+          console.log(querySnapshot.size, ' Previous Requests found')
 
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-          requests.push(doc.data());
-      });
-      this.setState({request: requests,hasRequest:true});
-      console.log('array > ', this.state.request)
-      } else console.log('No Active requests found')
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            //console.log(doc.id, " => ", doc.data());
+            requests.push(doc.data());
+          });
+          this.setState({ request: requests, hasRequest: true });
+          console.log('array > ', this.state.request)
+        } else console.log('No previous requests found')
+
       })
-          
   }
 
-
-  renderRequest = () => {
-    
-   
-    return (
-    <TouchableOpacity
+  renderRequest = ({ item, index }) => {
+    return (<TouchableOpacity
       activeOpacity={1}
       onPress={() => {
         // navigate to view
@@ -81,17 +79,14 @@ export default class PendingRequests extends Component {
         justifyContent: 'space-between',
       }}>
         <View style={{ padding: 10 }}>
-          <Text style={styles.label}>نوع المركبة BMW</Text>
-          <Text style={styles.label}>نوع التسليم 
-          {/* {vehicle.details.pickupOption} */}
-          </Text>
-          <Text style={styles.label}>اسم المستأجر  Faisal</Text>
-          <Text style={[styles.label, {color:colors.Subtitle}]}>الحالة  لم يتم الدفع</Text>
+          <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>نوع المركبة: range rover</Text>
+          <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>اسم المستأجر : Saad</Text>
+          <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>طريقة التسليم: توصيل</Text>
+          <Text style={{ textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 }}>الحالة :تم الدفع</Text>
+
         </View>
         <View style={{ width: 120, height: 80 }}>
-          <Image source={{ uri: 'https://pngimg.com/uploads/maserati/maserati_PNG81.png'
-            // vehicle.image 
-            }} style={{ width: '100%', height: '100%' }} />
+          <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} />
         </View>
       </View>
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -113,20 +108,18 @@ export default class PendingRequests extends Component {
           }}
           style={{ padding: 8, borderRadius: 6, borderColor: '#3fc250', borderWidth: 1, flexDirection: 'row', alignItems: 'center' }}>
           <Image source={{ uri: 'https://img.icons8.com/color/452/whatsapp--v1.png' }} style={{ width: 24, height: 24 }} />
-          <Text style={{ marginLeft: 8, fontFamily: 'Tajawal_400Regular',  }}>تواصل مع المستأجر</Text>
+          <Text style={{ marginLeft: 8, fontFamily: 'Tajawal_400Regular', }}>تواصل مع المستأجر</Text>
         </TouchableOpacity>
       </View>
 
     </TouchableOpacity>)
-     
   }
+
   userHasNoRequests = () => {
     return (
-      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 280 }}>
-   
-   <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{marginHorizontal:100, bottom:30}}/>
-        <Text style={styles.emptyTripsText}> لا توجد لديك رحلات معلقة</Text>
-
+      <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
+        <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{ marginHorizontal: 100, bottom: 30 }} />
+        <Text style={styles.emptyTripsText}> لا توجد لديك رحلة نشطة</Text>
       </View>
     )
   }
@@ -134,13 +127,13 @@ export default class PendingRequests extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.state.hasRequest  ?
+
+        {this.state.hasRequest ?
           <FlatList
             data={this.state.request}
             renderItem={this.renderRequest}
             contentContainerStyle={{ alignItems: 'center' }}
-           /> :  
-          this.userHasNoRequests()
+          /> : this.userHasNoRequests()
         }
         <ModalComponent />
       </View>
@@ -152,18 +145,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-
-  },
+  }, //for mockup
   emptyTripsText: {
     color: colors.Subtitle,
-    textAlign:'center',
+    textAlign: 'center',
     fontSize: 25,
     fontFamily: "Tajawal_500Medium"
-  },
-  label:{
-     textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 
-  },
-  input:{textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20 , color:colors.LightBlue}
+  }
 
 });
 

@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
 import {firebase} from '../../Configuration/firebase'
 import { Octicons } from '../../Constants/icons';
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { Rating, } from 'react-native-ratings';
 import { auth } from 'firebase';
 
 
@@ -24,10 +24,11 @@ export default class Person extends Component {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     this.setState({ hasCameraPermission: status === "granted" });
 
-
     this.retrieveProfile();
-    
    }
+  componentDidUpdate(){
+    this.retrieveProfile();
+  }
   
 
 
@@ -40,14 +41,15 @@ export default class Person extends Component {
     .then(snapshot =>{
       this.setState({
         name:snapshot.data().name ,
-        userRating: snapshot.data().userRating})
+        userRating: snapshot.data().userRating
+      })
     })
     .catch(()=>{
       console.log('error getting user firestore reference')
     })
 
     // 2. Retrieve Profile Image
-    firebase
+    var ref =firebase
     .storage()
     .ref()
     .child('userImages/'+personID);

@@ -1,11 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, ImageBackground } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import CustomButton from '../components/CustomButton';
+import CustomHeader from '../components/CustomHeader';
 import Input from '../components/Input';
 import { OverLay } from '../components/OverLay';
 import { auth, database } from '../Configuration/firebase'
-import {ModalComponent} from '../Constants/Components/Modal'
+import { ModalComponent } from '../Constants/Components/Modal'
 
 export default class Registration extends Component {
 
@@ -18,46 +21,84 @@ export default class Registration extends Component {
     DoB: '',
     password: '',
     confirmPassword: '',
-    loading: false
+    loading: false,
+    correctEmail: false
   }
 
-  handleSignUp = () => {
+  checkDataBase = (nationalID) => {
+    return database.collection('DataSets')
+      .get()
+      .then((querySnapshot) => {
+        let found = false;
+        let obj = null;
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+
+          if (doc.id == nationalID) {
+            found = true
+            obj = doc.data()
+          }
+          // console.warn(obj)
+        });
+
+        if (found) {
+          return true
+        } else {
+          return false;
+        }
+        console.warn('eeee');
+      })
+      .catch((error) => {
+        console.warn("Error getting documents: ", error);
+      });
+  }
+  handleSignUp = async () => {
+
     if (this.state.password !== this.state.confirmPassword) {
       this.state.formValid = false;
-      alert("يرجى التأكد من مطابقة كلمة المرور")
+
+      this.failureMessage("يرجى التأكد من مطابقة كلمة المرور")
       return;
 
     }
 
-    if (this.state.email !== this.state.confirmEmail) {
-      this.state.formValid = false;
-      alert("يرجى التأكد من مطابقة البريد الإلكتروني ")
-      return;
-
-    }
 
     if (this.state.email === '' && this.state.password === '') {
       this.state.formValid = false;
-      alert(" يرجى ادخال جميع البيانات")
+      this.failureMessage(" يرجى ادخال جميع البيانات")
       return;
 
     }
-    if (this.state.nationalId == '' || this.state.name == '' || this.state.phone == '' || this.state.email == '' || this.state.confirmEmail == '' || this.state.password == '' || this.state.confirmPassword == '') {
+    if (this.state.nationalID == '' || this.state.name == '' || this.state.phone == '' || this.state.email == '' || this.state.password == '' || this.state.confirmPassword == '') {
       this.state.formValid = false;
-      alert(" يرجى ادخال جميع البيانات")
+      this.failureMessage(" يرجى ادخال جميع البيانات")
       return;
 
     }
 
+    if (this.state.phone.length != 10) {
+      this.state.formValid = false;
+
+      this.failureMessage("يرجى استخدام رقم جوال صحيح")
+      return
+    }
 
     if (this.state.password.length < 8) {
       this.state.formValid = false;
 
-      alert("يرجى ادخال كلمة مرور مكونة من ٨ خانات او اكثر")
+      this.failureMessage("يرجى ادخال كلمة مرور مكونة من ٨ خانات او اكثر")
       return
     }
 
-
+    if (!this.state.correctEmail) {
+      this.failureMessage("يرجى استخدام بريد الكتروني صحيح")
+      return
+    }
+    const check = await this.checkDataBase(this.state.nationalID);
+    if (!check) {
+      this.failureMessage("عذرا رقم الهوية المدخل غير صحيح")
+      return;
+    }
 
     auth.
       createUserWithEmailAndPassword(this.state.email, this.state.password)
@@ -67,7 +108,7 @@ export default class Registration extends Component {
       .catch(
         (e) => {
           console.warn('successfulRegistration[error]', e)
-          alert('يرجى التأكد من ادخال البيانات بالشكل الصحيح')
+          this.failureMessage('يرجى التأكد من ادخال البيانات بالشكل الصحيح')
         })
 
     if (this.state.errorMessage == '') {
@@ -81,101 +122,113 @@ export default class Registration extends Component {
     database.collection('users').doc(userid).set({
       name: this.state.name,
       email: this.state.email,
-      password: this.state.password, 
+      password: this.state.password,
       mobileNumber: this.state.mobileNumber,
       nationalID: this.state.nationalID,
-      userRating:0,
+      userRating: 0,
     }).then(success => {
       // this is already handled in the navigation so no need for the following line of code
-     // this.props.navigation.navigate('Home');
+      // this.props.navigation.navigate('Home');
       this.setState({ loading: false })
     }).catch(e => {
-      alert('حصل خطأ ما يرجى المحاولة لاحقا')
+      this.failureMessage('حصل خطأ ما يرجى المحاولة لاحقا')
       this.setState({ loading: false })
       console.warn('error', e);
     })
 
   }
 
-  successMessage= ()=> {
+  successMessage = () => {
     showMessage({
-      message:"تم الحفظ بنجاح",
+      message: "تم الحفظ بنجاح",
       type: "success",
     });
   }
 
-  
-  failureMessage= (message)=> {
+
+  failureMessage = (message) => {
     showMessage({
-      message:  message,
+      message: message,
       type: 'danger'
     });
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={{ marginBottom: 64 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>إنشاء حساب جديد </Text>
+      <ImageBackground
+        source={require('../images/b2.png')}
+        style={{ width: '100%', height: '100%' }}
+      >
+        <View style={styles.container}>
+          <View style={{ marginBottom: 100, marginTop: 20 }}>
+            <CustomHeader
+              subTitle="إنشاء حساب جديد"
+            />
+          </View>
+          <Input
+            placeholder="رقم الهوية / الاقامة"
+            value={this.state.nationalID}
+            onChangeText={(nationalID) => this.setState({ nationalID })}
+            iconName={'flag'}
+          />
+          <Input
+            placeholder="الاسم الرباعي"
+            value={this.state.name}
+            onChangeText={(name) => this.setState({ name })}
+            iconName={'user'}
+          />
+          <Input
+            placeholder="البريد الالكتروني"
+            value={this.state.email}
+            onChangeText={(email) => {
+
+              var regex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+              var matches = regex.exec(email);
+              if (matches && matches.length > 0) {
+                this.setState({ correctEmail: true });
+              } else {
+                this.setState({ correctEmail: false });
+              }
+              this.setState({ email })
+            }}
+            iconName={'envelope'}
+          />
+          <Input
+            placeholder="رقم الجوال"
+            value={this.state.mobileNumber}
+            onChangeText={(mobileNumber) => this.setState({ mobileNumber })}
+            iconName={'phone'}
+            keyboardType={"phone-pad"}
+            returnKeyType={'done'}
+          />
+          <Input
+            placeholder="كلمة المرور"
+            value={this.state.password}
+            onChangeText={(password) => this.setState({ password })}
+            iconName={'lock'}
+            secureTextEntry={true}
+
+          />
+          <Input
+            placeholder="تاكيد كلمة المرور"
+            value={this.state.confirmPassword}
+            onChangeText={(confirmPassword) => this.setState({ confirmPassword })}
+            iconName={'lock'}
+            secureTextEntry={true}
+          />
+          <CustomButton
+            onPress={this.handleSignUp}
+            title='تســجــيـــــل'
+            style={{ marginTop: 32, marginBottom: 16 }}
+          />
+
+          <Text style={{ fontSize: 14 }} >مسجل مسبقا؟ <Text style={{ textDecorationLine: 'underline', color: '#01b753' }}
+            onPress={() => this.props.navigation.navigate('Login')}
+          >تسجيل الدخول</Text></Text>
+          {this.state.loading ? <OverLay /> : null}
         </View>
-        <Input
-          placeholder="رقم الهوية / الاقامة"
-          value={this.state.nationalID}
-          onChangeText={(nationalID) => this.setState({ nationalID })}
-          iconName={'flag'}
-        />
-        <Input
-          placeholder="الاسم الرباعي"
-          value={this.state.name}
-          onChangeText={(name) => this.setState({ name })}
-          iconName={'user'}
-        />
-        <Input
-          placeholder="البريد الالكتروني"
-          value={this.state.email}
-          onChangeText={(email) => this.setState({ email })}
-          iconName={'envelope'}
-        />
-        <Input
-          placeholder="تاكيد البريد الالكتروني"
-          value={this.state.confirmEmail}
-          onChangeText={(confirmEmail) => this.setState({ confirmEmail })}
-          iconName={'envelope'}
-        />
-        <Input
-          placeholder="رقم الجوال"
-          value={this.state.mobileNumber}
-          onChangeText={(mobileNumber) => this.setState({ mobileNumber })}
-          iconName={'phone'}
-          keyboardType={"phone-pad"}
-          returnKeyType={'done'}
-        />
-        <Input
-          placeholder="كلمة المرور"
-          value={this.state.password}
-          onChangeText={(password) => this.setState({ password })}
-          iconName={'lock'}
-          secureTextEntry={true}
-          
-        />
-        <Input
-          placeholder="تاكيد كلمة المرور"
-          value={this.state.confirmPassword}
-          onChangeText={(confirmPassword) => this.setState({ confirmPassword })}
-          iconName={'lock'}
-          secureTextEntry={true}
-        />
-        <TouchableOpacity
-          onPress={this.handleSignUp}
-          style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', justifyContent: 'center', alignItems: 'center', marginVertical: 16 }}>
-          <Text style={{ fontSize: 14, color: '#fff' }}>تسجيل</Text>
-        </TouchableOpacity>
-        <Text style={{ fontSize: 14 }} >مسجل مسبقا؟ <Text style={{ textDecorationLine: 'underline', color: '#01b753' }}
-          onPress={() => this.props.navigation.navigate('Login')}
-        >تسجيل الدخول</Text></Text>
-        {this.state.loading ? <OverLay /> : null}
-        <ModalComponent/>
-      </View>
+
+      </ImageBackground>
     );
 
   }
@@ -184,8 +237,7 @@ export default class Registration extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 100
   },
 });

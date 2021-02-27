@@ -16,8 +16,10 @@ export default function Input(props) {
       <TextInput
         style={[{
           paddingHorizontal: 10,
-          textAlign: 'right',
+          textAlign: 'center',
+          fontSize: 20,
           color: 'black',
+          fontFamily: "Tajawal_400Regular",
           height: 30,
           borderColor: 'gray',
           borderWidth: 1,

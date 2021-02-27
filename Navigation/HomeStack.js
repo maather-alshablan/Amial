@@ -1,74 +1,57 @@
 import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Text, View} from 'react-native';
+import { Text, View } from 'react-native';
 
 
 import Homescreen from '../Screens/Homescreen'
 import VehicleView from '../Screens/myVehicleScreens/ViewVehicle'
-import requestVehicle from '../Screens/myVehicleScreens/requestVehicle'
-
+import CustomHeader from "../components/CustomHeader";
 import colors from '../Constants/colors'
 
 
-function HomeStack (){
-    const Stack = createStackNavigator()
+function HomeStack() {
+  const Stack = createStackNavigator()
 
-    return(
-        <Stack.Navigator
-        initialRouteName="home">
+  return (
+    <Stack.Navigator
+      initialRouteName="home">
 
-        <Stack.Screen name="Home" 
-        component={Homescreen} 
+      <Stack.Screen name="Home"
+        component={Homescreen}
         unmountOnBlur={true}
-        options={{ 
-          headerTitle: null ,
-         
-            }}
-        />
+        options={{
+          headerTitle: null,
+          headerStyle: { shadowColor: 'transparent', height: 0 }
+        }}
+      />
 
-          <Stack.Screen name="VehicleView" component={VehicleView}
-           options={{ 
-            headerTitle:props => <ViewVehicleHeader {...props} />,
-            headerBackTitleVisible:false,
-            headerBackTitleStyle:{color:'#5dbcd2'},
-            headerTintColor:colors.LightBlue,
-            headerStyle: { shadowColor: 'transparent',height:140}
-            }}/>
-        
-            <Stack.Screen name="RequestVehicle" component={requestVehicle}
-           options={{ 
-            headerTitle:props => <ViewVehicleHeader {...props} />,
-            headerBackTitleVisible:false,
-            headerBackTitleStyle:{color:'#5dbcd2'},
-            headerTintColor:colors.LightBlue,
-            headerStyle: { shadowColor: 'transparent',height:140}
-            }}/>
+      <Stack.Screen name="VehicleView" component={VehicleView}
+        options={{
+          headerTitle: props => <CustomHeader title="المركبة" {...props} />,
+          headerBackTitleVisible: false,
+          headerBackTitleStyle: { color: '#5dbcd2' },
+          headerTintColor: colors.LightBlue,
+          headerStyle: { shadowColor: 'transparent', height: 140 }
+        }} />
 
-        
-        </Stack.Navigator>
-    )
+
+
+    </Stack.Navigator>
+  )
 }
 
 
 
-function Header(){
-    return(
-      <View >
-      <Text style={{fontSize:35,color:'#5dbcd2',fontFamily:'Tajawal_400Regular'}}>Homescreen</Text>
-      </View>
-    )
-  }
 
-
-  function ViewVehicleHeader(){
-    return(
-      <View >
-      <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>المركبة
+function ViewVehicleHeader() {
+  return (
+    <View >
+      <Text style={{ fontSize: 35, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', }}>المركبة
 </Text>
-      </View>
-    )
-  }
+    </View>
+  )
+}
 
 
-  
+
 export default HomeStack;
