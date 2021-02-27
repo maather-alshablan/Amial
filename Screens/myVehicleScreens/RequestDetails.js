@@ -240,6 +240,30 @@ const children = ({ remainingTime }) => {
   )
   }
 
+  handleActiveTrip=()=>{
+        
+    var batch = database.batch();
+
+    var trip =  database.collection('Trips').doc(this.state.currentRequest.tripID);
+                 batch.update(trip,{status:'completed'} );
+
+     var borrowerRequest = database.collection('users').doc( auth.currentUser.uid)
+     .collection('Requests').doc(this.state.currentRequest.tripID);
+                           batch.update(borrowerRequest,{status:'completed'} );
+
+     var ownerRequest = database.collection('users').doc(this.state.currentRequest.borrowerID)
+     .collection('Requests').doc(this.state.currentRequest.tripID);
+      batch.update(ownerRequest,{status:'completed'} );
+    
+    
+    batch.commit().then(()=>{
+     
+           // on success
+           this.successMessage('تم تنشيط الحجز بنجاح');
+           this.props.navigation.pop();}
+  )
+  }
+
 
   actionButton =()=>{
     var status=this.state.currentRequest.status+'';
@@ -259,8 +283,16 @@ var statusColor =''
     break;
     case 'accepted': status='ينتظر التأكيد' 
     statusColor = colors.Subtitle
-    
     break;
+    case 'confirmed':
+      statusColor = colors.Green
+      button=  (<TouchableOpacity style={[styles.Button,{borderColor:statusColor,borderWidth:1,width:150,marginHorizontal:10, alignSelf:'flex-start'}]}  
+      onPress={() => {
+       this.handleActiveTrip();
+        }}>
+        <Text style={[styles.ButtonText,{color:statusColor}]}>  ابدأ الرحلة   </Text>
+        </TouchableOpacity>)
+      break;
     case 'rejected': status ='لم يتم التأكيد'
     case 'cancelled': status ='لم يتم التأكيد'
 
