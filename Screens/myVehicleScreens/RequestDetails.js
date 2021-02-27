@@ -105,7 +105,7 @@ const children = ({ remainingTime }) => {
        this.handleCancelRequest('cancelled', true)
        return [true, 1500] // repeat animation in 1.5 seconds
      }}
-     duration={this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' ? countdown : 0 }
+     duration={this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' ? 100 : 0 }
      colors={[
        ['#004777', 0.4],
        ['#F7B801', 0.4],
@@ -262,6 +262,8 @@ var statusColor =''
     
     break;
     case 'rejected': status ='لم يتم التأكيد'
+    case 'cancelled': status ='لم يتم التأكيد'
+
     statusColor = '#fa4353'
     button=  (<TouchableOpacity style={[styles.Button,{borderColor:statusColor,borderWidth:1,width:150,marginHorizontal:10, alignSelf:'flex-start'}]}  
     onPress={() => {

@@ -113,7 +113,7 @@ const children = ({ remainingTime }) => {
        this.handleCancelRequest(true);
        return [true, 1500] // repeat animation in 1.5 seconds
      }}
-     duration={this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' ? countdown : 0 }
+     duration={this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' ? 100 : 0 }
      colors={[
        ['#004777', 0.4],
        ['#F7B801', 0.4],

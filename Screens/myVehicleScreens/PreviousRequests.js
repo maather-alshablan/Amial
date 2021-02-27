@@ -89,8 +89,11 @@ var statusColor =''
   switch (status){
     case 'completed': status='مكتملة' 
     statusColor=colors.Subtitle
-
     break;
+    case 'rejected': status ='لم يتم التأكيد'
+    case 'cancelled': status ='لم يتم التأكيد'
+    statusColor = '#fa4353'
+
 
   }
 
