@@ -105,10 +105,8 @@ var statusColor =''
     break;
     case 'accepted': status='مقبولة' 
     statusColor = colors.Green
- 
     break;
     
-    break;
     default: status='قيد المراجعة' ;
     statusColor=colors.Subtitle;
   }

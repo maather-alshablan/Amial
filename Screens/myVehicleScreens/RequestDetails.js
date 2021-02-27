@@ -227,7 +227,7 @@ const children = ({ remainingTime }) => {
      .collection('Requests').doc(this.state.currentRequest.tripID);
                            batch.update(borrowerRequest,{status:'accepted',requestAcceptTime: new Date()} );
 
-     var ownerRequest = database.collection('users').doc(this.state.currentRequest.ownerID)
+     var ownerRequest = database.collection('users').doc(this.state.currentRequest.borrowerID)
      .collection('Requests').doc(this.state.currentRequest.tripID);
       batch.update(ownerRequest,{status:'accepted',requestAcceptTime: new Date()} );
     
