@@ -21,46 +21,33 @@ export default class ActiveRequests extends Component {
 
   componentDidMount= ()=> {
     this.retrievePreviousTrips();
-    database.collection('users').doc(auth.currentUser.uid).collection('Requests')
-    .where("ownerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
-      if(snapshot.empty)
-      this.retrievePreviousTrips();
-
-      snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            this.retrievePreviousTrips();
-          }
-          if (change.type === "modified") {
-            this.retrievePreviousTrips();
-          }
-          if (change.type === "removed") {
-            this.retrievePreviousTrips();
-          }
-      });
-    });
   }
 
 
-  retrievePreviousTrips =  async () => {
+  retrievePreviousTrips =   () => {
     
     // user is a vehicle owner
       console.log('user is owner')
 
-      await database.collection('users').doc(auth.currentUser.uid).collection('Requests')
+       database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("ownerID",'==',auth.currentUser.uid)
       .where('status','in',['completed','rejected','cancelled'])
-      .get().then((querySnapshot)=>{
-      if (!querySnapshot.empty){
+      .onSnapshot((querySnapshot)=>{
         let requests = []
-        console.log(querySnapshot.size,' previous Requests found')
+      if (!querySnapshot.empty){
+        console.log(querySnapshot.size,' Pending Requests found')
+
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
+          //requests.push(doc.id, " => ", doc.data());
           requests.push(doc.data());
+          //requests[doc.id] = doc.data();
       });
-      this.setState({request: requests,hasRequest:true});
+      this.setState({request: requests, hasRequest:true});
       console.log('array > ', this.state.request)
-      } else console.log('No previous requests found')
+} else {console.log('No Pending requests found')
+this.setState({request: requests, hasRequest:false});
+}
       })
     
   }

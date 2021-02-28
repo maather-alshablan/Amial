@@ -17,47 +17,33 @@ export default class ConfirmedRequests extends Component {
   componentDidMount() {
     this.retrieveConfirmedTrips();
 
-    database.collection('users').doc(auth.currentUser.uid).collection('Requests')
-    .where("ownerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
-      if(snapshot.empty)
-      this.retrieveConfirmedTrips();
-
-      snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            this.retrieveConfirmedTrips();
-          }
-          if (change.type === "modified") {
-            this.retrieveConfirmedTrips();
-          }
-          if (change.type === "removed") {
-            this.retrieveConfirmedTrips();
-          }
-      });
-    });
   }
 
  
 
-   retrieveConfirmedTrips = async () => {
+   retrieveConfirmedTrips =  () => {
     // user is a vehicle owner
       console.log('user is owner')
 
-      await  database.collection('users').doc(auth.currentUser.uid).collection('Requests')
+        database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("ownerID",'==',auth.currentUser.uid)
       .where('status','in',['confirmed','active'])
-      .get().then((querySnapshot)=>{
+      .onSnapshot((querySnapshot)=>{
+        let requests = []
       if (!querySnapshot.empty){
-        let requests= []
-        console.log(querySnapshot.size,' Confirmed Requests found')
+        console.log(querySnapshot.size,' Pending Requests found')
 
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
+          //requests.push(doc.id, " => ", doc.data());
           requests.push(doc.data());
+          //requests[doc.id] = doc.data();
       });
-      this.setState({request: requests,   hasRequest:true});
+      this.setState({request: requests, hasRequest:true});
       console.log('array > ', this.state.request)
-      } else console.log('No confirmed requests found')
+} else {console.log('No Pending requests found')
+this.setState({request: requests, hasRequest:false});
+}
       })
   }
 

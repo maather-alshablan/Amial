@@ -16,51 +16,33 @@ export default class ConfirmedRequests extends Component {
   }}
   componentDidMount() {
     this.retrieveConfirmedTrips();
-
-    database.collection('users').doc(auth.currentUser.uid).collection('Requests')
-    .where("ownerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
-      if(snapshot.empty)
-      this.retrieveConfirmedTrips();
-
-      snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            this.retrieveConfirmedTrips();
-          }
-          if (change.type === "modified") {
-            this.retrieveConfirmedTrips();
-          }
-          if (change.type === "removed") {
-            this.retrieveConfirmedTrips();
-          }
-      });
-    });
   }
 
 
 
 
-   retrieveConfirmedTrips = async () => {
+   retrieveConfirmedTrips =  () => {
    
             console.log('user is borrower')
-            await  database.collection('users').doc(auth.currentUser.uid).collection('Requests')
+              database.collection('users').doc(auth.currentUser.uid).collection('Requests')
             .where("borrowerID",'==',auth.currentUser.uid)
             .where('status','in',['confirmed','active'])
-            .get().then((querySnapshot)=>{
-            if (!querySnapshot.empty){
+            .onSnapshot((querySnapshot)=>{
               let requests = []
-              console.log(querySnapshot.size,' Confirmed Requests found')
+            if (!querySnapshot.empty){
+              console.log(querySnapshot.size,' Pending Requests found')
 
               querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
-                //console.log(doc.id, " => ", doc.data());
+                //requests.push(doc.id, " => ", doc.data());
                 requests.push(doc.data());
+                //requests[doc.id] = doc.data();
             });
-            this.setState
-            ({request: requests,
-                hasRequest:true
-            });
+            this.setState({request: requests, hasRequest:true});
             console.log('array > ', this.state.request)
-      } else console.log('No Confirmed requests found')
+      } else {console.log('No Pending requests found')
+      this.setState({request: requests, hasRequest:false});
+    }
             })
     
   }

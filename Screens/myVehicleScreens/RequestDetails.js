@@ -218,18 +218,20 @@ const children = ({ remainingTime }) => {
   }
 
   handleAcceptRequest=()=>{
+
+    var requestAcceptTime = new Date();
     var batch = database.batch();
 
     var trip =  database.collection('Trips').doc(this.state.currentRequest.tripID);
-                 batch.update(trip,{status:'accepted', requestAcceptTime: new Date()} );
+                 batch.update(trip,{status:'accepted', requestAcceptTime: requestAcceptTime} );
 
      var borrowerRequest = database.collection('users').doc( auth.currentUser.uid)
      .collection('Requests').doc(this.state.currentRequest.tripID);
-                           batch.update(borrowerRequest,{status:'accepted',requestAcceptTime: new Date()} );
+                           batch.update(borrowerRequest,{status:'accepted',requestAcceptTime: requestAcceptTime} );
 
      var ownerRequest = database.collection('users').doc(this.state.currentRequest.borrowerID)
      .collection('Requests').doc(this.state.currentRequest.tripID);
-      batch.update(ownerRequest,{status:'accepted',requestAcceptTime: new Date()} );
+      batch.update(ownerRequest,{status:'accepted',requestAcceptTime: requestAcceptTime} );
     
     
     batch.commit().then(()=>{
@@ -427,7 +429,7 @@ var statusColor =''
 
          
          {//dont show cancel request button if the request is already rejected 
-         this.state.currentRequest.status == 'rejected' || this.state.currentRequest.status == 'cancelled' ? <View>
+         this.state.currentRequest.status == 'rejected' || this.state.currentRequest.status == 'cancelled' || this.state.currentRequest.status =='completed'? <View>
            <TouchableOpacity style={[styles.Button,{borderColor:'#fa4353',borderWidth:1,}]}    
               onPress={() => {
                this.handleDeleteRequest();
@@ -436,7 +438,7 @@ var statusColor =''
               </TouchableOpacity> 
          </View>:<View></View>}
 
-          {this.state.currentRequest.status == 'accepted'? <View>
+          {this.state.currentRequest.status == 'accepted' || this.state.currentRequest.status =='confirmed' ? <View>
          <TouchableOpacity style={[styles.Button,{borderColor:'grey',borderWidth:1,}]}    
               onPress={() => {
                this.handleCancelRequest('cancelled');
