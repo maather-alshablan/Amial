@@ -17,9 +17,9 @@ export default function Input(props) {
         style={[{
           paddingHorizontal: 10,
           textAlign: 'center',
-          fontSize:18,
+          fontSize: 20,
           color: 'black',
-          fontFamily:"Tajawal_400Regular",
+          fontFamily: "Tajawal_400Regular",
           height: 30,
           borderColor: 'gray',
           borderWidth: 1,

@@ -7,9 +7,10 @@ import Modal from 'react-native-modal';
 import { firebase, database } from '../../Configuration/firebase'
 import { Rating, AirbnbRating, } from 'react-native-ratings';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {EvilIcons , FontAwesome5, MaterialIcons} from '../../Constants/icons'
-import { auth,  } from 'firebase';
-import  { showMessage, hideMessage } from "react-native-flash-message";
+import { EvilIcons, FontAwesome5, MaterialIcons } from '../../Constants/icons'
+import { auth, } from 'firebase';
+import { showMessage, hideMessage } from "react-native-flash-message";
+import CustomButton from '../../components/CustomButton';
 
 
 export default class viewVehicle extends Component {
@@ -17,81 +18,269 @@ export default class viewVehicle extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      VehicleOwner:null,
+      VehicleOwner: null,
       vehicleID: props?.route?.params?.vehicleID,
-      ownerID:'',
-      vehicleDetails:{}, 
-      availability:[],
-      features:[],
-      address:{},
-      Rating:0,
-      InsurancePolicy:{},
+      ownerID: '',
+      vehicleDetails: {},
+      availability: [],
+      features: [],
+      address: {},
+      Rating: 0,
+      InsurancePolicy: {},
       isModalVisible: false,
-      calculatedTotalPrice:0,
-      sentRequest:false,
-      failedRequest:false,
-      selectedPickUp:[],
-      selectedItems:[],
-      selectedDates:[],
+      calculatedTotalPrice: 0,
+      sentRequest: false,
+      failedRequest: false,
+      selectedPickUp: [],
+      selectedItems: [],
+      selectedDates: [],
 
     }
+
+    return (
+      <ScrollView
+        horizontal={true}
+        showsHorizontalScrollIndicator={true}
+        centerContent={true}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
+          {this.state.availability.map(date => {
+            return (<TouchableOpacity
+              style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+              onPress={() => {
+
+                if (this.state.selectedDates == undefined) {
+                  console.log('undefined array')
+                  const dates = []
+                  dates.push(date)
+                  console.log(dates)
+
+                  //var newSelection = this.state.selectedDates.push(date)
+                  this.setState({
+                    selectedDates: dates
+                  })
+                  console.log(this.state.selectedDates[0])
+                }
+                else if (this.state.selectedDates.indexOf(date) >= 0) {
+                  { console.log('remove element') }
+                  const dates = this.state.selectedDates;
+
+                  var index = dates.indexOf((String(date)))
+                  dates.splice(index, 1)
+                  console.log(dates)
+
+                  this.setState({
+                    selectedDates: dates
+                  })
+                }
+                else {
+                  const dates = this.state.selectedDates;
+                  dates.push(date);
+                  console.log(dates)
+
+                  this.setState({
+                    selectedDates: dates
+                  })
+                }
+                calculateTotalPrice();
+
+
+              }}
+              style={{
+                borderColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : 'black',
+                borderWidth: 1, borderRadius: 10, padding: 12, margin: 4,
+                backgroundColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : '#fff'
+              }}>
+              <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? '#fff' : 'black' }}>{date}</Text>
+            </TouchableOpacity>)
+          })}
+        </View>
+      </ScrollView>
+
+    )
   }
 
 
-  componentDidMount= async()=>{
-    
+  SelectPickUpOption = () => {
+
+
+
+    return (
+
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
+        {['توصيل', 'من الموقع',].map(option => {
+          return (<TouchableOpacity
+            style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+            onPress={() => {
+              console.log('here')
+
+              if (this.state.selectedPickUp) {
+                const selection = []
+                selection.push(option)
+
+                //var newSelection = this.state.selectedDates.push(date)
+                this.setState({
+                  selectedPickUp: selection
+                })
+                console.log(this.state.selectedPickUp[0])
+              }
+              else if (this.state.selectedPickUp.indexOf(option) >= 0) {
+                { console.log('remove element') }
+                const selection = this.state.selectedPickUp;
+
+                var index = selection.indexOf((String(option)))
+                selection.splice(index, 1)
+
+                this.setState({
+                  selectedPickUp: selection
+                })
+              }
+            }}
+            style={{
+              borderColor: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? colors.LightBlue : 'black',
+              borderWidth: 1, borderRadius: 10, padding: 12, margin: 4,
+              backgroundColor: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? colors.LightBlue : '#fff'
+            }}>
+            <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? '#fff' : 'black' }}>{option}</Text>
+          </TouchableOpacity>)
+        })}
+      </View>
+
+    )
+  }
+
+
+
+  sortCalender = () => {
+
+    console.log('sorting calender.. ')
+    this.state.selectedDates.sort(function (a, b) {
+      // Turn your strings into dates, and then subtract them
+      // to get a value that is either negative, positive, or zero.
+      return new Date(b.date) - new Date(a.date);
+    });
+  }
+
+  handleRequest = () => {
+
+    if (this.state.selectedDates[0] == null) {
+      this.failureMessage('يرجى اختيار احدى المواعيد المتاحة لحجز المركبة')
+      return;
+    }
+    else {
+      this.sortCalender();
+    }
+
+    if (this.state.selectedPickUp[0] == null)
+      this.state.selectedPickUp[0] = 'من الموقع'
+
+    console.log('handling request..')
+
+    var requestTime = new Date();
+
+
+    //create request 
+    var tripDocument = database.collection('Trips').doc();
+
+    var requestID = tripDocument.id;
+    var vehicleID = this.state.vehicleID;
+    var ownerID = this.state.ownerID;
+    var borrowerID = auth().currentUser.uid;
+
+    var tripRequest = {
+      tripID: requestID,
+      ownerID: ownerID,
+      borrowerID: borrowerID,
+      requestTime: requestTime.toLocaleString(),
+      status: 'pending',
+      vehicleID: vehicleID,
+      details: {
+        pickupDate: '',
+        dropoffDate: '',
+        bookedDates: this.state.selectedDates,
+        pickupOption: this.state.selectedPickUp[0],
+        pickUplocation: this.state.address.coordinates
+      },
+      image: this.state.vehicleDetails.image,
+      totalAmount: this.state.calculatedTotalPrice,
+    }
+    //send to firestore
+    var batch = database.batch();
+
+    var trip = database.collection('Trips').doc(requestID);
+    batch.set(trip, tripRequest);
+
+    var ownerRequests = database.collection('users').doc(ownerID).collection('Requests').doc(requestID);
+    batch.set(ownerRequests, tripRequest);
+
+    var borrowerRequests = database.collection('users').doc(borrowerID).collection('Requests').doc(requestID);
+    batch.set(borrowerRequests, tripRequest);
+
+    batch.commit().then(() =>
+      // on success
+      this.setState({ sentRequest: true })).catch(() => {
+        console.log('failed request')
+        this.setState({ failedRequest: true })
+
+        this.unsuccessfulRequest();
+      })
+
+
+  }
+
+  componentDidMount = async () => {
+
     await this.retrieveVehicle();
     this.setHeader();
   }
 
-  setHeader=()=>{
+  setHeader = () => {
 
-    var model = this.state.vehicleDetails.model+'';
+    var model = this.state.vehicleDetails.model + '';
     model = model.toUpperCase();
 
-const ViewVehicleHeader= ()=>{
-  return(
-    <View >
-    <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>
-    {model} {this.state.vehicleDetails.year}
-</Text>
-    </View>
-  )
-}
+    const ViewVehicleHeader = () => {
+      return (
+        <View >
+          <Text style={{ fontSize: 35, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', }}>
+            {model} {this.state.vehicleDetails.year}
+          </Text>
+        </View>
+      )
+    }
     this.props.navigation.setOptions({
       headerTitle: (props) => <ViewVehicleHeader {...props} />
     })
-    }
-  
-  
-  IsVehicleOwner =  (user)=>{
-
-   
-   if (user == auth().currentUser.uid){
-     console.log('User is owner of vehicle')
-     this.state.VehicleOwner = true;
-   }else{
-    this.state.VehicleOwner = false;
-
-   }
   }
 
-  successMessage= (message)=> {
+
+  IsVehicleOwner = (user) => {
+
+
+    if (user == auth().currentUser.uid) {
+      console.log('User is owner of vehicle')
+      this.state.VehicleOwner = true;
+    } else {
+      this.state.VehicleOwner = false;
+
+    }
+  }
+
+  successMessage = (message) => {
     showMessage({
-      message:message,
+      message: message,
       type: "success",
     });
   }
 
-  
-  failureMessage= (message)=> {
+
+  failureMessage = (message) => {
     showMessage({
       message: message,
       type: 'danger'
     });
   }
 
-  retrieveVehicle = async ()=>{
+  retrieveVehicle = async () => {
 
     var vehicle = database.collection('Vehicle').doc(this.state.vehicleID).get();
     var vehicleData = (await vehicle).data();
@@ -99,339 +288,445 @@ const ViewVehicleHeader= ()=>{
     this.setState({
       ownerID: vehicleData.ownerID,
       vehicleDetails: vehicleData.vehicleDetails,
-      availability:vehicleData.availability,
-      address:vehicleData.address,
+      availability: vehicleData.availability,
+      address: vehicleData.address,
       dailyRate: vehicleData.dailyRate,
-      features:vehicleData.features,
+      features: vehicleData.features,
       Rating: vehicleData.Rating,
       InsurancePolicy: vehicleData.InsurancePolicy,
     })
-      //testing output
-    console.log(this.state.ownerID,this.state.vehicleDetails,this.state.address,this.state.availability,
-      this.state.features,this.state.Rating,this.state.InsurancePolicy);
+    //testing output
+    console.log(this.state.ownerID, this.state.vehicleDetails, this.state.address, this.state.availability,
+      this.state.features, this.state.Rating, this.state.InsurancePolicy);
 
   }
 
-  createfakedata=()=>{
-    var ref =database.collection('Vehicle').doc().id;
+  createfakedata = () => {
+    var ref = database.collection('Vehicle').doc().id;
     database.collection('Vehicle').doc(ref).set({
       ownerID: auth().currentUser.uid,
-      vehicleDetails:{
-        features:['AUX', 'USB Input', 'GPS'],
-        description:"During these trying times we are all looking for some sense of normalcy and escape.  While many entertainment venues are closed, we want to offer something that can still bring a smile to your face.",
-        images:'https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/_sHy9Pm0RbOrhgiKeRW2Pw.2880x1400.jpg',
-        transmission:'manual',
-        year:'2020',
-        model:'mustang'
+      vehicleDetails: {
+        features: ['AUX', 'USB Input', 'GPS'],
+        description: "During these trying times we are all looking for some sense of normalcy and escape.  While many entertainment venues are closed, we want to offer something that can still bring a smile to your face.",
+        images: 'https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/_sHy9Pm0RbOrhgiKeRW2Pw.2880x1400.jpg',
+        transmission: 'manual',
+        year: '2020',
+        model: 'mustang'
       },
-      address:{
-        city:'Riyadh',
-        street:'Turki AlAwal',
-        coordinates:{
-         lat:24.7240805257,
-          lag:46.6453786543
-         }
+      address: {
+        city: 'Riyadh',
+        street: 'Turki AlAwal',
+        coordinates: {
+          lat: 24.7240805257,
+          lag: 46.6453786543
+        }
       },
-      Rating:0,
-      LicensePlateNumber:"5496 DMB",
-      InsurancePolicy:{
-        type:'شامل',
-        company:'التعاونية'
+      Rating: 0,
+      LicensePlateNumber: "5496 DMB",
+      InsurancePolicy: {
+        type: 'شامل',
+        company: 'التعاونية'
       },
-      dailyRate:100,
-      availability:['2020-2-12', '2020-8-12', '2020-9-12','2020-4-12','2020-10-12']
+      dailyRate: 100,
+      availability: ['2020-2-12', '2020-8-12', '2020-9-12', '2020-4-12', '2020-10-12']
     })
   }
 
 
 
-    SelectAvailability = () => {
+  SelectAvailability = () => {
 
-      const calculateTotalPrice = async () =>{
-        if(this.state.selectedDates != undefined){
-      var price = this.state.selectedDates.length * this.state.dailyRate;
-      var tax = price*0.15;
-      var totalAmount = price+tax; 
-       this.state.calculatedTotalPrice = totalAmount;
-      console.log(this.state.calculatedTotalPrice)}
+    const calculateTotalPrice = async () => {
+      if (this.state.selectedDates != undefined) {
+        var price = this.state.selectedDates.length * this.state.dailyRate;
+        var tax = price * 0.15;
+        var totalAmount = price + tax;
+        this.state.calculatedTotalPrice = totalAmount;
+        console.log(this.state.calculatedTotalPrice)
       }
-
-      return (
-  <ScrollView 
-  horizontal={true}
-  showsHorizontalScrollIndicator={true}
-  centerContent={true}>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,alignSelf:'flex-end', marginHorizontal:30  }}>
-        {this.state.availability.map(date => {
-              return (<TouchableOpacity
-                style={{ margin: 5 , padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
-                onPress={() => {
-
-                  if( this.state.selectedDates==undefined){
-                    console.log('undefined array')
-                    const dates = []
-                    dates.push(date)
-                    console.log(dates)
-
-                    //var newSelection = this.state.selectedDates.push(date)
-                    this.setState({
-                      selectedDates: dates
-                    })
-                    console.log(this.state.selectedDates[0])
-                  }
-                   else if (  this.state.selectedDates.indexOf(date)>=0) {
-                    {console.log('remove element')}
-                    const dates = this.state.selectedDates ;
-                   
-                    var index = dates.indexOf((String(date)))
-                    dates.splice(index,1)
-                    console.log(dates)
-
-                    this.setState({
-                      selectedDates: dates
-                    })}
-                  else{
-                    const dates = this.state.selectedDates ;
-                    dates.push(date);
-                    console.log(dates)
-                    
-                    this.setState({
-                      selectedDates: dates
-                    })
-                  }
-                  calculateTotalPrice();
-
-                  
-                }}
-                style={{ 
-                  borderColor: (this.state.selectedDates!=undefined && this.state.selectedDates.includes(date))? colors.LightBlue : 'black' , 
-                  borderWidth: 1, borderRadius: 10, padding: 12, margin: 4, 
-                backgroundColor: (this.state.selectedDates!=undefined && this.state.selectedDates.includes(date))? colors.LightBlue : '#fff' }}>
-                <Text style={{ fontSize: 15,fontFamily:'Tajawal_300Light', color: (this.state.selectedDates!=undefined && this.state.selectedDates.includes(date))? '#fff' : 'black'}}>{date}</Text>
-              </TouchableOpacity>)
-            })}
-          </View>
-          </ScrollView>
-        
-      )
     }
 
+    return (
+      <ScrollView
+        horizontal={true}
+        showsHorizontalScrollIndicator={true}
+        centerContent={true}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
+          {this.state.availability.map(date => {
+            return (<TouchableOpacity
+              style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+              onPress={() => {
 
-    SelectPickUpOption = () => {
+                if (this.state.selectedDates == undefined) {
+                  console.log('undefined array')
+                  const dates = []
+                  dates.push(date)
+                  console.log(dates)
 
-  
+                  //var newSelection = this.state.selectedDates.push(date)
+                  this.setState({
+                    selectedDates: dates
+                  })
+                  console.log(this.state.selectedDates[0])
+                }
+                else if (this.state.selectedDates.indexOf(date) >= 0) {
+                  { console.log('remove element') }
+                  const dates = this.state.selectedDates;
 
-      return (
- 
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,alignSelf:'flex-end', marginHorizontal:30  }}>
-        {[ 'توصيل', 'من الموقع',].map(option => {
-              return (<TouchableOpacity
-                style={{ margin: 5 , padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
-                onPress={() => {
-                  console.log('here')
+                  var index = dates.indexOf((String(date)))
+                  dates.splice(index, 1)
+                  console.log(dates)
 
-                  if( this.state.selectedPickUp ){
-                    const selection = []
-                    selection.push(option)
+                  this.setState({
+                    selectedDates: dates
+                  })
+                }
+                else {
+                  const dates = this.state.selectedDates;
+                  dates.push(date);
+                  console.log(dates)
 
-                    //var newSelection = this.state.selectedDates.push(date)
-                    this.setState({
-                      selectedPickUp: selection
-                    })
-                    console.log(this.state.selectedPickUp[0])
-                  }
-                   else if (  this.state.selectedPickUp.indexOf(option)>=0) {
-                    {console.log('remove element')}
-                    const selection = this.state.selectedPickUp ;
-                   
-                    var index = selection.indexOf((String(option)))
-                    selection.splice(index,1)
-
-                    this.setState({
-                      selectedPickUp: selection
-                    })} }}
-                style={{ 
-                  borderColor: (this.state.selectedPickUp!=undefined && this.state.selectedPickUp.includes(option))? colors.LightBlue : 'black' , 
-                  borderWidth: 1, borderRadius: 10, padding: 12, margin: 4, 
-                backgroundColor: (this.state.selectedPickUp!=undefined && this.state.selectedPickUp.includes(option))? colors.LightBlue : '#fff' }}>
-                <Text style={{ fontSize: 15,fontFamily:'Tajawal_300Light', color: (this.state.selectedPickUp!=undefined && this.state.selectedPickUp.includes(option))? '#fff' : 'black'}}>{option}</Text>
-              </TouchableOpacity>)
-            })}
-          </View>
-        
-      )
-    }
-  
-  
-
-    sortCalender = () =>{
-
-      console.log('sorting calender.. ')
-      this.state.selectedDates.sort(function(a,b){
-        // Turn your strings into dates, and then subtract them
-        // to get a value that is either negative, positive, or zero.
-        return new Date(b.date) - new Date(a.date);
-      });
-    }
-
-    handleRequest=()=>{
-
-      if (this.state.selectedDates[0] == null){
-      this.failureMessage('يرجى اختيار احدى المواعيد المتاحة لحجز المركبة')
-      return;
-      }
-      else{
-      this.sortCalender(); }
-      
-      if (this.state.selectedPickUp[0]==null)
-      this.state.selectedPickUp[0] = 'من الموقع'
-      
-      console.log('handling request..')
-
-      var requestTime = new Date();
-     
-
-        //create request 
-       var tripDocument= database.collection('Trips').doc();
-
-       var requestID= tripDocument.id;
-       var vehicleID= this.state.vehicleID;
-       var ownerID= this.state.ownerID;
-       var borrowerID= auth().currentUser.uid;
-
-       var tripRequest = {
-           tripID: requestID,
-           ownerID: ownerID ,
-           borrowerID: borrowerID,
-           requestTime: requestTime.toLocaleString(),
-           status:'pending',
-           model: this.state.vehicleDetails.model,
-           vehicleID: vehicleID,
-           details:{
-               pickupDate:'',
-               dropoffDate:'',
-               bookedDates: this.state.selectedDates,
-               pickupOption:this.state.selectedPickUp[0],
-               pickUplocation:this.state.address.coordinates 
-           },
-           image: this.state.vehicleDetails.image, 
-           totalAmount:this.state.calculatedTotalPrice,
-       }
-        //send to firestore
-        var batch = database.batch();
-
-        var trip = database.collection('Trips').doc(requestID); 
-        batch.set(trip,tripRequest);
-
-        var ownerRequests = database.collection('users').doc(ownerID).collection('Requests').doc(requestID);
-        batch.set(ownerRequests,tripRequest);
-
-        var borrowerRequests = database.collection('users').doc(borrowerID).collection('Requests').doc(requestID);
-        batch.set(borrowerRequests,tripRequest);
-
-        batch.commit().then(()=>
-        // on success
-        this.setState({sentRequest:true}) ).catch(()=>{
-          console.log('failed request')
-          this.setState({failedRequest:true})
-
-          this.unsuccessfulRequest();
-        })
+                  this.setState({
+                    selectedDates: dates
+                  })
+                }
+                calculateTotalPrice();
 
 
-    }
-    
-      toggleModal = () => {
-          this.setState({isModalVisible: !this.state.isModalVisible});
-        };
-   
+              }}
+              style={{
+                borderColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : 'black',
+                borderWidth: 1, borderRadius: 10, padding: 12, margin: 4,
+                backgroundColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : '#fff'
+              }}>
+              <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? '#fff' : 'black' }}>{date}</Text>
+            </TouchableOpacity>)
+          })}
+        </View>
+      </ScrollView>
 
-    successfulRequest = () =>{
-        return(
-            <View style={{flexDirection:'column', alignSelf:'center' ,justifyContent:'center'}}>
-
-                <View style={{alignSelf:'center',marginVertical:150}}>
-                <FontAwesome5 name={'check-circle'} size={80} color={'green'} style={{alignSelf:'center',marginVertical:15}}/>
-                <Text style={styles.RequestText} >تم إرسال الطلب بنجاح</Text>
-                </View>
-            </View>
-        )
-    }
-
-    unsuccessfulRequest = () =>{
-      return(
-          <View style={{flexDirection:'column', alignSelf:'center' ,justifyContent:'center'}}>
-
-              <View style={{alignSelf:'center',marginVertical:150}}>
-              <MaterialIcons name={'error'} size={80} color={colors.Subtitle} style={{alignSelf:'center',marginVertical:15}}/>
-              <Text style={styles.RequestText} >تعذر إرسال الطلب، يرجى المحاولة مرة اخرى</Text>
-              </View>
-          </View>
-      )
+    )
   }
 
-    requestVehicleModal= ()=>{
-        return(
-               this.state.VehicleOwner ? <View></View> :
-               <View>
-          <TouchableOpacity style={styles.Button} onPress={()=> this.setState({isModalVisible:true}) }>
-          <Text style={styles.RequestButtonText}> حجز </Text>
-          </TouchableOpacity>
 
-          <Modal 
-        onBackdropPress={() => this.toggleModal()}
-        onSwipeComplete={() => this.toggleModal()}
-        swipeDirection='down'
-          isVisible={this.state.isModalVisible}
-          style={styles.Modal}
-          >
-          <View style={{
-      height: '55%',
-      width:400,
-      marginTop: 'auto',
-      backgroundColor:'white' }}>
-        <TouchableOpacity onPress={()=>this.toggleModal()}>
-                    <EvilIcons name={'close'} size={35} style={{position:'absolute', top:20, left:20}} onPress={()=>this.toggleModal()}/>
-                    </TouchableOpacity>
-<View style={{ alignSelf:'center',justifyContent:"center"}}>
-            
-
-            {this.state.sentRequest ? this.successfulRequest() : <View>
-            <Text style={styles.requestModalTitle}>طلب حجز المركبة</Text>
-
-            <Text style={styles.requestModalLabel}>التواريخ المتاحة </Text>
-            {this.SelectAvailability()}
-        
-
-            <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
-           
-            <ScrollView 
-  horizontal={true}
-  centerContent={true}>
-{                this.SelectPickUpOption()
-}
-
-          </ScrollView>
-            <Text style={[styles.requestModalLabel, {fontSize:20, }]}>المجموع</Text>
-            <Text style={[styles.requestModalLabel, {fontSize:25, fontFamily:'Tajawal_500Medium',bottom:20}]}> {this.state.calculatedTotalPrice} ريال</Text>
+  SelectPickUpOption = () => {
 
 
-            <View style={{marginBottom:13}}>
-            <TouchableOpacity style={styles.Button} onPress={()=> this.setState({isModalVisible:true}) }>
-          <Text style={styles.RequestButtonText} 
-            onPress={ ()=> { 
-                this.handleRequest();
-              }}
-              > إرسال الطلب </Text>
-          </TouchableOpacity>
-          </View>
-           
-          </View>}
-            </View> 
-            </View>
-            </Modal>
+
+    return (
+
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
+        {['توصيل', 'من الموقع',].map(option => {
+          return (<TouchableOpacity
+            style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+            onPress={() => {
+              console.log('here')
+
+              if (this.state.selectedPickUp) {
+                const selection = []
+                selection.push(option)
+
+                //var newSelection = this.state.selectedDates.push(date)
+                this.setState({
+                  selectedPickUp: selection
+                })
+                console.log(this.state.selectedPickUp[0])
+              }
+              else if (this.state.selectedPickUp.indexOf(option) >= 0) {
+                { console.log('remove element') }
+                const selection = this.state.selectedPickUp;
+
+                var index = selection.indexOf((String(option)))
+                selection.splice(index, 1)
+
+                this.setState({
+                  selectedPickUp: selection
+                })
+              }
+            }}
+            style={{
+              borderColor: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? colors.LightBlue : 'black',
+              borderWidth: 1, borderRadius: 10, padding: 12, margin: 4,
+              backgroundColor: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? colors.LightBlue : '#fff'
+            }}>
+            <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? '#fff' : 'black' }}>{option}</Text>
+          </TouchableOpacity>)
+        })}
+      </View>
+
+    )
+  }
+
+
+
+  sortCalender = () => {
+
+    console.log('sorting calender.. ')
+    this.state.selectedDates.sort(function (a, b) {
+      // Turn your strings into dates, and then subtract them
+      // to get a value that is either negative, positive, or zero.
+      return new Date(b.date) - new Date(a.date);
+    });
+  }
+
+  handleRequest = () => {
+
+    if (this.state.selectedDates[0] == null) {
+      this.failureMessage('يرجى اختيار احدى المواعيد المتاحة لحجز المركبة')
+      return;
+    }
+    else {
+      this.sortCalender();
+    }
+
+    if (this.state.selectedPickUp[0] == null)
+      this.state.selectedPickUp[0] = 'من الموقع'
+
+    console.log('handling request..')
+
+    var requestTime = new Date();
+
+
+    //create request 
+    var tripDocument = database.collection('Trips').doc();
+
+    var requestID = tripDocument.id;
+    var vehicleID = this.state.vehicleID;
+    var ownerID = this.state.ownerID;
+    var borrowerID = auth().currentUser.uid;
+
+    var tripRequest = {
+      tripID: requestID,
+      ownerID: ownerID,
+      borrowerID: borrowerID,
+      requestTime: requestTime.toLocaleString(),
+      status: 'pending',
+      model: this.state.vehicleDetails.model,
+      vehicleID: vehicleID,
+      details: {
+        pickupDate: '',
+        dropoffDate: '',
+        bookedDates: this.state.selectedDates,
+        pickupOption: this.state.selectedPickUp[0],
+        pickUplocation: this.state.address.coordinates
+      },
+      image: this.state.vehicleDetails.image,
+      totalAmount: this.state.calculatedTotalPrice,
+    }
+    //send to firestore
+    var batch = database.batch();
+
+    var trip = database.collection('Trips').doc(requestID);
+    batch.set(trip, tripRequest);
+
+    var ownerRequests = database.collection('users').doc(ownerID).collection('Requests').doc(requestID);
+    batch.set(ownerRequests, tripRequest);
+
+    var borrowerRequests = database.collection('users').doc(borrowerID).collection('Requests').doc(requestID);
+    batch.set(borrowerRequests, tripRequest);
+
+    batch.commit().then(() =>
+      // on success
+      this.setState({ sentRequest: true })).catch(() => {
+        console.log('failed request')
+        this.setState({ failedRequest: true })
+
+        this.unsuccessfulRequest();
+      })
+
+
+  }
+
+  toggleModal = () => {
+    this.setState({ isModalVisible: !this.state.isModalVisible });
+  };
+
+
+  successfulRequest = () => {
+    return (
+      <View style={{ flexDirection: 'column', alignSelf: 'center', justifyContent: 'center' }}>
+
+        <View style={{ alignSelf: 'center', marginVertical: 150 }}>
+          <FontAwesome5 name={'check-circle'} size={80} color={'green'} style={{ alignSelf: 'center', marginVertical: 15 }} />
+          <Text style={styles.RequestText} >تم إرسال الطلب بنجاح</Text>
         </View>
-         ) }
+      </View>
+    )
+  }
+
+  unsuccessfulRequest = () => {
+    return (
+      <View style={{ flexDirection: 'column', alignSelf: 'center', justifyContent: 'center' }}>
+
+        <View style={{ alignSelf: 'center', marginVertical: 150 }}>
+          <MaterialIcons name={'error'} size={80} color={colors.Subtitle} style={{ alignSelf: 'center', marginVertical: 15 }} />
+          <Text style={styles.RequestText} >تعذر إرسال الطلب، يرجى المحاولة مرة اخرى</Text>
+        </View>
+      </View>
+    )
+  }
+
+  requestVehicleModal = () => {
+    return (
+      this.state.VehicleOwner ? <View></View> :
+        <View>
+          <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
+            <CustomButton
+              onPress={() => this.setState({ isModalVisible: true })}
+              title="إحجز"
+              style={{ marginTop: 12 }}
+            />
+          </TouchableOpacity>
+
+          <Modal
+            onBackdropPress={() => this.toggleModal()}
+            onSwipeComplete={() => this.toggleModal()}
+            swipeDirection='down'
+            isVisible={this.state.isModalVisible}
+            style={styles.Modal}
+          >
+            <View style={{
+              height: '55%',
+              width: 400,
+              marginTop: 'auto',
+              backgroundColor: 'white'
+            }}>
+              <TouchableOpacity onPress={() => this.toggleModal()}>
+                <EvilIcons name={'close'} size={35} style={{ position: 'absolute', top: 20, left: 20 }} onPress={() => this.toggleModal()} />
+              </TouchableOpacity>
+              <View style={{ alignSelf: 'center', justifyContent: "center" }}>
+
+
+                {this.state.sentRequest ? this.successfulRequest() : <View>
+                  <Text style={styles.requestModalTitle}>طلب حجز المركبة</Text>
+
+                  <Text style={styles.requestModalLabel}>التواريخ المتاحة </Text>
+                  {this.SelectAvailability()}
+
+
+                  <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
+
+                  <ScrollView
+                    horizontal={true}
+                    centerContent={true}>
+                    {this.SelectPickUpOption()
+                    }
+
+                  </ScrollView>
+                  <Text style={[styles.requestModalLabel, { fontSize: 20, }]}>المجموع</Text>
+                  <Text style={[styles.requestModalLabel, { fontSize: 25, fontFamily: 'Tajawal_500Medium', bottom: 20 }]}> {this.state.calculatedTotalPrice} ريال</Text>
+
+
+                  <View style={{ marginBottom: 13 }}>
+                    <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
+                      <Text style={styles.RequestButtonText}
+                        onPress={() => {
+                          this.handleRequest();
+                        }}
+                      > إرسال الطلب </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                </View>}
+              </View>
+            </View>
+          </Modal>
+        </View>
+    )
+  }
+
+
+
+  successfulRequest = () => {
+    return (
+      <View style={{ flexDirection: 'column', alignSelf: 'center', justifyContent: 'center' }}>
+
+        <View style={{ alignSelf: 'center', marginVertical: 150 }}>
+          <FontAwesome5 name={'check-circle'} size={80} color={'green'} style={{ alignSelf: 'center', marginVertical: 15 }} />
+          <Text style={styles.RequestText} >تم إرسال الطلب بنجاح</Text>
+        </View>
+      </View>
+    )
+  }
+
+  unsuccessfulRequest = () => {
+    return (
+      <View style={{ flexDirection: 'column', alignSelf: 'center', justifyContent: 'center' }}>
+
+        <View style={{ alignSelf: 'center', marginVertical: 150 }}>
+          <MaterialIcons name={'error'} size={80} color={colors.Subtitle} style={{ alignSelf: 'center', marginVertical: 15 }} />
+          <Text style={styles.RequestText} >تعذر إرسال الطلب، يرجى المحاولة مرة اخرى</Text>
+        </View>
+      </View>
+    )
+  }
+
+  requestVehicleModal = () => {
+    return (
+      this.state.VehicleOwner ? <View></View> :
+        <View>
+          <CustomButton
+            onPress={() => this.setState({ isModalVisible: true })}
+            title="إحجز"
+            style={{ marginTop: 12 }}
+          />
+
+          <Modal
+            onBackdropPress={() => this.toggleModal()}
+            onSwipeComplete={() => this.toggleModal()}
+            swipeDirection='down'
+            isVisible={this.state.isModalVisible}
+            style={styles.Modal}
+          >
+            <View style={{
+              height: '55%',
+              width: 400,
+              marginTop: 'auto',
+              backgroundColor: 'white'
+            }}>
+              <TouchableOpacity onPress={() => this.toggleModal()}>
+                <EvilIcons name={'close'} size={35} style={{ position: 'absolute', top: 20, left: 20 }} onPress={() => this.toggleModal()} />
+              </TouchableOpacity>
+              <View style={{ alignSelf: 'center', justifyContent: "center" }}>
+
+
+                {this.state.sentRequest ? this.successfulRequest() : <View>
+                  <Text style={styles.requestModalTitle}>طلب حجز المركبة</Text>
+
+                  <Text style={styles.requestModalLabel}>التواريخ المتاحة </Text>
+                  {this.SelectAvailability()}
+
+
+                  <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
+
+                  <ScrollView
+                    horizontal={true}
+                    centerContent={true}>
+                    {this.SelectPickUpOption()
+                    }
+
+                  </ScrollView>
+                  <Text style={[styles.requestModalLabel, { fontSize: 20, }]}>المجموع</Text>
+                  <Text style={[styles.requestModalLabel, { fontSize: 25, fontFamily: 'Tajawal_500Medium', bottom: 20 }]}> {this.state.calculatedTotalPrice} ريال</Text>
+
+
+                  <View style={{ marginBottom: 13 }}>
+                    <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
+                      <Text style={styles.RequestButtonText}
+                        onPress={() => {
+                          this.handleRequest();
+                        }}
+                      > إرسال الطلب </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                </View>}
+              </View>
+            </View>
+          </Modal>
+        </View>
+    )
+  }
 
 
   renderCell = (data = {}) => {
@@ -449,7 +744,7 @@ const ViewVehicleHeader= ()=>{
           }
         }}>
         {data.icon && data.icon != "" ? <Icon name={data.icon} color={'#01b753'} size={18} style={{ marginRight: 8 }} /> : <Text style={{ fontSize: 17, textAlign: 'left', fontFamily: 'Tajawal_400Regular' }}> {data.name}   </Text>}
-        <Text style={{ fontSize: 17, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' ,marginHorizontal:3}}> {data.value}</Text>
+        <Text style={{ fontSize: 17, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', marginHorizontal: 3 }}> {data.value}</Text>
       </View>
     )
   }
@@ -472,22 +767,21 @@ const ViewVehicleHeader= ()=>{
 
 
     return (<View style={{ direction: 'rtl' }}>
-      <View style={{ height: 160, width: '100%' ,backgroundColor:'transparent'}}>
+      <View style={{ height: 180, width: '100%', backgroundColor: 'transparent', marginBottom: 8 }}>
         <Image source={{ uri: this.state.vehicleDetails.image }}
-          style={{ width: '100%', height: '100%',  resizeMode:'cover', }} />
+          style={{ width: '100%', height: '100%', resizeMode: 'cover', }} />
       </View>
 
 
-      <View style={{  alignItems: 'baseline', marginVertical:5, marginHorizontal:5, fontFamily: 'Tajawal_400Regular',flexDirection:'row-reverse' }}>
-    
-    <View style={{alignSelf:'flex-end' , flexDirection:'row-reverse',justifyContent:'center' }}> 
-   
-  <Rating type='star' ratingCount={1} readonly={true} imageSize={28} startingValue={1} style={{marginBottom:5}}/>
-  <Text style={{color:'#f1c40f', fontSize:25, fontFamily:'Tajawal_300Light', marginHorizontal:5,marginTop:3}}>{this.state.Rating}/5</Text>
-  </View>
-        <View style={{marginRight:200}}>
-      <Text style={{ fontSize: 20, margin:10 ,color: '#5dbcd2', fontFamily: 'Tajawal_700Bold' }}> {this.state.dailyRate} ريال / يوم</Text>
-      </View>
+      <View style={{ alignItems: 'baseline', marginVertical: 5, marginHorizontal: 5, fontFamily: 'Tajawal_400Regular', flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
+
+        <View style={{ alignSelf: 'flex-end', flexDirection: 'row-reverse', justifyContent: 'center' }}>
+
+          <Rating type='star' ratingCount={1} readonly={true} imageSize={28} startingValue={1} style={{ marginBottom: 5, direction: 'ltr' }} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 20, margin: 10, color: '#5dbcd2', fontFamily: 'Tajawal_700Bold', textAlign: 'left' }}> {this.state.dailyRate} ريال / يوم</Text>
+        </View>
       </View>
       <View style={{ padding: 12, }}>
         <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>وصف المركبة</Text>
@@ -520,10 +814,10 @@ const ViewVehicleHeader= ()=>{
         <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>خصائص المركبة</Text>
         {features}
       </View>
-      
+
 
       <View style={{ flexDirection: 'row', }}>
-        {this.renderCell({ name: 'المنطقة ', value: this.state.address.city})}
+        {this.renderCell({ name: 'المنطقة ', value: this.state.address.city })}
         {this.renderCell({ name: "نوع الإستلام", value: "من الموقع" })}
       </View>
 
@@ -531,80 +825,82 @@ const ViewVehicleHeader= ()=>{
     </View>)
   }
 
-render() {
-return (
-<View style={styles.container}>
-<ScrollView style={{ backgroundColor: 'fff' }}>
+  render() {
+    return (
+      <View style={styles.container}>
+        <ScrollView style={{ backgroundColor: 'fff' }}>
 
-{this.renderVehicleDetails()}
-{this.state.VehicleOwner ? <View></View> :
-this.requestVehicleModal()}
-</ScrollView>
+          {this.renderVehicleDetails()}
+          {this.state.VehicleOwner ? <View></View> :
+            this.requestVehicleModal()}
+        </ScrollView>
 
-</View>
+      </View>
 
-)
-}
+    )
+  }
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      fontFamily: 'Tajawal_400Regular',
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    fontFamily: 'Tajawal_400Regular',
 
-    },Button:{
-        backgroundColor: colors.LightBlue,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginHorizontal: 140,
-        margin:10,
-        width: 150,
-        height: 30,
-        borderRadius: 10,
-        color: 'white',
-        fontFamily: 'Tajawal_400Regular',
-    },
-    RequestButtonText:{
-        color:'white',
-        fontFamily:'Tajawal_400Regular',
-        fontSize:20,
-        justifyContent:'center',
-        padding:5
+  }, Button: {
+    backgroundColor: colors.LightBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 140,
+    margin: 10,
+    width: 150,
+    height: 30,
+    borderRadius: 10,
+    color: 'white',
+    fontFamily: 'Tajawal_400Regular',
+  },
+  RequestButtonText: {
+    color: 'white',
+    fontFamily: 'Tajawal_400Regular',
+    fontSize: 20,
+    justifyContent: 'center',
+    padding: 5
 
-    },
-    OptionsText:{
-        fontFamily:'Tajawal_300Light',
-        fontSize:18
-    },
+  },
+  OptionsText: {
+    fontFamily: 'Tajawal_300Light',
+    fontSize: 18
+  },
 
 
-        Modal:{
-           // backgroundColor:'white',
-           alignSelf:'center',
-           borderTopEndRadius:120,
-            color: '#5dbcd2',
-            fontFamily: 'Tajawal_400Regular'
-        },
-        requestModalTitle:{
-            fontFamily:'Tajawal_500Medium',
-            fontSize:30,
-            marginTop:25,
-            marginHorizontal:30,
-            color:colors.LightBlue,
-            alignSelf:'flex-end'},
+  Modal: {
+    // backgroundColor:'white',
+    alignSelf: 'center',
+    borderTopEndRadius: 120,
+    color: '#5dbcd2',
+    fontFamily: 'Tajawal_400Regular'
+  },
+  requestModalTitle: {
+    fontFamily: 'Tajawal_500Medium',
+    fontSize: 30,
+    marginTop: 25,
+    marginHorizontal: 30,
+    color: colors.LightBlue,
+    alignSelf: 'flex-end'
+  },
 
-        requestModalLabel:
-            {
-            alignSelf:'flex-end',
-            marginVertical:20,
-            marginHorizontal:30,
-            marginLeft:150,
-            fontSize:25,
-            fontFamily:'Tajawal_300Light',
-            },
-        RequestText:{
-            fontSize:25,
-            fontFamily:'Tajawal_500Medium'
-        }})
+  requestModalLabel:
+  {
+    alignSelf: 'flex-end',
+    marginVertical: 20,
+    marginHorizontal: 30,
+    marginLeft: 150,
+    fontSize: 25,
+    fontFamily: 'Tajawal_300Light',
+  },
+  RequestText: {
+    fontSize: 25,
+    fontFamily: 'Tajawal_500Medium'
+  }
+})
 
