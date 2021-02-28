@@ -31,13 +31,13 @@ const carTypes = [
 ]
 
 const vehicleFeatures = [
-    { id: 1, label: 'فخمة', value: 'فخمة' },
-    { id: 2, label: 'اقتصادية', value: 'اقتصادية' },
-    { id: 3, label: 'صغيرة', value: 'صغيرة' },
-    { id: 4, label: 'سيدان متوسطة', value: 'سيدان متوسطة' },
-    { id: 5, label: 'سيدان كبيرة', value: 'سيدان كبيرة' },
-    { id: 6, label: 'عائلية', value: 'عائلية' },
-    { id: 7, label: 'متعددة الاستخدامات', value: 'متعددة الاستخدامات' },
+    { id: 1, label: 'مفتاح ذكي', value: 'مفتاح ذكي' },
+    { id: 2, label: 'AUX', value: 'AUX' },
+    { id: 3, label: 'مكيف أوتوماتك', value: 'مكيف أوتوماتك' },
+    { id: 4, label: 'CarPlay', value: 'CarPlay' },
+    { id: 5, label: 'أضواء محيطة', value: 'أضواء محيطة' },
+    { id: 6, label: 'GPS', value: 'GPS' },
+    { id: 7, label: 'شاشة تعمل باللمس', value: 'شاشة تعمل باللمس' },
 ]
 
 export default class AddOrEditVehicle extends Component {
@@ -660,6 +660,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                             textAlign: 'left',
                             fontFamily: "Tajawal_400Regular",
                             fontSize: 16
+
                         }} >الأوقات المتاحة للعرض</Text>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                             {this.state.availabilities.map(availability => {
@@ -761,7 +762,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                     <Text style={{
                         fontSize: 16,
                         fontFamily: "Tajawal_400Regular", fontWeight: 'bold', marginBottom: 24, textAlign: 'right', color: 'grey'
-                    }}>{'السعر' + ` ${this.state.selectedValues[0]}  ريال / يوم`}</Text>
+                    }}>{'السعر' + ` ${this.state.selectedValues[0]}يوم/ريال`}</Text>
 
                     <MultiSlider
                         values={[50]}

@@ -36,13 +36,220 @@ export default class viewVehicle extends Component {
       selectedDates: [],
 
     }
+
+    return (
+      <ScrollView
+        horizontal={true}
+        showsHorizontalScrollIndicator={true}
+        centerContent={true}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
+          {this.state.availability.map(date => {
+            return (<TouchableOpacity
+              style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+              onPress={() => {
+
+                if (this.state.selectedDates == undefined) {
+                  console.log('undefined array')
+                  const dates = []
+                  dates.push(date)
+                  console.log(dates)
+
+                  //var newSelection = this.state.selectedDates.push(date)
+                  this.setState({
+                    selectedDates: dates
+                  })
+                  console.log(this.state.selectedDates[0])
+                }
+                else if (this.state.selectedDates.indexOf(date) >= 0) {
+                  { console.log('remove element') }
+                  const dates = this.state.selectedDates;
+
+                  var index = dates.indexOf((String(date)))
+                  dates.splice(index, 1)
+                  console.log(dates)
+
+                  this.setState({
+                    selectedDates: dates
+                  })
+                }
+                else {
+                  const dates = this.state.selectedDates;
+                  dates.push(date);
+                  console.log(dates)
+
+                  this.setState({
+                    selectedDates: dates
+                  })
+                }
+                calculateTotalPrice();
+
+
+              }}
+              style={{
+                borderColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : 'black',
+                borderWidth: 1, borderRadius: 10, padding: 12, margin: 4,
+                backgroundColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : '#fff'
+              }}>
+              <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? '#fff' : 'black' }}>{date}</Text>
+            </TouchableOpacity>)
+          })}
+        </View>
+      </ScrollView>
+
+    )
   }
 
 
-  componentDidMount = async () => {
-    this.retrieveVehicle();
-    this.IsVehicleOwner();
+  SelectPickUpOption = () => {
 
+
+
+    return (
+
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
+        {['توصيل', 'من الموقع',].map(option => {
+          return (<TouchableOpacity
+            style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+            onPress={() => {
+              console.log('here')
+
+              if (this.state.selectedPickUp) {
+                const selection = []
+                selection.push(option)
+
+                //var newSelection = this.state.selectedDates.push(date)
+                this.setState({
+                  selectedPickUp: selection
+                })
+                console.log(this.state.selectedPickUp[0])
+              }
+              else if (this.state.selectedPickUp.indexOf(option) >= 0) {
+                { console.log('remove element') }
+                const selection = this.state.selectedPickUp;
+
+                var index = selection.indexOf((String(option)))
+                selection.splice(index, 1)
+
+                this.setState({
+                  selectedPickUp: selection
+                })
+              }
+            }}
+            style={{
+              borderColor: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? colors.LightBlue : 'black',
+              borderWidth: 1, borderRadius: 10, padding: 12, margin: 4,
+              backgroundColor: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? colors.LightBlue : '#fff'
+            }}>
+            <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? '#fff' : 'black' }}>{option}</Text>
+          </TouchableOpacity>)
+        })}
+      </View>
+
+    )
+  }
+
+
+
+  sortCalender = () => {
+
+    console.log('sorting calender.. ')
+    this.state.selectedDates.sort(function (a, b) {
+      // Turn your strings into dates, and then subtract them
+      // to get a value that is either negative, positive, or zero.
+      return new Date(b.date) - new Date(a.date);
+    });
+  }
+
+  handleRequest = () => {
+
+    if (this.state.selectedDates[0] == null) {
+      this.failureMessage('يرجى اختيار احدى المواعيد المتاحة لحجز المركبة')
+      return;
+    }
+    else {
+      this.sortCalender();
+    }
+
+    if (this.state.selectedPickUp[0] == null)
+      this.state.selectedPickUp[0] = 'من الموقع'
+
+    console.log('handling request..')
+
+    var requestTime = new Date();
+
+
+    //create request 
+    var tripDocument = database.collection('Trips').doc();
+
+    var requestID = tripDocument.id;
+    var vehicleID = this.state.vehicleID;
+    var ownerID = this.state.ownerID;
+    var borrowerID = auth().currentUser.uid;
+
+    var tripRequest = {
+      tripID: requestID,
+      ownerID: ownerID,
+      borrowerID: borrowerID,
+      requestTime: requestTime.toLocaleString(),
+      status: 'pending',
+      vehicleID: vehicleID,
+      details: {
+        pickupDate: '',
+        dropoffDate: '',
+        bookedDates: this.state.selectedDates,
+        pickupOption: this.state.selectedPickUp[0],
+        pickUplocation: this.state.address.coordinates
+      },
+      image: this.state.vehicleDetails.image,
+      totalAmount: this.state.calculatedTotalPrice,
+    }
+    //send to firestore
+    var batch = database.batch();
+
+    var trip = database.collection('Trips').doc(requestID);
+    batch.set(trip, tripRequest);
+
+    var ownerRequests = database.collection('users').doc(ownerID).collection('Requests').doc(requestID);
+    batch.set(ownerRequests, tripRequest);
+
+    var borrowerRequests = database.collection('users').doc(borrowerID).collection('Requests').doc(requestID);
+    batch.set(borrowerRequests, tripRequest);
+
+    batch.commit().then(() =>
+      // on success
+      this.setState({ sentRequest: true })).catch(() => {
+        console.log('failed request')
+        this.setState({ failedRequest: true })
+
+        this.unsuccessfulRequest();
+      })
+
+
+  }
+
+  componentDidMount = async () => {
+
+    await this.retrieveVehicle();
+    this.setHeader();
+  }
+
+  setHeader = () => {
+
+    var model = this.state.vehicleDetails.model + '';
+    model = model.toUpperCase();
+
+    const ViewVehicleHeader = () => {
+      return (
+        <View >
+          <Text style={{ fontSize: 35, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', }}>
+            {model} {this.state.vehicleDetails.year}
+          </Text>
+        </View>
+      )
+    }
+    this.props.navigation.setOptions({
+      headerTitle: (props) => <ViewVehicleHeader {...props} />
+    })
   }
 
 
@@ -294,6 +501,7 @@ export default class viewVehicle extends Component {
       borrowerID: borrowerID,
       requestTime: requestTime.toLocaleString(),
       status: 'pending',
+      model: this.state.vehicleDetails.model,
       vehicleID: vehicleID,
       details: {
         pickupDate: '',
@@ -332,6 +540,101 @@ export default class viewVehicle extends Component {
   toggleModal = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible });
   };
+
+
+  successfulRequest = () => {
+    return (
+      <View style={{ flexDirection: 'column', alignSelf: 'center', justifyContent: 'center' }}>
+
+        <View style={{ alignSelf: 'center', marginVertical: 150 }}>
+          <FontAwesome5 name={'check-circle'} size={80} color={'green'} style={{ alignSelf: 'center', marginVertical: 15 }} />
+          <Text style={styles.RequestText} >تم إرسال الطلب بنجاح</Text>
+        </View>
+      </View>
+    )
+  }
+
+  unsuccessfulRequest = () => {
+    return (
+      <View style={{ flexDirection: 'column', alignSelf: 'center', justifyContent: 'center' }}>
+
+        <View style={{ alignSelf: 'center', marginVertical: 150 }}>
+          <MaterialIcons name={'error'} size={80} color={colors.Subtitle} style={{ alignSelf: 'center', marginVertical: 15 }} />
+          <Text style={styles.RequestText} >تعذر إرسال الطلب، يرجى المحاولة مرة اخرى</Text>
+        </View>
+      </View>
+    )
+  }
+
+  requestVehicleModal = () => {
+    return (
+      this.state.VehicleOwner ? <View></View> :
+        <View>
+          <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
+            <CustomButton
+              onPress={() => this.setState({ isModalVisible: true })}
+              title="إحجز"
+              style={{ marginTop: 12 }}
+            />
+          </TouchableOpacity>
+
+          <Modal
+            onBackdropPress={() => this.toggleModal()}
+            onSwipeComplete={() => this.toggleModal()}
+            swipeDirection='down'
+            isVisible={this.state.isModalVisible}
+            style={styles.Modal}
+          >
+            <View style={{
+              height: '55%',
+              width: 400,
+              marginTop: 'auto',
+              backgroundColor: 'white'
+            }}>
+              <TouchableOpacity onPress={() => this.toggleModal()}>
+                <EvilIcons name={'close'} size={35} style={{ position: 'absolute', top: 20, left: 20 }} onPress={() => this.toggleModal()} />
+              </TouchableOpacity>
+              <View style={{ alignSelf: 'center', justifyContent: "center" }}>
+
+
+                {this.state.sentRequest ? this.successfulRequest() : <View>
+                  <Text style={styles.requestModalTitle}>طلب حجز المركبة</Text>
+
+                  <Text style={styles.requestModalLabel}>التواريخ المتاحة </Text>
+                  {this.SelectAvailability()}
+
+
+                  <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
+
+                  <ScrollView
+                    horizontal={true}
+                    centerContent={true}>
+                    {this.SelectPickUpOption()
+                    }
+
+                  </ScrollView>
+                  <Text style={[styles.requestModalLabel, { fontSize: 20, }]}>المجموع</Text>
+                  <Text style={[styles.requestModalLabel, { fontSize: 25, fontFamily: 'Tajawal_500Medium', bottom: 20 }]}> {this.state.calculatedTotalPrice} ريال</Text>
+
+
+                  <View style={{ marginBottom: 13 }}>
+                    <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
+                      <Text style={styles.RequestButtonText}
+                        onPress={() => {
+                          this.handleRequest();
+                        }}
+                      > إرسال الطلب </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                </View>}
+              </View>
+            </View>
+          </Modal>
+        </View>
+    )
+  }
+
 
 
   successfulRequest = () => {
@@ -472,17 +775,20 @@ export default class viewVehicle extends Component {
 
       <View style={{ alignItems: 'baseline', marginVertical: 5, marginHorizontal: 5, fontFamily: 'Tajawal_400Regular', flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
 
-        <View style={{ alignSelf: 'flex-end', flexDirection: 'row-reverse', justifyContent: 'center', }}>
+        <View style={{ alignSelf: 'flex-end', flexDirection: 'row-reverse', justifyContent: 'center' }}>
 
-          <Rating type='star' ratingCount={5} readonly={true} imageSize={24} startingValue={1} style={{ marginBottom: 5, direction: 'ltr' }} />
-          {/* <Text style={{ color: '#f1c40f', fontSize: 25, fontFamily: 'Tajawal_300Light', marginHorizontal: 5, marginTop: 3 }}>{this.state.Rating}/5</Text> */}
+          <Rating type='star' ratingCount={1} readonly={true} imageSize={28} startingValue={1} style={{ marginBottom: 5, direction: 'ltr' }} />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 20, margin: 10, color: '#5dbcd2', fontFamily: 'Tajawal_700Bold', textAlign: 'left' }}> {this.state.dailyRate} ريال / يوم</Text>
         </View>
       </View>
+      <View style={{ padding: 12, }}>
+        <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>وصف المركبة</Text>
+        <Text style={{ fontSize: 16, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }}>{this.state.vehicleDetails.description}</Text>
+      </View>
       <View style={{ flexDirection: 'row', marginHorizontal: 4, fontFamily: 'Tajawal_400Regular' }}>
-        {this.renderCell({ name: 'موديل المركبة', value: this.state.vehicleDetails.model, })}
+        {this.renderCell({ name: 'الموديل ', value: this.state.vehicleDetails.model, })}
         {this.renderCell({ name: 'سنة الصنع', value: this.state.vehicleDetails.year })}
       </View>
       <View style={{ flexDirection: 'row', marginHorizontal: 4, fontFamily: 'Tajawal_400Regular' }}>
@@ -492,7 +798,7 @@ export default class viewVehicle extends Component {
       <View style={{ flexDirection: 'row', }}>
         <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
         </View>
-        {this.renderCell({ name: 'تامين المركبة', value: this.state.InsurancePolicy.type })}
+        {this.renderCell({ name: 'نوع التأمين ', value: this.state.InsurancePolicy.type })}
         <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
         </View>
       </View>
@@ -508,10 +814,7 @@ export default class viewVehicle extends Component {
         <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>خصائص المركبة</Text>
         {features}
       </View>
-      <View style={{ padding: 12, }}>
-        <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>وصف المركبة</Text>
-        <Text style={{ fontSize: 16, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular' }}>{this.state.vehicleDetails.description}</Text>
-      </View>
+
 
       <View style={{ flexDirection: 'row', }}>
         {this.renderCell({ name: 'المنطقة ', value: this.state.address.city })}

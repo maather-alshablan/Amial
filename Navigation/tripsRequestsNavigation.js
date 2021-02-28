@@ -11,8 +11,8 @@ export default function TripRequestsNavigation() {
 
   return (
 
-    <Tab.Navigator
-      initialRouteName='Pending'
+    <Tab.Navigator initialRouteName='Pending'
+
       tabBarOptions={{
         tabStyle: { borderTopWidth: 0, borderTopColor: 'transparent', borderTopWidth: 0, elevation: 0, },
         indicatorStyle: {

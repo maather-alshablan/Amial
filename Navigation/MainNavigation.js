@@ -1,10 +1,7 @@
 import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-
 import { Text, View, } from 'react-native';
-
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons, FontAwesome, Ionicons } from '../Constants/icons'
 import colors from '../Constants/colors'
@@ -14,6 +11,7 @@ import Vehicle from '../Navigation/MyVehicleNavigation'
 import Profile from '../Navigation/profileStack'
 import TripRequestsNavigation from '../Navigation/tripsRequestsNavigation'
 import CustomHeader from "../components/CustomHeader";
+import TripRequestDetails from '../Screens/TripRequests/TripRequestDetails'
 
 function MainNavigation() {
 
@@ -100,19 +98,22 @@ function TripStack() {
             height: 150
           }
         }} />
+      <Stack.Screen
+        name='RequestDetails'
+        component={TripRequestDetails}
+        options={{
+          headerTitle: props => <CustomHeader title="تفاصيل طلب المركبة" {...props} />,
+          headerBackTitleStyle: { color: colors.LightBlue },
+          headerStyle: {
+            height: 150,
+            shadowColor: 'transparent'
+          },
+
+        }} />
     </Stack.Navigator>
   )
 }
 
-
-
-function RequestHeader() {
-  return (
-    <View >
-      <Text style={{ fontSize: 30, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'flex-end' }}>رحلاتي</Text>
-    </View>
-  )
-}
 
 
 

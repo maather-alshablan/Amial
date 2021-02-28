@@ -1,12 +1,10 @@
 import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-
 import { Text, View } from 'react-native';
-
 import Vehicle from '../Screens/Vehicle'
 import ManageVehicle from '../Screens/myVehicleScreens/manageVehicle'
 import RequestsNavigation from '../Navigation/RequestsNavigation'
-
+import RequestDetails from '../Screens/myVehicleScreens/RequestDetails'
 import AddOrEditVehicle from '../Screens/myVehicleScreens/AddOrEditVehicle'
 import colors from "../Constants/colors";
 import CustomHeader from "../components/CustomHeader";
@@ -91,6 +89,18 @@ function RequestStack() {
             height: 170
           },
           headerTintColor: colors.LightBlue
+        }} />
+      <Stack.Screen name='RequestDetails'
+        component={RequestDetails}
+        options={{
+          headerTitle: props => <CustomHeader title="تفاصيل طلب المركبة" {...props} />,
+          headerBackTitleStyle: { color: colors.LightBlue },
+          headerStyle: {
+            height: 150,
+            shadowColor: 'transparent'
+          },
+          headerTintColor: colors.LightBlue
+
         }} />
     </Stack.Navigator>
   )

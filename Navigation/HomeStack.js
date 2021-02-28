@@ -25,7 +25,9 @@ function HomeStack() {
         }}
       />
 
-      <Stack.Screen name="VehicleView" component={VehicleView}
+      <Stack.Screen
+        name="VehicleView"
+        component={VehicleView}
         options={{
           headerTitle: props => <CustomHeader title="المركبة" {...props} />,
           headerBackTitleVisible: false,
@@ -34,21 +36,7 @@ function HomeStack() {
           headerStyle: { shadowColor: 'transparent', height: 140 }
         }} />
 
-
-
     </Stack.Navigator>
-  )
-}
-
-
-
-
-function ViewVehicleHeader() {
-  return (
-    <View >
-      <Text style={{ fontSize: 35, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', }}>المركبة
-</Text>
-    </View>
   )
 }
 
