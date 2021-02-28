@@ -21,24 +21,6 @@ export default class PendingRequests extends Component {
   componentDidMount =  () =>{
     
     this.retreiveRequests();
-
-    // database.collection('users').doc(auth.currentUser.uid).collection('Requests')
-    // .where("ownerID",'==',auth.currentUser.uid)  .onSnapshot((snapshot) => {
-    //   if(snapshot.empty)
-    //   this.retreiveRequests();
-
-    //   snapshot.docChanges().forEach((change) => {
-    //       if (change.type === "added") {
-    //         this.retreiveRequests();
-    //       }
-    //       if (change.type === "modified") {
-    //         this.retreiveRequests();
-    //       }
-    //       if (change.type === "removed") {
-    //         this.retreiveRequests();
-    //       }
-    //   });
-    // });
  
   }
 
