@@ -34,8 +34,7 @@ export default class Person extends Component {
     var personID = firebase.auth().currentUser.uid
 
     //1 . Retrieve User Name
-    const userSnapshot = database.collection('users').doc(personID).get()
-      .then(snapshot => {
+     database.collection('users').doc(personID).onSnapshot(snapshot => {
         this.setState({
           name: snapshot.data().name,
           userRating: snapshot.data().userRating,

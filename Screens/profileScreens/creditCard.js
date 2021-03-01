@@ -4,7 +4,9 @@ import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-i
 import {firebase} from '../../Configuration/firebase'
 import colors from '../../Constants/colors'
 import {ModalComponent} from '../../Constants/Components/Modal'
+import '../../components/CustomButton'
 import  { showMessage, hideMessage } from "react-native-flash-message";
+import CustomButton from "../../components/CustomButton";
 
 
 
@@ -47,9 +49,6 @@ export default class creditCard extends Component {
     name: {
       defaultValue: this.state.name,
       maxLength: 40,
-    },
-    postalCode: {
-      defaultValue: this.state.postalCode
     },
      cvc: {
       defaultValue: this.state.cvc
@@ -100,49 +99,31 @@ console.log(this.state.formData)
   render() {
     return (
       <View style={s.container}>
-       <KeyboardAvoidingView>
             <CreditCardInput
               
-
-              requiresName
+            //  requiresName
               requiresCVC
               
+              //labels={"رقم البطاقة", "تاريخ انتهاء الصلاحية", "CVV"}
+
               labelStyle={s.label}
               inputStyle={s.input}
               validColor={"black"}
               invalidColor={"red"}
-              values= { this.state.number, this.state.expiry, this.state.cvc, this.state.name, this.state.type }
-
+              values= { this.state.number, this.state.expiry, this.state.cvc, this.state.type }
+              inputContainerStyle={{alignSelf:'flex-end', marginVertical:10}}
               placeholderColor={"darkgray"}
               allowScroll={false}
               onFocus={this._onFocus}
               onChange={this._onChange}
-              additionalInputsProps={{
-                name: {
-                  defaultValue: this.state.name,
-                  maxLength: 40,
-                },
-                postalCode: {
-                  defaultValue: this.state.postalCode
-                },
-                 cvc: {
-                  defaultValue: this.state.cvc
-                },  
-                expiry: {
-                  defaultValue: this.state.expiry
-                }, 
-                number: {
-                  defaultValue: this.state.number
-                },
-                type: {
-                  value: this.state.type
-                },
-              }}
+              
               />
-          </KeyboardAvoidingView>
           <View >
         <TouchableOpacity style={s.Button} onPress = {() => this.handleSaveInfo()}>
-      <Text style={{color:'white',fontFamily:'Tajawal_400Regular',fontSize:25}}>حفظ </Text>
+      {/* <Text style={{color:'white',fontFamily:'Tajawal_400Regular',fontSize:25}}>حفظ </Text> */}
+      <CustomButton 
+      onPress={() => this.handleSaveInfo()}
+      title='حفظ'/>
       </TouchableOpacity>
       </View>
       <ModalComponent/>

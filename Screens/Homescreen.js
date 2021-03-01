@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Dimensions, Image, FlatList, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, Image, FlatList, ImageBackground , Picker} from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Map from '../Screens/maps'
 import colors from '../Constants/colors'

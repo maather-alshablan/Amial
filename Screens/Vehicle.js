@@ -5,6 +5,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { database } from '../Configuration/firebase';
 import { auth } from 'firebase';
 import colors from '../Constants/colors';
+import CustomButton from '.././components/CustomButton';
+
 import { Ionicons, FontAwesome5 } from '../Constants/icons';
 
 
@@ -72,31 +74,8 @@ export default class Vehicle extends Component {
     return (
       <View>
         <View style={{ flexDirection: 'row-reverse', alignItems: 'center', borderBottomWidth: 1, borderColor: colors.Subtitle }}>
-          <View style={{
-            backgroundColor: colors.Subtitle,
-            justifyContent: 'center',
-            alignItems: 'center',
-            margin: 10,
-            width: 170,
-            height: 40,
-            borderRadius: 10,
-            color: 'white'
-          }} >
-            <Text style={styles.optionText}>إدارة المركبة</Text>
-          </View>
-
-          <View style={{
-            backgroundColor: colors.Subtitle,
-            justifyContent: 'center',
-            alignItems: 'center',
-            margin: 10,
-            width: 170,
-            height: 40,
-            borderRadius: 10,
-            color: 'white'
-          }} >
-            <Text style={styles.optionText}>الطلبات</Text>
-          </View>
+        
+        
         </View>
         <FlatList
           data={this.state.items}
@@ -104,12 +83,16 @@ export default class Vehicle extends Component {
           contentContainerStyle={{ paddingTop: 5 }}
         />
 
-        <TouchableOpacity style={styles.EmptyaddVehicleButton}
+        <TouchableOpacity 
           onPress={() => {
             this.props.navigation.navigate('AddOrEditVehicle')
           }}>
-          <Ionicons name={'add'} color={'white'} size={28} style={{ top: 3 }} />
-          <Text style={styles.ButtonText}> إضافة مركبة </Text>
+          <CustomButton 
+              style={[styles.Button]}
+            title='إضافة مركبة'
+            onPress={() => {
+              this.props.navigation.navigate('AddOrEditVehicle')
+            }}/>
 
         </TouchableOpacity>
 
@@ -197,17 +180,23 @@ export default class Vehicle extends Component {
     return (
       <View>
         <View style={{ flexDirection: 'row-reverse', alignItems: 'center', borderBottomWidth: 1, borderColor: colors.LightBlue }}>
-          <TouchableOpacity style={styles.Button} onPress={() => this.props.navigation.navigate('AddOrEditVehicle')}>
+          {/* <TouchableOpacity style={styles.Button} onPress={() => this.props.navigation.navigate('AddOrEditVehicle')}>
             <Text style={styles.optionText}>إدارة المركبة</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+            <CustomButton 
+            style={[styles.Button, ]}
+            onPress={() => this.props.navigation.navigate('AddOrEditVehicle')}
+            title='إدارة المركبة'/>
 
-          <TouchableOpacity style={styles.Button} onPress={() => this.props.
-            navigation.navigate('Requests',
-              {
-                screen: 'Pending'
-              })}>
-            <Text style={styles.optionText}>الطلبات</Text>
-          </TouchableOpacity>
+              <CustomButton 
+              onPress={() => this.props.
+                navigation.navigate('Requests',
+                  {
+                    screen: 'Pending'
+                  })}
+              style={styles.Button}
+            title='الطلبات'/>
+
         </View>
 
         <FlatList
@@ -217,13 +206,7 @@ export default class Vehicle extends Component {
           contentContainerStyle={{ alignItems: 'center' }}
         />
 
-        <TouchableOpacity style={styles.addVehicleButton}
-          onPress={() => {
-            this.props.navigation.navigate('AddOrEditVehicle')
-          }}>
-          <Ionicons name={'add'} color={'white'} size={55} style={{ left: 3 }} />
-
-        </TouchableOpacity>
+  
 
       </View>
 

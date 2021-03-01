@@ -7,6 +7,7 @@ import colors from '../../Constants/colors';
 import * as ImagePicker from 'expo-image-picker';
 import { auth } from 'firebase';
 import  { showMessage, hideMessage } from "react-native-flash-message";
+import CustomButton from "../../components/CustomButton";
 
 import {ModalComponent} from '../../Constants/Components/Modal'
 
@@ -270,11 +271,16 @@ export default class editProfile extends Component{
       </View>
      
 
-      <View >
+      {/* <View >
         <TouchableOpacity style={styles.Button} onPress = {() => this.handleSaveInfo()}>
       <Text style={{color:'white',fontFamily:'Tajawal_400Regular',fontSize:25}}>حفظ </Text>
       </TouchableOpacity>
-      </View>
+      </View> */}
+      <CustomButton 
+      style={styles.Button} onPress = {() => this.handleSaveInfo()}
+        title='حفظ'/>
+      
+
 
 
         <ModalComponent/>
@@ -307,7 +313,7 @@ const styles = StyleSheet.create({
        fontSize:20
        },
        Button:{
-         backgroundColor:colors.LightBlue,
+         top:40,
          justifyContent:'center',
          alignItems:'center',
          margin:10,

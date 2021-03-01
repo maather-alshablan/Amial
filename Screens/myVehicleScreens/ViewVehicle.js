@@ -13,6 +13,7 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 import CustomButton from '../../components/CustomButton';
 
 
+
 export default class viewVehicle extends Component {
 
   constructor(props) {
@@ -36,69 +37,7 @@ export default class viewVehicle extends Component {
       selectedDates: [],
 
     }
-
-    return (
-      <ScrollView
-        horizontal={true}
-        showsHorizontalScrollIndicator={true}
-        centerContent={true}>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
-          {this.state.availability.map(date => {
-            return (<TouchableOpacity
-              style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
-              onPress={() => {
-
-                if (this.state.selectedDates == undefined) {
-                  console.log('undefined array')
-                  const dates = []
-                  dates.push(date)
-                  console.log(dates)
-
-                  //var newSelection = this.state.selectedDates.push(date)
-                  this.setState({
-                    selectedDates: dates
-                  })
-                  console.log(this.state.selectedDates[0])
-                }
-                else if (this.state.selectedDates.indexOf(date) >= 0) {
-                  { console.log('remove element') }
-                  const dates = this.state.selectedDates;
-
-                  var index = dates.indexOf((String(date)))
-                  dates.splice(index, 1)
-                  console.log(dates)
-
-                  this.setState({
-                    selectedDates: dates
-                  })
-                }
-                else {
-                  const dates = this.state.selectedDates;
-                  dates.push(date);
-                  console.log(dates)
-
-                  this.setState({
-                    selectedDates: dates
-                  })
-                }
-                calculateTotalPrice();
-
-
-              }}
-              style={{
-                borderColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : 'black',
-                borderWidth: 1, borderRadius: 10, padding: 12, margin: 4,
-                backgroundColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : '#fff'
-              }}>
-              <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? '#fff' : 'black' }}>{date}</Text>
-            </TouchableOpacity>)
-          })}
-        </View>
-      </ScrollView>
-
-    )
   }
-
 
   SelectPickUpOption = () => {
 
@@ -301,36 +240,36 @@ export default class viewVehicle extends Component {
 
   }
 
-  createfakedata = () => {
-    var ref = database.collection('Vehicle').doc().id;
-    database.collection('Vehicle').doc(ref).set({
-      ownerID: auth().currentUser.uid,
-      vehicleDetails: {
-        features: ['AUX', 'USB Input', 'GPS'],
-        description: "During these trying times we are all looking for some sense of normalcy and escape.  While many entertainment venues are closed, we want to offer something that can still bring a smile to your face.",
-        images: 'https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/_sHy9Pm0RbOrhgiKeRW2Pw.2880x1400.jpg',
-        transmission: 'manual',
-        year: '2020',
-        model: 'mustang'
-      },
-      address: {
-        city: 'Riyadh',
-        street: 'Turki AlAwal',
-        coordinates: {
-          lat: 24.7240805257,
-          lag: 46.6453786543
-        }
-      },
-      Rating: 0,
-      LicensePlateNumber: "5496 DMB",
-      InsurancePolicy: {
-        type: 'شامل',
-        company: 'التعاونية'
-      },
-      dailyRate: 100,
-      availability: ['2020-2-12', '2020-8-12', '2020-9-12', '2020-4-12', '2020-10-12']
-    })
-  }
+  // createfakedata = () => {
+  //   var ref = database.collection('Vehicle').doc().id;
+  //   database.collection('Vehicle').doc(ref).set({
+  //     ownerID: auth().currentUser.uid,
+  //     vehicleDetails: {
+  //       features: ['AUX', 'USB Input', 'GPS'],
+  //       description: "During these trying times we are all looking for some sense of normalcy and escape.  While many entertainment venues are closed, we want to offer something that can still bring a smile to your face.",
+  //       images: 'https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/_sHy9Pm0RbOrhgiKeRW2Pw.2880x1400.jpg',
+  //       transmission: 'manual',
+  //       year: '2020',
+  //       model: 'mustang'
+  //     },
+  //     address: {
+  //       city: 'Riyadh',
+  //       street: 'Turki AlAwal',
+  //       coordinates: {
+  //         lat: 24.7240805257,
+  //         lag: 46.6453786543
+  //       }
+  //     },
+  //     Rating: 0,
+  //     LicensePlateNumber: "5496 DMB",
+  //     InsurancePolicy: {
+  //       type: 'شامل',
+  //       company: 'التعاونية'
+  //     },
+  //     dailyRate: 100,
+  //     availability: ['2020-2-12', '2020-8-12', '2020-9-12', '2020-4-12', '2020-10-12']
+  //   })
+  // }
 
 
 
@@ -570,9 +509,10 @@ export default class viewVehicle extends Component {
     return (
       this.state.VehicleOwner ? <View></View> :
         <View>
-          <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
+          <TouchableOpacity style={styles.Button} //onPress={() => this.setState({ isModalVisible: true })}
+          >
             <CustomButton
-              onPress={() => this.setState({ isModalVisible: true })}
+             onPress={() => this.setState({ isModalVisible: true })}
               title="إحجز"
               style={{ marginTop: 12 }}
             />
@@ -618,12 +558,11 @@ export default class viewVehicle extends Component {
 
 
                   <View style={{ marginBottom: 13 }}>
-                    <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
-                      <Text style={styles.RequestButtonText}
-                        onPress={() => {
-                          this.handleRequest();
-                        }}
-                      > إرسال الطلب </Text>
+                    <TouchableOpacity style={styles.Button} onPress={() => {this.handleRequest(); this.setState({ isModalVisible: true })}}>
+                    
+                      <CustomButton
+                      title='إرسال الطلب '
+                      />
                     </TouchableOpacity>
                   </View>
 

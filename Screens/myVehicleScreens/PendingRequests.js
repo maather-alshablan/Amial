@@ -1,15 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, Animated, Text, View, Alert, TouchableOpacity, Image, FlatList, Dimensions, Linking } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
-import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
-import Modal from 'react-native-modal';
-import Person from '../profileScreens/person'
 
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { database, auth } from '../../Configuration/firebase';
-import { MaterialCommunityIcons, EvilIcons } from '../../Constants/icons';
+import { MaterialCommunityIcons,  } from '../../Constants/icons';
 
 
 export default class PendingRequests extends Component {
