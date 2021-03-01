@@ -69,7 +69,7 @@ export default class Registration extends Component {
       return;
 
     }
-    if (this.state.nationalID == '' || this.state.name == '' || this.state.phone == '' || this.state.email == '' || this.state.password == '' || this.state.confirmPassword == '') {
+    if (this.state.nationalID == '' || this.state.name == '' || this.state.mobileNumber == '' || this.state.email == '' || this.state.password == '' || this.state.confirmPassword == '') {
       this.state.formValid = false;
       this.failureMessage(" يرجى ادخال جميع البيانات")
       return;
