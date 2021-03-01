@@ -24,7 +24,7 @@ export default class viewVehicle extends Component {
       ownerID: '',
       vehicleDetails: {},
       availability: [],
-      features: ['AUX','CarPlay'],
+      features: [],
       address: {},
       Rating: 0,
       InsurancePolicy: {},
@@ -104,7 +104,7 @@ export default class viewVehicle extends Component {
       availability: vehicleData.availability,
       address: vehicleData.address,
       dailyRate: vehicleData.dailyRate,
-      features: vehicleData.features,
+      features: vehicleDetails.features,
       Rating: vehicleData.Rating,
       InsurancePolicy: vehicleData.InsurancePolicy,
     })
@@ -459,8 +459,6 @@ export default class viewVehicle extends Component {
 
   renderFeature =()=>{
     const features = [];
-
-    this.state.features = ['AUX','CarPlay','GPS',]
     for (let i = 0; i < this.state.features.length; i += 2) {
       
       features.push(<View style={{  flexDirection:'row'}}>
