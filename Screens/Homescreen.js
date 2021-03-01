@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Dimensions, Image, FlatList, ImageBackground , Picker} from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, Image, FlatList, ImageBackground, Picker } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Map from '../Screens/maps'
 import colors from '../Constants/colors'
@@ -10,6 +10,7 @@ import { database } from '../Configuration/firebase';
 import ExploreScreen from './ExploreScreen';
 import Modal from 'react-native-modal';
 import DatePicker from 'react-native-datepicker'
+import { Rating, AirbnbRating, } from 'react-native-ratings';
 const carTypes = [
   { id: 1, label: 'فخمة', value: 'فخمة' },
   { id: 2, label: 'اقتصادية', value: 'اقتصادية' },
@@ -113,7 +114,7 @@ navigation={this.props.navigation}
     const { image = "", model = "" } = item.vehicleDetails || {}
     const stars = []
     for (let i = 0; i < 5; i++) {
-      if (i < item.Rating) {
+      if (i < 4) {
         stars.push(<FontAwesome5 name="star" color="#fff" />)
       }
     }
@@ -140,17 +141,21 @@ navigation={this.props.navigation}
         borderRadius: 16,
         padding: 12
       }}>
-      <View style={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-        <View style={{ padding: 4, borderRadius: 4, backgroundColor: '#ffb815', flexDirection: 'row', alignItems: 'center' }}>
-          {stars}
-        </View>
-      </View>
+
       <View style={{ width: '80%', height: 120, marginBottom: 4, alignSelf: 'center' }}>
         <Image source={{ uri: image }} style={{ width: '100%', height: '100%' }} />
       </View>
-      <View style={{ padding: 4 }}>
-        <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'left' }}>{model}</Text>
-        <Text style={{ fontSize: 14, fontFamily: 'Tajawal_400Regular', textAlign: 'left', color: '#929090', marginVertical: 5 }}>{`السعر : ${item.dailyRate} ريال/يوم`}</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+
+        <View style={{ padding: 4 }}>
+          <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'left' }}>{model}</Text>
+          <Text style={{ fontSize: 14, fontFamily: 'Tajawal_400Regular', textAlign: 'left', color: '#929090', marginVertical: 5 }}>{`السعر : ${item.dailyRate} ريال/يوم`}</Text>
+        </View>
+        <View style={{ flexDirection: 'row-reverse', justifyContent: 'center' }}>
+
+          <Rating type='star' ratingCount={5} readonly={true} imageSize={20} startingValue={3} style={{ marginBottom: 5, direction: 'ltr' }} />
+
+        </View>
       </View>
     </TouchableOpacity>)
   }

@@ -6,7 +6,7 @@ import { database } from '../Configuration/firebase';
 import { auth } from 'firebase';
 import colors from '../Constants/colors';
 import CustomButton from '.././components/CustomButton';
-
+import { Rating, AirbnbRating, } from 'react-native-ratings';
 import { Ionicons, FontAwesome5 } from '../Constants/icons';
 
 
@@ -74,8 +74,8 @@ export default class Vehicle extends Component {
     return (
       <View>
         <View style={{ flexDirection: 'row-reverse', alignItems: 'flex-end', borderBottomWidth: 1, borderColor: colors.Subtitle }}>
-        
-        
+
+
         </View>
         <FlatList
           data={this.state.items}
@@ -83,16 +83,16 @@ export default class Vehicle extends Component {
           contentContainerStyle={{ paddingTop: 5 }}
         />
 
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={() => {
             this.props.navigation.navigate('AddOrEditVehicle')
           }}>
-          <CustomButton 
-              style={[styles.Button]}
+          <CustomButton
+            style={[styles.Button]}
             title='إضافة مركبة'
             onPress={() => {
               this.props.navigation.navigate('AddOrEditVehicle')
-            }}/>
+            }} />
 
         </TouchableOpacity>
 
@@ -101,63 +101,54 @@ export default class Vehicle extends Component {
   }
 
   renderVehicle = ({ item, index }) => {
+    const { image = "", model = "" } = item.vehicleDetails || {}
+    const stars = []
+    for (let i = 0; i < 5; i++) {
+      if (i < 4) {
+        stars.push(<FontAwesome5 name="star" color="#fff" />)
+      }
+    }
     return (<TouchableOpacity
       activeOpacity={1}
       onPress={() => {
-        // navigate to view
+        this.props.navigation.navigate('VehicleView', { vehicleID: item.vehicleID })
       }}
       style={{
+        direction: 'rtl',
+        width: 320,
+        height: 220,
         backgroundColor: '#fff',
-        width: Dimensions.get('screen').width - 40,
-        margin: 10,
+        marginVertical: 10,
+        borderWidth: 0.2,
         shadowColor: '#000',
-        shadowOpacity: 0.12,
+        shadowOpacity: 0.15,
         fontFamily: 'Tajawal_400Regular',
         shadowRadius: 6,
         shadowOffset: {
           height: 3,
           width: 0
         },
-        borderRadius: 20,
-        direction: 'rtl',
-        padding: 12,
-        alignSelf: 'center'
+        borderRadius: 16,
+        padding: 12
       }}>
-      <View style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-      }}>
-        <View style={{ padding: 8 }}>
-          <View style={styles.inputRow}>
-            <Text style={styles.label}>موديل المركبة </Text>
-            <Text style={styles.input}> {item.vehicleDetails.model}</Text>
-          </View>
 
-          <View style={styles.inputRow}>
-            <Text style={styles.label}> لوحة المركبة</Text>
-            <Text style={styles.input}> {item.LicensePlateNumber}</Text>
-          </View>
+      <View style={{ width: '80%', height: 120, marginBottom: 4, alignSelf: 'center' }}>
+        <Image source={{ uri: image }} style={{ width: '100%', height: '100%' }} />
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
 
-
-          <View style={styles.inputRow}>
-            <Text style={styles.label}>السعر اليومي</Text>
-            <Text style={styles.input}> {item.dailyRate}</Text>
-          </View>
-          <View style={[styles.inputRow]}>
-            <Text style={styles.input}> {<FontAwesome5 name={'star'} size={20} />}{item.Rating} </Text>
-          </View>
+        <View style={{ padding: 4 }}>
+          <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'left' }}>{model}</Text>
+          <Text style={{ fontSize: 14, fontFamily: 'Tajawal_400Regular', textAlign: 'left', color: '#929090', marginVertical: 5 }}>{`السعر : ${item.dailyRate} ريال/يوم`}</Text>
         </View>
-        <View style={{ width: 120, height: 80 }}>
-          <Image source={{ uri: item.vehicleDetails.image }} style={{ width: '100%', height: '100%' }} />
+        <View style={{ flexDirection: 'row-reverse', justifyContent: 'center' }}>
+
+          <Rating type='star' ratingCount={5} readonly={true} imageSize={20} startingValue={3} style={{ marginBottom: 5, direction: 'ltr' }} />
+
         </View>
       </View>
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-
-      </View>
-
     </TouchableOpacity>)
   }
-
 
   renderItem = ({ item, index }) => {
     return (
@@ -183,19 +174,19 @@ export default class Vehicle extends Component {
           {/* <TouchableOpacity style={styles.Button} onPress={() => this.props.navigation.navigate('AddOrEditVehicle')}>
             <Text style={styles.optionText}>إدارة المركبة</Text>
           </TouchableOpacity> */}
-            <CustomButton 
-            style={[styles.Button, ]}
+          <CustomButton
+            style={[styles.Button,]}
             onPress={() => this.props.navigation.navigate('AddOrEditVehicle')}
-            title='إضافة مركبة'/>
+            title='إضافة مركبة' />
 
-              <CustomButton 
-              onPress={() => this.props.
-                navigation.navigate('Requests',
-                  {
-                    screen: 'Pending'
-                  })}
-              style={styles.Button}
-            title='الطلبات'/>
+          <CustomButton
+            onPress={() => this.props.
+              navigation.navigate('Requests',
+                {
+                  screen: 'Pending'
+                })}
+            style={styles.Button}
+            title='الطلبات' />
 
         </View>
 
@@ -206,7 +197,7 @@ export default class Vehicle extends Component {
           contentContainerStyle={{ alignItems: 'center' }}
         />
 
-  
+
 
       </View>
 
@@ -307,14 +298,16 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     margin: 7,
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    flex: 1,
   },
   label:
   {
     alignSelf: 'flex-end', textAlign: 'right', fontFamily: 'Tajawal_400Regular', fontSize: 20
   },
   input:
-    { textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20, color: colors.Green, marginHorizontal: 5 }
+    { textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20, color: colors.Green, marginHorizontal: 5, flex: 1 }
 
 
 });
