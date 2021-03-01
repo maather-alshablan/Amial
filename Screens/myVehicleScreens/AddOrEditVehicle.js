@@ -30,15 +30,17 @@ const carTypes = [
     { id: 7, label: 'متعددة الاستخدامات', value: 'متعددة الاستخدامات' },
 ]
 
-const vehicleFeatures = [
-    { id: 1, label: 'مفتاح ذكي', value: 'مفتاح ذكي' },
-    { id: 2, label: 'AUX', value: 'AUX' },
-    { id: 3, label: 'مكيف أوتوماتك', value: 'مكيف أوتوماتك' },
-    { id: 4, label: 'CarPlay', value: 'CarPlay' },
-    { id: 5, label: 'أضواء محيطة', value: 'أضواء محيطة' },
-    { id: 6, label: 'GPS', value: 'GPS' },
-    { id: 7, label: 'شاشة تعمل باللمس', value: 'شاشة تعمل باللمس' },
-]
+// const vehicleFeatures = [
+//     { id: 1, label: 'مفتاح ذكي', value: 'مفتاح ذكي' },
+//     { id: 2, label: 'AUX', value: 'AUX' },
+//     { id: 3, label: 'مكيف أوتوماتك', value: 'مكيف أوتوماتك' },
+//     { id: 4, label: 'CarPlay', value: 'CarPlay' },
+//     { id: 5, label: 'أضواء محيطة', value: 'أضواء محيطة' },
+//     { id: 6, label: 'GPS', value: 'GPS' },
+//     { id: 7, label: 'شاشة تعمل باللمس', value: 'شاشة تعمل باللمس' },
+// ]
+
+const vehicleFeatures = [ 'مفتاح ذكي', 'AUX' ,'مكيف أوتوماتك' ,'CarPlay' , 'أضواء محيطة' , 'GPS' , 'شاشة تعمل باللمس' ,]
 
 export default class AddOrEditVehicle extends Component {
 
@@ -61,7 +63,7 @@ export default class AddOrEditVehicle extends Component {
         state: '',
         description: '',
         selectedValues: [50, 500],
-        selectedFeatures: {},
+        selectedFeatures: [],
         carNumber: '',
         pickUpOptionCost: [15],
         coordinates: null
@@ -349,24 +351,57 @@ export default class AddOrEditVehicle extends Component {
                     {vehicleFeatures.map(feature => {
                         return (<TouchableOpacity
                             onPress={() => {
-                                if (this.state.selectedFeatures[feature.id]) {
-                                    const featurs = { ...this.state.selectedFeatures };
-                                    delete featurs[feature.id]
-                                    this.setState({
-                                        selectedFeatures: featurs
-                                    })
+                                // if (this.state.selectedFeatures[feature.id]) {
+                                //     const featurs = { ...this.state.selectedFeatures };
+                                //     delete featurs[feature.id]
+                                //     this.setState({
+                                //         selectedFeatures: featurs
+                                //     })
 
-                                } else {
+                                // } else {
+                                //     this.setState({
+                                //         selectedFeatures: { ...this.state.selectedFeatures, [feature.id]: feature }
+                                //     })
+                                //     console.log(this.state.selectedFeatures);
+                                // }
+                                if (this.state.selectedFeatures == undefined) {
+                                    console.log('undefined array')
+                                    const features = []
+                                    feature.push(feature)
+                                    console.log(features)
+                  
                                     this.setState({
-                                        selectedFeatures: { ...this.state.selectedFeatures, [feature.id]: feature }
+                                      selectedFeatures: features
                                     })
-                                }
+                                    console.log(this.state.selectedFeatures[0])
+                                  }
+                                  else if (this.state.selectedFeatures.indexOf(feature) >= 0) {
+                                    { console.log('remove element') }
+                                    const features = this.state.selectedFeatures;
+                  
+                                    var index = features.indexOf((String(feature)))
+                                    features.splice(index, 1)
+                                    console.log(features)
+                  
+                                    this.setState({
+                                      selectedDates: features
+                                    })
+                                  }
+                                  else {
+                                    const features = this.state.selectedFeatures;
+                                    features.push(feature);
+                                    console.log(features)
+                  
+                                    this.setState({
+                                      selectedDates: features
+                                    })
+                                  }
                             }}
-                            style={{ borderColor: '#01b753', borderWidth: 1, margin: 2, borderRadius: 10, padding: 12, backgroundColor: this.state.selectedFeatures[feature.id] ? '#01b753' : '#fff' }}>
+                            style={{ borderColor: '#01b753', borderWidth: 1, margin: 2, borderRadius: 10, padding: 12, backgroundColor: this.state.selectedFeatures.includes(feature) ? '#01b753' : '#fff' }}>
                             <Text style={{
                                 fontSize: 14,
-                                fontFamily: "Tajawal_400Regular", color: this.state.selectedFeatures[feature.id] ? '#fff' : '#01b753'
-                            }}>{feature.label}</Text>
+                                fontFamily: "Tajawal_400Regular", color: this.state.selectedFeatures.includes(feature) ? '#fff' : '#01b753'
+                            }}>{feature}</Text>
                         </TouchableOpacity>)
                     })}
                 </View>
@@ -727,7 +762,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                         }>
                         <Picker.Item label="طريقة التسليم" value="طريقة التسليم" />
                         <Picker.Item label="التوصيل لموقع المستأجر" value="التوصيل لموقع المستأجر" color={"التوصيل لموقع المستأجر" == this.state.pickUpOption ? colors.LightBlue : '#000'} />
-                        <Picker.Item label="استلام من موق المالك" value="استلام من موق المالك" color={"استلام من موق المالك" == this.state.pickUpOption ? colors.LightBlue : '#000'} />
+                        <Picker.Item label="استلام من موقع المالك" value="استلام من موق المالك" color={"استلام من موق المالك" == this.state.pickUpOption ? colors.LightBlue : '#000'} />
                     </Picker>
                     {/* <Icon name={"car"} color={'#01b753'} size={25} style={{ marginLeft: 8 }} /> */}
                 </View>

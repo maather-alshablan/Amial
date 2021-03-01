@@ -73,7 +73,7 @@ export default class Vehicle extends Component {
   userHasNoVehicle = () => {
     return (
       <View>
-        <View style={{ flexDirection: 'row-reverse', alignItems: 'center', borderBottomWidth: 1, borderColor: colors.Subtitle }}>
+        <View style={{ flexDirection: 'row-reverse', alignItems: 'flex-end', borderBottomWidth: 1, borderColor: colors.Subtitle }}>
         
         
         </View>
@@ -161,7 +161,7 @@ export default class Vehicle extends Component {
 
   renderItem = ({ item, index }) => {
     return (
-      <View style={{ flexDirection: 'row', direction: 'rtl', flex: 1, top: 100 }}>
+      <View style={{ flexDirection: 'row', direction: 'rtl', flex: 1, top: 100, }}>
         <View style={{}}>
           <View style={{ width: 32, height: 32, borderRadius: 16, borderColor: '#5dbcd2', borderWidth: 2, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{ fontSize: 18, fontFamily: 'Tajawal_500Medium', color: colors.Subtitle }}>{index + 1}</Text>
