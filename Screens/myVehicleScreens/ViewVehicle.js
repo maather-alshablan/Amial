@@ -104,7 +104,7 @@ export default class viewVehicle extends Component {
       availability: vehicleData.availability,
       address: vehicleData.address,
       dailyRate: vehicleData.dailyRate,
-      features: vehicleData.features,
+      features: vehicleDetails.features,
       Rating: vehicleData.Rating,
       InsurancePolicy: vehicleData.InsurancePolicy,
     })
@@ -221,7 +221,7 @@ export default class viewVehicle extends Component {
     return (
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
-        {['توصيل', 'من الموقع',].map(option => {
+        {['توصيل', 'استلام من موقع المالك',].map(option => {
           return (<TouchableOpacity
             style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
             onPress={() => {

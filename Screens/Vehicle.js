@@ -80,6 +80,7 @@ export default class Vehicle extends Component {
         <FlatList
           data={this.state.items}
           renderItem={this.renderItem}
+          keyExtractor={(index) => index.toString()}
           contentContainerStyle={{ paddingTop: 5 }}
         />
 

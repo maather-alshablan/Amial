@@ -5,6 +5,7 @@ import { auth, firebase } from '../../Configuration/firebase'
 import Icon from 'react-native-vector-icons/Entypo';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import colors from '../../Constants/colors';
+import CustomButton from "../../components/CustomButton";
 
 import {ModalComponent} from '../../Constants/Components/Modal'
 import  { showMessage, hideMessage } from "react-native-flash-message";
@@ -52,7 +53,7 @@ export default class ChangePassword extends Component {
     return (
       <View style={styles.container}>
 
-        <View style={{ marginBottom: 90 }}>
+        <View style={{ marginBottom: 60 }}>
           <Image 
           source={require('../../images/resetIcon.png')}
           style={{
@@ -81,7 +82,7 @@ export default class ChangePassword extends Component {
 
 <Text style={styles.FieldTitle}>تأكيد كلمة المرور</Text>
 <TextInput
-  style={styles.InputField}
+  style={[styles.InputField,{ width: 200,marginLeft:30}]}
   secureTextEntry
   placeholder='******'
   onChangeText={password => this.setState({ confirmPassword: password })}
@@ -91,10 +92,10 @@ export default class ChangePassword extends Component {
 </View>
 
 
-        <TouchableOpacity style={styles.Reset} onPress={() => this.handlePasswordReset()} >
-          <Text style={{ color: 'white', fontWeight: '800' }}> إعادة ضبط كلمة المرور</Text>
-
-        </TouchableOpacity>
+          <CustomButton 
+          style={{marginTop:40}}
+      onPress={() => this.handlePasswordReset()}
+      title='إعادة ضبط كلمة المرور'/>
       
 
         <ModalComponent/>
@@ -126,10 +127,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     marginBottom: 20,
 
-
   },
   InputField: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
+    alignSelf:'flex-end',
+    justifyContent:'center',
     textAlign: 'right',
     color: 'black',
     height: 40,
@@ -142,11 +144,12 @@ const styles = StyleSheet.create({
   },
   FieldTitle:{
     alignSelf:'flex-end',
+    justifyContent:'center',
     marginLeft:10,
     textAlign:'right',
-    fontSize:20,
+    fontSize:23,
     color:'black',
-    fontFamily:'Tajawal_400Regular'
+    fontFamily:'Tajawal_300Light'
   }
 });
 

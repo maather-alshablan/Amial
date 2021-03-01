@@ -13,8 +13,6 @@ import CustomButton from "../../components/CustomButton";
 export default class creditCard extends Component {
   state = {  
     formData:null,
-    name:'',
-    postalCode:'',
     cvc:'',
     type:'',
     number:'',
@@ -22,7 +20,7 @@ export default class creditCard extends Component {
   };
 
   componentDidMount(){
-    console.log('hi')
+  
 
     this.retrieveBillingAccount();
   }
@@ -33,48 +31,47 @@ export default class creditCard extends Component {
   _onFocus = (field) => console.log("focusing", field);
 
   retrieveBillingAccount = async ()=>{
-   firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get().then(snapshot=>{
-
+   var ref = await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get();
+   if (ref.exists)
+     if (ref.data().BillingAccount != null ){
+      var addtionalInputsProps = {
+        name: {
+          defaultValue: this.state.name,
+          maxLength: 40,
+        },
+         cvc: {
+          defaultValue: this.state.cvc
+        },  
+        expiry: {
+          defaultValue: this.state.expiry
+        }, 
+        number: {
+          defaultValue: this.state.number
+        },
+        type: {
+          defaultValue: this.state.type
+        },
+      }; 
       this.setState({
-        formData:snapshot.data().BillingAccount,
-         name:snapshot.data().BillingAccount.name,
-        postalCode: snapshot.data().BillingAccount.postalCode,
-      cvc: snapshot.data().BillingAccount.cvc,
-    type: snapshot.data().BillingAccount.type,
-  number:snapshot.data().BillingAccount.number,
-  expiry: snapshot.data().BillingAccount.expiry
-  })
+        formData:ref.data().BillingAccount,
+      cvc: ref.data().BillingAccount.cvc,
+    type: ref.data().BillingAccount.type,
+  number:ref.data().BillingAccount.number,
+  expiry: ref.data().BillingAccount.expiry,
+  addtionalInputsProps:addtionalInputsProps
+  });
 
-  var addtionalInputsProps = {
-    name: {
-      defaultValue: this.state.name,
-      maxLength: 40,
-    },
-     cvc: {
-      defaultValue: this.state.cvc
-    },  
-    expiry: {
-      defaultValue: this.state.expiry
-    }, 
-    number: {
-      defaultValue: this.state.number
-    },
-    type: {
-      defaultValue: this.state.type
-    },
-  }; 
-  this.setState({addtionalInputsProps:addtionalInputsProps})
+  console.log(this.state.formData)
+    }
 
-console.log(this.state.formData)
-    }).catch(error=>{
-      console.log('firestore error')
-    }) 
   }
 
 
 
 
   handleSaveInfo= ()=>{
+  
+  
   firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update //collection('BillingAccount').doc(this.state.formData.type)
   ({
     BillingAccount: this.state.formData
