@@ -40,7 +40,7 @@ const carTypes = [
 //     { id: 7, label: 'شاشة تعمل باللمس', value: 'شاشة تعمل باللمس' },
 // ]
 
-const vehicleFeatures = [ 'مفتاح ذكي', 'AUX' ,'مكيف أوتوماتك' ,'CarPlay' , 'أضواء محيطة' , 'GPS' , 'شاشة تعمل باللمس' ,]
+const vehicleFeatures = ['مفتاح ذكي', 'AUX', 'مكيف أوتوماتك', 'CarPlay', 'أضواء محيطة', 'GPS', 'شاشة تعمل باللمس',]
 
 export default class AddOrEditVehicle extends Component {
 
@@ -91,10 +91,10 @@ export default class AddOrEditVehicle extends Component {
         }
     }
     onError = (e) => {
-       // console.warn(e, "===")
+        // console.warn(e, "===")
     }
     componentDidMount() {
-      //  console.warn('eeee')
+        //  console.warn('eeee')
         database.collection('Vehicle').where('userId', "==", auth.currentUser.uid).onSnapshot(this.onResult, this.onError)
         console.log(this.state.selectedValues)
         this.gnerateYears()
@@ -105,7 +105,7 @@ export default class AddOrEditVehicle extends Component {
         for (let i = 2021; i > 2010; i--) {
             arr.push({ id: i, label: i.toString(), value: i.toString() },)
         }
-       // console.warn({ arr })
+        // console.warn({ arr })
         this.setState({
             years: arr
         })
@@ -154,7 +154,7 @@ export default class AddOrEditVehicle extends Component {
             aspect: 1,
             allowsEditing: true,
         });
-       // console.warn(result)
+        // console.warn(result)
         if (!result.cancelled) this.setState({ image: result.uri });
     };
 
@@ -236,7 +236,7 @@ export default class AddOrEditVehicle extends Component {
                 }).catch(e => {
                     this.failureMessage('حصل خطأ ما يرجى المحاولة لاحقا')
                     this.setState({ loading: false })
-                 //   console.warn('error', e);
+                    //   console.warn('error', e);
                 })
             } else {
                 const response = await this.uploadFile(this.state.image);
@@ -369,33 +369,33 @@ export default class AddOrEditVehicle extends Component {
                                     const features = []
                                     feature.push(feature)
                                     console.log(features)
-                  
+
                                     this.setState({
-                                      selectedFeatures: features
+                                        selectedFeatures: features
                                     })
                                     console.log(this.state.selectedFeatures[0])
-                                  }
-                                  else if (this.state.selectedFeatures.indexOf(feature) >= 0) {
+                                }
+                                else if (this.state.selectedFeatures.indexOf(feature) >= 0) {
                                     { console.log('remove element') }
                                     const features = this.state.selectedFeatures;
-                  
+
                                     var index = features.indexOf((String(feature)))
                                     features.splice(index, 1)
                                     console.log(features)
-                  
+
                                     this.setState({
-                                      selectedDates: features
+                                        selectedDates: features
                                     })
-                                  }
-                                  else {
+                                }
+                                else {
                                     const features = this.state.selectedFeatures;
                                     features.push(feature);
                                     console.log(features)
-                  
+
                                     this.setState({
-                                      selectedDates: features
+                                        selectedDates: features
                                     })
-                                  }
+                                }
                             }}
                             style={{ borderColor: '#01b753', borderWidth: 1, margin: 2, borderRadius: 10, padding: 12, backgroundColor: this.state.selectedFeatures.includes(feature) ? '#01b753' : '#fff' }}>
                             <Text style={{
@@ -531,7 +531,7 @@ style={{ width: 80, height: 80, borderRadius: 4, borderWidth: 1, borderColor: 'g
                 <Input
                     value={this.state.carNumber}
                     onChangeText={(carNumber) => this.setState({ carNumber })}
-                    placeholder="اضافة لوحة السيارة"
+                    placeholder="اضافة لوحة المركبة : مثال ABC123"
                     style={{ width: '100%', backgroundColor: '#F0EEF0', borderBottomWidth: 0, height: 50, borderRadius: 10 }}
                     containerStyle={{ flex: 1, paddingRight: 16, }}
                 />

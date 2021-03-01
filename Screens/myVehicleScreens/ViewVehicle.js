@@ -40,7 +40,7 @@ export default class viewVehicle extends Component {
   }
 
 
-  componentDidMount = async () => {
+  async componentDidMount() {
 
     await this.retrieveVehicle();
     this.setHeader();
@@ -104,13 +104,10 @@ export default class viewVehicle extends Component {
       availability: vehicleData.availability,
       address: vehicleData.address,
       dailyRate: vehicleData.dailyRate,
-      features: vehicleDetails.features,
+      features: vehicleData.features,
       Rating: vehicleData.Rating,
       InsurancePolicy: vehicleData.InsurancePolicy,
     })
-    //testing output
-    console.log(this.state.ownerID, this.state.vehicleDetails, this.state.address, this.state.availability,
-      this.state.features, this.state.Rating, this.state.InsurancePolicy);
 
   }
 
@@ -155,64 +152,63 @@ export default class viewVehicle extends Component {
         var tax = price * 0.15;
         var totalAmount = price + tax;
         this.state.calculatedTotalPrice = totalAmount;
-        console.log(this.state.calculatedTotalPrice)
       }
     }
 
     return (
-      
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
-          {this.state.availability.map(date => {
-            return (<TouchableOpacity
-              style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
-              onPress={() => {
 
-                if (this.state.selectedDates == undefined) {
-                  console.log('undefined array')
-                  const dates = []
-                  dates.push(date)
-                  console.log(dates)
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
+        {this.state.availability.map(date => {
+          return (<TouchableOpacity
+            style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
+            onPress={() => {
 
-                  //var newSelection = this.state.selectedDates.push(date)
-                  this.setState({
-                    selectedDates: dates
-                  })
-                  console.log(this.state.selectedDates[0])
-                }
-                else if (this.state.selectedDates.indexOf(date) >= 0) {
-                  { console.log('remove element') }
-                  const dates = this.state.selectedDates;
+              if (this.state.selectedDates == undefined) {
+                console.log('undefined array')
+                const dates = []
+                dates.push(date)
+                console.log(dates)
 
-                  var index = dates.indexOf((String(date)))
-                  dates.splice(index, 1)
-                  console.log(dates)
+                //var newSelection = this.state.selectedDates.push(date)
+                this.setState({
+                  selectedDates: dates
+                })
+                console.log(this.state.selectedDates[0])
+              }
+              else if (this.state.selectedDates.indexOf(date) >= 0) {
+                { console.log('remove element') }
+                const dates = this.state.selectedDates;
 
-                  this.setState({
-                    selectedDates: dates
-                  })
-                }
-                else {
-                  const dates = this.state.selectedDates;
-                  dates.push(date);
-                  console.log(dates)
+                var index = dates.indexOf((String(date)))
+                dates.splice(index, 1)
+                console.log(dates)
 
-                  this.setState({
-                    selectedDates: dates
-                  })
-                }
-                calculateTotalPrice();
+                this.setState({
+                  selectedDates: dates
+                })
+              }
+              else {
+                const dates = this.state.selectedDates;
+                dates.push(date);
+                console.log(dates)
+
+                this.setState({
+                  selectedDates: dates
+                })
+              }
+              calculateTotalPrice();
 
 
-              }}
-              style={{
-                borderColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : 'black',
-                borderWidth: 1, borderRadius: 10, padding: 12, margin: 4,
-                backgroundColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : '#fff'
-              }}>
-              <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? '#fff' : 'black' }}>{date}</Text>
-            </TouchableOpacity>)
-          })}
-        </View>
+            }}
+            style={{
+              borderColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : 'black',
+              borderWidth: 1, borderRadius: 10, padding: 12, margin: 4,
+              backgroundColor: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? colors.LightBlue : '#fff'
+            }}>
+            <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedDates != undefined && this.state.selectedDates.includes(date)) ? '#fff' : 'black' }}>{date}</Text>
+          </TouchableOpacity>)
+        })}
+      </View>
 
     )
   }
@@ -413,8 +409,8 @@ export default class viewVehicle extends Component {
 
                   <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
 
-                 
-                    {this.SelectPickUpOption()}
+
+                  {this.SelectPickUpOption()}
 
                   <Text style={[styles.requestModalLabel, { fontSize: 20, }]}>المجموع</Text>
                   <Text style={[styles.requestModalLabel, { fontSize: 25, fontFamily: 'Tajawal_500Medium', bottom: 20 }]}> {this.state.calculatedTotalPrice} ريال</Text>
@@ -422,8 +418,8 @@ export default class viewVehicle extends Component {
 
                   <View style={{ bottom: 20 }}>
                     <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
-                    <CustomButton
-                      title='إرسال الطلب'
+                      <CustomButton
+                        title='إرسال الطلب'
                       />
                     </TouchableOpacity>
                   </View>
@@ -457,28 +453,29 @@ export default class viewVehicle extends Component {
     )
   }
 
-  renderFeature =()=>{
+  renderFeature = () => {
     const features = [];
     for (let i = 0; i < this.state.features.length; i += 2) {
-      
-      features.push(<View style={{  flexDirection:'row'}}>
-        <View style={{ flex: 1, alignItems: 'center', flexDirection:'row'}}>
+
+      features.push(<View style={{ flexDirection: 'row' }}>
+        <View style={{ flex: 1, alignItems: 'center', flexDirection: 'row' }}>
 
           <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#5dbcd2', marginRight: 8, }}></View>
           <Text style={{ fontSize: 16, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>{this.state.features[i]}</Text>
         </View>
-        {this.state.features[i+1] != null ? 
-        <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
-          <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#5dbcd2', marginRight: 8 }}></View>
-          <Text style={{ fontSize: 16, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>{this.state.features[i+1]}</Text>
-        </View> :<View></View>}
+        {this.state.features[i + 1] != null ?
+          <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#5dbcd2', marginRight: 8 }}></View>
+            <Text style={{ fontSize: 16, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>{this.state.features[i + 1]}</Text>
+          </View> : <View></View>}
       </View>
       )
     }
-    return features}
+    return features
+  }
   renderVehicleDetails = () => {
- 
-    this.state.features=['aux']
+
+    this.state.features = ['aux']
 
     return (<View style={{ direction: 'rtl' }}>
       <View style={{ height: 180, width: '100%', backgroundColor: 'transparent', marginBottom: 8 }}>
@@ -491,7 +488,7 @@ export default class viewVehicle extends Component {
 
         <View style={{ alignSelf: 'flex-end', flexDirection: 'row-reverse', justifyContent: 'center' }}>
 
-          <Rating type='star' ratingCount={1} readonly={true} imageSize={28} startingValue={1} style={{ marginBottom: 5, direction: 'ltr' }}/>
+          <Rating type='star' ratingCount={5} readonly={true} imageSize={20} startingValue={3} style={{ marginBottom: 5, direction: 'ltr' }} />
 
         </View>
         <View style={{ flex: 1 }}>
@@ -511,29 +508,29 @@ export default class viewVehicle extends Component {
         {this.renderCell({ name: 'الجير', value: this.state.vehicleDetails.transmission })}
       </View>
       <View style={{ flexDirection: 'row', }}>
-       
+
         {/* {this.renderCell({ name: 'نوع التأمين ', value: this.state.InsurancePolicy.type })}
         <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
         </View> */}
       </View>
-      {this.state.features === undefined ? <View ></View>:
+      {this.state.features === undefined ? <View ></View> :
 
-      <View style={{
-        padding: 12, backgroundColor: '#fff', borderRadius: 20, margin: 8, shadowColor: '#000',
-        shadowOpacity: 0.12,
-        shadowRadius: 6,
-        shadowOffset: {
-          height: 3,
-          width: 0
-        }
-      }}>
+        <View style={{
+          padding: 12, backgroundColor: '#fff', borderRadius: 20, margin: 8, shadowColor: '#000',
+          shadowOpacity: 0.12,
+          shadowRadius: 6,
+          shadowOffset: {
+            height: 3,
+            width: 0
+          }
+        }}>
 
-        <View>
-        <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>خصائص المركبة</Text>
-        {this.renderFeature()}
-      </View> 
+          <View>
+            <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>خصائص المركبة</Text>
+            {this.renderFeature()}
           </View>
-  }
+        </View>
+      }
 
 
       <View style={{ flexDirection: 'row', }}>
