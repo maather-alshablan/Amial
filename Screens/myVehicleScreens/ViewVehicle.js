@@ -24,7 +24,7 @@ export default class viewVehicle extends Component {
       ownerID: '',
       vehicleDetails: {},
       availability: [],
-      features: [],
+      features: ['AUX','CarPlay'],
       address: {},
       Rating: 0,
       InsurancePolicy: {},
@@ -457,22 +457,30 @@ export default class viewVehicle extends Component {
     )
   }
 
-  renderVehicleDetails = () => {
+  renderFeature =()=>{
     const features = [];
-    for (let i = 0; i < 4; i += 2) {
-      features.push(<View style={{ flexDirection: 'row' }}>
-        <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+
+    this.state.features = ['AUX','CarPlay','GPS',]
+    for (let i = 0; i < this.state.features.length; i += 2) {
+      
+      features.push(<View style={{  flexDirection:'row'}}>
+        <View style={{ flex: 1, alignItems: 'center', flexDirection:'row'}}>
 
           <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#5dbcd2', marginRight: 8, }}></View>
-          <Text style={{ fontSize: 14, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>الخاصية {i + 1}</Text>
+          <Text style={{ fontSize: 16, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>{this.state.features[i]}</Text>
         </View>
+        {this.state.features[i+1] != null ? 
         <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
           <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#5dbcd2', marginRight: 8 }}></View>
-          <Text style={{ fontSize: 14, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>الخاصية {i + 2}</Text>
-        </View>
-      </View>)
+          <Text style={{ fontSize: 16, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>{this.state.features[i+1]}</Text>
+        </View> :<View></View>}
+      </View>
+      )
     }
-
+    return features}
+  renderVehicleDetails = () => {
+ 
+    this.state.features=['aux']
 
     return (<View style={{ direction: 'rtl' }}>
       <View style={{ height: 180, width: '100%', backgroundColor: 'transparent', marginBottom: 8 }}>
@@ -505,12 +513,13 @@ export default class viewVehicle extends Component {
         {this.renderCell({ name: 'الجير', value: this.state.vehicleDetails.transmission })}
       </View>
       <View style={{ flexDirection: 'row', }}>
-        <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
-        </View>
+       
         {/* {this.renderCell({ name: 'نوع التأمين ', value: this.state.InsurancePolicy.type })}
         <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
         </View> */}
       </View>
+      {this.state.features === undefined ? <View ></View>:
+
       <View style={{
         padding: 12, backgroundColor: '#fff', borderRadius: 20, margin: 8, shadowColor: '#000',
         shadowOpacity: 0.12,
@@ -520,9 +529,13 @@ export default class viewVehicle extends Component {
           width: 0
         }
       }}>
+
+        <View>
         <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>خصائص المركبة</Text>
-        {features}
-      </View>
+        {this.renderFeature()}
+      </View> 
+          </View>
+  }
 
 
       <View style={{ flexDirection: 'row', }}>

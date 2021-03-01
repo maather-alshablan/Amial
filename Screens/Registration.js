@@ -76,7 +76,7 @@ export default class Registration extends Component {
 
     }
 
-    if (this.state.phone.length != 10) {
+    if (this.state.mobileNumber.length != 10) {
       this.state.formValid = false;
 
       this.failureMessage("يرجى استخدام رقم جوال صحيح")

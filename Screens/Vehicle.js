@@ -186,7 +186,7 @@ export default class Vehicle extends Component {
             <CustomButton 
             style={[styles.Button, ]}
             onPress={() => this.props.navigation.navigate('AddOrEditVehicle')}
-            title='إدارة المركبة'/>
+            title='إضافة مركبة'/>
 
               <CustomButton 
               onPress={() => this.props.

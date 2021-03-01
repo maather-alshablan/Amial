@@ -89,10 +89,10 @@ export default class AddOrEditVehicle extends Component {
         }
     }
     onError = (e) => {
-        console.warn(e, "===")
+       // console.warn(e, "===")
     }
     componentDidMount() {
-        console.warn('eeee')
+      //  console.warn('eeee')
         database.collection('Vehicle').where('userId', "==", auth.currentUser.uid).onSnapshot(this.onResult, this.onError)
         console.log(this.state.selectedValues)
         this.gnerateYears()
@@ -103,7 +103,7 @@ export default class AddOrEditVehicle extends Component {
         for (let i = 2021; i > 2010; i--) {
             arr.push({ id: i, label: i.toString(), value: i.toString() },)
         }
-        console.warn({ arr })
+       // console.warn({ arr })
         this.setState({
             years: arr
         })
@@ -152,7 +152,7 @@ export default class AddOrEditVehicle extends Component {
             aspect: 1,
             allowsEditing: true,
         });
-        console.warn(result)
+       // console.warn(result)
         if (!result.cancelled) this.setState({ image: result.uri });
     };
 
@@ -234,7 +234,7 @@ export default class AddOrEditVehicle extends Component {
                 }).catch(e => {
                     this.failureMessage('حصل خطأ ما يرجى المحاولة لاحقا')
                     this.setState({ loading: false })
-                    console.warn('error', e);
+                 //   console.warn('error', e);
                 })
             } else {
                 const response = await this.uploadFile(this.state.image);
@@ -275,7 +275,7 @@ export default class AddOrEditVehicle extends Component {
                     }).catch(e => {
                         this.failureMessage('حصل خطأ ما يرجى المحاولة لاحقا')
                         this.setState({ loading: false })
-                        console.warn('error', e);
+                        //console.warn('error', e);
                     })
                 } else {
                     this.setState({ loading: false })
