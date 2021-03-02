@@ -418,6 +418,7 @@ console.log('retrieve')
                   <View style={{ bottom: 20 }}>
                     <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
                       <CustomButton
+                        onPress = {()=> this.handleRequest()}
                         title='إرسال الطلب'
                       />
                     </TouchableOpacity>
