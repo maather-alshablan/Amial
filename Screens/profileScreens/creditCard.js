@@ -75,23 +75,18 @@ export default class creditCard extends Component {
   firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update //collection('BillingAccount').doc(this.state.formData.type)
   ({
     BillingAccount: this.state.formData
-  }).catch((error)=>{
+  }).then(()=>{
+      showMessage({
+        message:"تم الحفظ بنجاح",
+        type: "success",
+      });
+    }).catch((error)=>{
     console.log(error)
     showMessage({
       message:  'يرجى محاولة الحفظ مرة أخرى',
       type: 'danger'
     });
-  }).then(()=>{
-    successMessage= ()=> {
-      showMessage({
-        message:"تم الحفظ بنجاح",
-        type: "success",
-      });
-    }
   })
-
-
-
   }
   render() {
     return (
