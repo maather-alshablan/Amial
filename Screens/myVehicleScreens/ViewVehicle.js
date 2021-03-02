@@ -94,7 +94,7 @@ export default class viewVehicle extends Component {
   }
 
   retrieveVehicle = async () => {
-
+console.log('retrieve')
     var vehicle = database.collection('Vehicle').doc(this.state.vehicleID).get();
     var vehicleData = (await vehicle).data();
     this.IsVehicleOwner(vehicleData.ownerID);
@@ -104,11 +104,10 @@ export default class viewVehicle extends Component {
       availability: vehicleData.availability,
       address: vehicleData.address,
       dailyRate: vehicleData.dailyRate,
-      features: vehicleDetails.features,
       Rating: vehicleData.Rating,
       InsurancePolicy: vehicleData.InsurancePolicy,
     })
-
+    
   }
 
   // createfakedata = () => {
@@ -455,18 +454,18 @@ export default class viewVehicle extends Component {
 
   renderFeature = () => {
     const features = [];
-    for (let i = 0; i < this.state.features.length; i += 2) {
+    for (let i = 0; i < this.state.vehicleDetails.features.length; i += 2) {
 
       features.push(<View style={{ flexDirection: 'row' }}>
         <View style={{ flex: 1, alignItems: 'center', flexDirection: 'row' }}>
 
           <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#5dbcd2', marginRight: 8, }}></View>
-          <Text style={{ fontSize: 16, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>{this.state.features[i]}</Text>
+          <Text style={{ fontSize: 16, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>{this.state.vehicleDetails.features[i]}</Text>
         </View>
-        {this.state.features[i + 1] != null ?
+        {this.state.vehicleDetails.features[i + 1] != null ?
           <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
             <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#5dbcd2', marginRight: 8 }}></View>
-            <Text style={{ fontSize: 16, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>{this.state.features[i + 1]}</Text>
+            <Text style={{ fontSize: 16, color: 'grey', fontFamily: 'Tajawal_400Regular' }}>{this.state.vehicleDetails.features[i + 1]}</Text>
           </View> : <View></View>}
       </View>
       )
@@ -488,7 +487,7 @@ export default class viewVehicle extends Component {
 
         <View style={{ alignSelf: 'flex-end', flexDirection: 'row-reverse', justifyContent: 'center' }}>
 
-          <Rating type='star' ratingCount={5} readonly={true} imageSize={20} startingValue={3} style={{ marginBottom: 5, direction: 'ltr' }} />
+          <Rating type='star' ratingCount={5} readonly={true} imageSize={20} startingValue={this.state.Rating} style={{ marginBottom: 5, direction: 'ltr' }} />
 
         </View>
         <View style={{ flex: 1 }}>
@@ -513,7 +512,7 @@ export default class viewVehicle extends Component {
         <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
         </View> */}
       </View>
-      {this.state.features === undefined ? <View ></View> :
+      {this.state.vehicleDetails.features === undefined ? <View ></View> :
 
         <View style={{
           padding: 12, backgroundColor: '#fff', borderRadius: 20, margin: 8, shadowColor: '#000',
