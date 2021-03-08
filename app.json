@@ -1,6 +1,7 @@
 {
   "name": "Amial",
   "displayName": "Amial",
+  "type": "module",
   "expo": {
     "name": "Amial",
     "slug": "Amial",

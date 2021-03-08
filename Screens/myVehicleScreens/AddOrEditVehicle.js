@@ -19,6 +19,8 @@ import SelectLocation from '../myVehicleScreens/SelectLocation';
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { showMessage } from 'react-native-flash-message';
+import CryptoES from 'crypto-es';
+
 
 const carTypes = [
     { id: 1, label: 'فخمة', value: 'فخمة' },
@@ -204,7 +206,7 @@ export default class AddOrEditVehicle extends Component {
             if (this.state.image.indexOf('http') > -1) {
                 database.collection('Vehicle').doc(this.state.docId).update({
                     vehicleID: ref, //document reference
-                    vehicleRegistration: this.state.carId,
+                    vehicleRegistration: CryptoES.AES.encrypt(this.state.carId, firebase.auth().currentUser.uid,).toString(),
                     vehicleDetails: {
                         features: this.state.selectedFeatures,
                         description: this.state.description,
@@ -216,7 +218,7 @@ export default class AddOrEditVehicle extends Component {
                     },
                     ownerID: auth.currentUser.uid,
                     availability: this.state.availabilities,
-                    LicensePlateNumber: this.state.carNumber,
+                    LicensePlateNumber: CryptoES.AES.encrypt(this.state.carNumber, firebase.auth().currentUser.uid,).toString(),
                     pickUpOption: this.state.pickUpOption,
                     pickUpOptionCost: this.state.pickUpOption == "التوصيل لموقع المستأجر" ? this.state.pickUpOptionCost : 0,
                     address: {
@@ -245,7 +247,7 @@ export default class AddOrEditVehicle extends Component {
                     const downloadUrl = await response.ref.getDownloadURL();
                     database.collection('Vehicle').doc(this.state.docId).update({
                         vehicleID: ref, //document reference
-                        vehicleRegistration: this.state.carId,
+                        vehicleRegistration: CryptoES.AES.encrypt(this.state.carId, firebase.auth().currentUser.uid,).toString(),
                         vehicleDetails: {
                             features: this.state.selectedFeatures,
                             description: this.state.description,
@@ -257,7 +259,7 @@ export default class AddOrEditVehicle extends Component {
                         },
                         ownerID: auth.currentUser.uid,
                         availability: this.state.availabilities,
-                        LicensePlateNumber: this.state.carNumber,
+                        LicensePlateNumber: CryptoES.AES.encrypt(this.state.carNumber, firebase.auth().currentUser.uid,).toString(),
                         pickUpOption: this.state.pickUpOption,
                         pickUpOptionCost: this.state.pickUpOption == "التوصيل لموقع المستأجر" ? this.state.pickUpOptionCost : 0,
                         address: {

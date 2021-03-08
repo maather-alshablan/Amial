@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Switch, Text ,TouchableOpacity, KeyboardAvoidingView} from "react-native";
 import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
+import CryptoES from 'crypto-es';
+
 import {firebase} from '../../Configuration/firebase'
 import colors from '../../Constants/colors'
 import {ModalComponent} from '../../Constants/Components/Modal'
@@ -20,14 +22,30 @@ export default class creditCard extends Component {
   };
 
   componentDidMount(){
-  
+ 
+    var cipher = CryptoES.AES.encrypt("Message234", firebase.auth().currentUser.uid,)
+    console.log('ciphering  > ', cipher.toString())
+    var decrypt = CryptoES.AES.decrypt(cipher, firebase.auth().currentUser.uid,)
+    
+    console.log('decrypting> ', decrypt.toString(CryptoES.enc.Utf8))
 
     this.retrieveBillingAccount();
   }
 
   _onChange = (formData) => {console.log(JSON.stringify(formData, null, " "))
   console.log(formData.values)
-  this.setState({formData:formData.values})}
+  var cvvEncrypted = CryptoES.AES.encrypt(formData.values.cvc, firebase.auth().currentUser.uid,)
+  var numberEncrypted = CryptoES.AES.encrypt(formData.values.number, firebase.auth().currentUser.uid,)
+  var creditCard = { 
+    CVV: cvvEncrypted.toString(),
+    number: numberEncrypted.toString(),
+    expiry: formData.values.expiry,
+    type:formData.values.type
+  }
+  this.setState({formData:creditCard})
+    console.log(creditCard)
+}
+
   _onFocus = (field) => console.log("focusing", field);
 
   retrieveBillingAccount = async ()=>{
@@ -62,6 +80,8 @@ export default class creditCard extends Component {
   });
 
   console.log(this.state.formData)
+  console.log(CryptoES.AES.decrypt(this.state.formData.CVV, firebase.auth().currentUser.uid,).toString(CryptoES.enc.Utf8))
+
     }
 
   }
@@ -70,6 +90,7 @@ export default class creditCard extends Component {
 
 
   handleSaveInfo= ()=>{
+
   
   
   firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update //collection('BillingAccount').doc(this.state.formData.type)
@@ -91,6 +112,7 @@ export default class creditCard extends Component {
   render() {
     return (
       <View style={s.container}>
+        <KeyboardAvoidingView >
             <CreditCardInput
               
             //  requiresName
@@ -109,7 +131,9 @@ export default class creditCard extends Component {
               onFocus={this._onFocus}
               onChange={this._onChange}
               
+              
               />
+              </KeyboardAvoidingView>
           <View >
         <TouchableOpacity style={s.Button} onPress = {() => this.handleSaveInfo()}>
       {/* <Text style={{color:'white',fontFamily:'Tajawal_400Regular',fontSize:25}}>حفظ </Text> */}
