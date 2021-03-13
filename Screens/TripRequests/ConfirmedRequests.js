@@ -27,7 +27,7 @@ export default class ConfirmedRequests extends Component {
     console.log('user is borrower')
     database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("borrowerID", '==', auth.currentUser.uid)
-      .where('status', 'in', ['confirmed', 'active'])
+      .where('status', 'in', ['confirmed', 'active', 'checkedIn'])
       .onSnapshot((querySnapshot) => {
         let requests = []
         if (!querySnapshot.empty) {
@@ -77,8 +77,11 @@ export default class ConfirmedRequests extends Component {
       case 'confirmed': status = 'مؤكدة'
         statusColor = colors.LightBlue
         break;
-
+      
       case 'active': status = 'نشطة'
+        statusColor = colors.Green
+        break;
+        case 'checkedIn': status = 'تم التسليم'
         statusColor = colors.Green
         break;
 

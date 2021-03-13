@@ -28,7 +28,7 @@ export default class ConfirmedRequests extends Component {
 
     database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("ownerID", '==', auth.currentUser.uid)
-      .where('status', 'in', ['confirmed', 'active'])
+      .where('status', 'in', ['confirmed', 'active','checkedIn','unlocked','locked'])
       .onSnapshot((querySnapshot) => {
         let requests = []
         if (!querySnapshot.empty) {
@@ -79,8 +79,13 @@ export default class ConfirmedRequests extends Component {
         statusColor = colors.LightBlue
         break;
 
+      case 'checkedIn':
       case 'active': status = 'نشطة'
         statusColor = colors.Green
+        break;
+      case 'locked':
+        status = 'تم إعادة المركبة'
+        statusColor = colors.Subtitle
         break;
 
       default: status = 'مؤكدة'

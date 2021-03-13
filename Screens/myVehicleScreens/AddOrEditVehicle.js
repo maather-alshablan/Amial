@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Image, ImageBackgroundBase, ScrollView, Platform, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Keyboard, Image, TouchableWithoutFeedback, ScrollView, Platform, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Input from '../../components/Input';
 import DatePicker from 'react-native-datepicker'
@@ -832,6 +832,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
     render() {
         return (
             <View style={styles.container}>
+                <DismissKeyboard>
 
                 <ProgressSteps
                     activeStepIconBorderColor={'#01b753'}
@@ -944,6 +945,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                         />
                     </ProgressStep>
                 </ProgressSteps>
+                </DismissKeyboard>
                 <ModalComponent />
 
                 {this.state.loading ? <OverLay /> : null}
@@ -952,6 +954,11 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
     }
 }
 
+const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      {children}
+    </TouchableWithoutFeedback>
+  );
 const styles = StyleSheet.create({
     container: {
         flex: 1,

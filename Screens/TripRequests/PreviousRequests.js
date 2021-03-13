@@ -142,7 +142,7 @@ export default class ActiveRequests extends Component {
     return (
       <View style={{ alignSelf: 'center', justifyContent: 'center', marginVertical: 180 }}>
         <MaterialCommunityIcons name={'car-traction-control'} size={150} color={colors.Subtitle} style={{ marginHorizontal: 100, bottom: 30 }} />
-        <Text style={styles.emptyTripsText}> لا توجد لديك رحلة نشطة</Text>
+        <Text style={styles.emptyTripsText}> لا توجد لديك رحلة ماضية</Text>
       </View>
     )
   }

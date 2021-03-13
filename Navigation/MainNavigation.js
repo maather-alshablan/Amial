@@ -12,6 +12,7 @@ import Profile from '../Navigation/profileStack'
 import TripRequestsNavigation from '../Navigation/tripsRequestsNavigation'
 import CustomHeader from "../components/CustomHeader";
 import TripRequestDetails from '../Screens/TripRequests/TripRequestDetails'
+import TripForm from '../Screens/myVehicleScreens/TripForm'
 
 function MainNavigation() {
 
@@ -109,6 +110,17 @@ function TripStack() {
             shadowColor: 'transparent'
           },
 
+        }} />
+        <Stack.Screen name='tripForm'
+        component={TripForm}
+        options={{
+          headerRight: null,
+          headerTitle: props => <CustomHeader title="بيانات الرحلة" {...props} />,
+          headerBackTitleVisible: false,
+          headerStyle: {
+            height: 170,
+            shadowColor: 'transparent',
+          }
         }} />
     </Stack.Navigator>
   )
