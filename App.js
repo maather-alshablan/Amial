@@ -2,6 +2,8 @@
 import React from 'react';
 import Authuntication from './Navigation'
 import AppLoading from 'expo-app-loading';
+import { LogBox } from 'react-native';
+
 import {
   useFonts, Tajawal_200ExtraLight,
   Tajawal_300Light,
@@ -26,6 +28,7 @@ export default function App() {
     Tajawal_900Black
   });
 
+  LogBox.ignoreAllLogs();
 
   if (!fontsLoaded) {
     return <AppLoading />;

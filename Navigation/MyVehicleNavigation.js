@@ -8,6 +8,7 @@ import RequestDetails from '../Screens/myVehicleScreens/RequestDetails'
 import AddOrEditVehicle from '../Screens/myVehicleScreens/AddOrEditVehicle'
 import colors from "../Constants/colors";
 import CustomHeader from "../components/CustomHeader";
+import TripForm from '../Screens/myVehicleScreens/TripForm'
 
 
 function myVehicleNavigation() {
@@ -58,6 +59,8 @@ function myVehicleNavigation() {
             shadowColor: 'transparent',
           }
         }} />
+         
+
 
     </Stack.Navigator>
   )
@@ -102,6 +105,17 @@ function RequestStack() {
           headerTintColor: colors.LightBlue
 
         }} />
+         <Stack.Screen name='tripForm'
+        component={TripForm}
+        options={{
+          headerRight: null,
+          headerTitle: props => <CustomHeader title="بيانات الرحلة" {...props} />,
+          headerBackTitleVisible: false,
+          headerStyle: {
+            height: 170,
+            shadowColor: 'transparent',
+          }
+        }} />
     </Stack.Navigator>
   )
 }
@@ -115,21 +129,5 @@ function RequestHeader() {
   )
 }
 
-function ManageVehicleHeader() {
-  return (
-    <View style={{ paddingVertical: 15, alignSelf: 'center' }}>
-      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'center' }}>مركبتي</Text>
-      <Text style={{ fontSize: 25, color: 'grey', fontFamily: 'Tajawal_300Light', alignSelf: 'center' }}>إدارة البيانات</Text>
-    </View>
-  )
-}
-
-function Header() {
-  return (
-    <View style={{ paddingVertical: 15 }}>
-      <Text style={{ fontSize: 40, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', alignSelf: 'center' }}>مركبتي</Text>
-    </View>
-  )
-}
 export default myVehicleNavigation;
 

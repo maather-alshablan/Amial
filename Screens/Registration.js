@@ -9,6 +9,8 @@ import Input from '../components/Input';
 import { OverLay } from '../components/OverLay';
 import { auth, database } from '../Configuration/firebase'
 import { ModalComponent } from '../Constants/Components/Modal'
+import CryptoES from 'crypto-es';
+
 
 export default class Registration extends Component {
 
@@ -124,11 +126,9 @@ export default class Registration extends Component {
       email: this.state.email,
       password: this.state.password,
       mobileNumber: this.state.mobileNumber,
-      nationalID: this.state.nationalID,
+      nationalID: CryptoES.AES.encrypt(this.state.nationalID, firebase.auth().currentUser.uid,).toString(),
       userRating: 0,
     }).then(success => {
-      // this is already handled in the navigation so no need for the following line of code
-      // this.props.navigation.navigate('Home');
       this.setState({ loading: false })
     }).catch(e => {
       this.failureMessage('حصل خطأ ما يرجى المحاولة لاحقا')

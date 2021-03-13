@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Image, ImageBackgroundBase, ScrollView, Platform, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Keyboard, Image, TouchableWithoutFeedback, ScrollView, Platform, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Input from '../../components/Input';
 import DatePicker from 'react-native-datepicker'
@@ -237,8 +237,8 @@ export default class AddOrEditVehicle extends Component {
             if (this.state.image.indexOf('http') > -1) {
                 console.warn(this.state.docId, "=====")
                 database.collection('Vehicle').doc(this.state.docId).update({
-                    vehicleID: vehicleID, //document reference
-                    vehicleRegistration: CryptoES.AES.encrypt(this.state.carId, firebase.auth().currentUser.uid).toString(),
+                    vehicleID: ref, //document reference
+                    vehicleRegistration: CryptoES.AES.encrypt(this.state.carId, firebase.auth().currentUser.uid,).toString(),
                     vehicleDetails: {
                         features: this.state.selectedFeatures,
                         description: this.state.description,
@@ -864,118 +864,120 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
     render() {
         return (
             <View style={styles.container}>
+                <DismissKeyboard>
 
-                <ProgressSteps
-                    activeStepIconBorderColor={'#01b753'}
-                    activeLabelColor={'#01b753'}
+                    <ProgressSteps
+                        activeStepIconBorderColor={'#01b753'}
+                        activeLabelColor={'#01b753'}
 
-                    completedProgressBarColor={'#01b753'}
-                    completedStepIconColor={'#01b753'}
-                >
-                    <ProgressStep
-                        label="معلومات المركبة"
-                        nextBtnText="التالي"
-                        nextBtnTextStyle={{
-                            color: "white", fontSize: 20,
-                            fontFamily: "Tajawal_400Regular"
-                        }}
-                        nextBtnStyle={{
-                            fontFamily: "Tajawal_400Regular",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            alignSelf: "stretch",
-                            justifyContent: "center",
-                            marginTop: 5,
-                            width: 100,
-                            color: "#ccc",
-                            borderRadius: 22.5,
-                            borderWidth: 0.1,
-                            borderColor: "#ccc",
-                            backgroundColor: "#01b753",
-                        }}
-                        onNext={this.onNextFirstStep}
-                        errors={this.state.errors}
+                        completedProgressBarColor={'#01b753'}
+                        completedStepIconColor={'#01b753'}
                     >
-                        {this.renderFirstStep()}
-                    </ProgressStep>
-                    <ProgressStep
-                        label="معلومات الحجز"
-                        previousBtnText="السابق"
-                        nextBtnText="التالي"
-                        onNext={this.onNextsecondtStep}
-                        errors={this.state.errors}
-                        nextBtnTextStyle={{
-                            color: "white", fontSize: 20,
-                            fontFamily: "Tajawal_400Regular"
-                        }}
-                        nextBtnStyle={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            alignSelf: "stretch",
-                            justifyContent: "center",
-                            color: "#ccc",
-                            borderRadius: 22.5,
-                            borderWidth: 0.1,
-                            borderColor: "#ccc",
-                            backgroundColor: "#01b753",
-                        }}
-                        previousBtnTextStyle={{
-                            color: "white", fontSize: 20,
-                            fontFamily: "Tajawal_400Regular"
-                        }}
-                        previousBtnStyle={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            alignSelf: "stretch",
-                            justifyContent: "center",
-                            color: "#ccc",
-                            borderRadius: 22.5,
-                            borderWidth: 0.1,
-                            borderColor: "#ccc",
-                            backgroundColor: "#01b753",
-                        }}
-                    >
-                        {this.renderPoking()}
-                    </ProgressStep>
+                        <ProgressStep
+                            label="معلومات المركبة"
+                            nextBtnText="التالي"
+                            nextBtnTextStyle={{
+                                color: "white", fontSize: 20,
+                                fontFamily: "Tajawal_400Regular"
+                            }}
+                            nextBtnStyle={{
+                                fontFamily: "Tajawal_400Regular",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                alignSelf: "stretch",
+                                justifyContent: "center",
+                                marginTop: 5,
+                                width: 100,
+                                color: "#ccc",
+                                borderRadius: 22.5,
+                                borderWidth: 0.1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#01b753",
+                            }}
+                            onNext={this.onNextFirstStep}
+                            errors={this.state.errors}
+                        >
+                            {this.renderFirstStep()}
+                        </ProgressStep>
+                        <ProgressStep
+                            label="معلومات الحجز"
+                            previousBtnText="السابق"
+                            nextBtnText="التالي"
+                            onNext={this.onNextsecondtStep}
+                            errors={this.state.errors}
+                            nextBtnTextStyle={{
+                                color: "white", fontSize: 20,
+                                fontFamily: "Tajawal_400Regular"
+                            }}
+                            nextBtnStyle={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                alignSelf: "stretch",
+                                justifyContent: "center",
+                                color: "#ccc",
+                                borderRadius: 22.5,
+                                borderWidth: 0.1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#01b753",
+                            }}
+                            previousBtnTextStyle={{
+                                color: "white", fontSize: 20,
+                                fontFamily: "Tajawal_400Regular"
+                            }}
+                            previousBtnStyle={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                alignSelf: "stretch",
+                                justifyContent: "center",
+                                color: "#ccc",
+                                borderRadius: 22.5,
+                                borderWidth: 0.1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#01b753",
+                            }}
+                        >
+                            {this.renderPoking()}
+                        </ProgressStep>
 
-                    <ProgressStep
-                        label="الموقع"
-                        previousBtnText="السابق"
-                        finishBtnText="اضافة مركبة"
-                        isComplete={true}
-                        onSubmit={this.handleSaveData}
-                        nextBtnTextStyle={{ color: "white", fontSize: 20, }}
-                        nextBtnStyle={{
+                        <ProgressStep
+                            label="الموقع"
+                            previousBtnText="السابق"
+                            finishBtnText="اضافة مركبة"
+                            isComplete={true}
+                            onSubmit={this.handleSaveData}
+                            nextBtnTextStyle={{ color: "white", fontSize: 20, }}
+                            nextBtnStyle={{
 
-                            flexDirection: "row",
-                            alignItems: "center",
-                            alignSelf: "stretch",
-                            justifyContent: "center",
-                            color: "#ccc",
-                            borderRadius: 22.5,
-                            borderWidth: 0.1,
-                            borderColor: "#ccc",
-                            backgroundColor: "#01b753",
-                        }}
-                        previousBtnTextStyle={{ color: "white", fontSize: 20, }}
-                        previousBtnStyle={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            alignSelf: "stretch",
-                            justifyContent: "center",
-                            color: "#ccc",
-                            borderRadius: 22.5,
-                            borderWidth: 0.1,
-                            borderColor: "#ccc",
-                            backgroundColor: "#01b753",
-                        }}
-                    >
+                                flexDirection: "row",
+                                alignItems: "center",
+                                alignSelf: "stretch",
+                                justifyContent: "center",
+                                color: "#ccc",
+                                borderRadius: 22.5,
+                                borderWidth: 0.1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#01b753",
+                            }}
+                            previousBtnTextStyle={{ color: "white", fontSize: 20, }}
+                            previousBtnStyle={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                alignSelf: "stretch",
+                                justifyContent: "center",
+                                color: "#ccc",
+                                borderRadius: 22.5,
+                                borderWidth: 0.1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#01b753",
+                            }}
+                        >
 
-                        <SelectLocation
-                            setCoordinates={(coordinates) => this.setState({ coordinates })}
-                        />
-                    </ProgressStep>
-                </ProgressSteps>
+                            <SelectLocation
+                                setCoordinates={(coordinates) => this.setState({ coordinates })}
+                            />
+                        </ProgressStep>
+                    </ProgressSteps>
+                </DismissKeyboard>
                 <ModalComponent />
 
                 {this.state.loading ? <OverLay /> : null}
@@ -984,6 +986,11 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
     }
 }
 
+const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+    </TouchableWithoutFeedback>
+);
 const styles = StyleSheet.create({
     container: {
         flex: 1,

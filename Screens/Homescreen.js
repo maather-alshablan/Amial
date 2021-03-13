@@ -47,12 +47,12 @@ export default class Homescreen extends Component {
   // onError = (e) => {	
   // console.log(e, "===")	
   // }	
-  async componentDidMount() {
+   async componentDidMount() {
     //await database.collection('Vehicle').onSnapshot(this.onResult, this.onError)	
-    await this.retreiveVehicles();
+     this.retreiveVehicles();
   }
   retreiveVehicles = () => {
-    database.collection('Vehicle').get().then((doc) => {
+    database.collection('Vehicle').onSnapshot((doc) => {
       let vehicles = []
       doc.forEach((vehicle) => {
         vehicles.push(vehicle.data())
@@ -153,7 +153,7 @@ navigation={this.props.navigation}
         </View>
         <View style={{ flexDirection: 'row-reverse', justifyContent: 'center' }}>
 
-          <Rating type='star' ratingCount={5} readonly={true} imageSize={20} startingValue={3} style={{ marginBottom: 5, direction: 'ltr' }} />
+          <Rating type='star' ratingCount={5} readonly={true} imageSize={20} startingValue={item.Rating} style={{ marginBottom: 5, direction: 'ltr' }} />
 
         </View>
       </View>
