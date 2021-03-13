@@ -29,7 +29,7 @@ export default class Vehicle extends Component {
 
         {
           title: 'لا تشيل هم واكسب المال',
-          //  desc: 'desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3'
+          // desc: 'desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3 desc3'
         },
       ]
     }
@@ -117,7 +117,7 @@ export default class Vehicle extends Component {
       style={{
         direction: 'rtl',
         width: 320,
-        height: 220,
+        minHeight: 220,
         backgroundColor: '#fff',
         marginVertical: 10,
         borderWidth: 0.2,
@@ -148,6 +148,15 @@ export default class Vehicle extends Component {
 
         </View>
       </View>
+      <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', paddingBottom: 6 }}>
+        <TouchableOpacity
+          onPress={() => {
+            this.props.navigation.navigate('AddOrEditVehicle', { vehicleID: item.vehicleID })
+          }}
+          style={{ padding: 8, backgroundColor: 'red' }}>
+          <FontAwesome5 name="edit" color="#fff" />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>)
   }
 
@@ -173,8 +182,8 @@ export default class Vehicle extends Component {
       <View>
         <View style={{ flexDirection: 'row-reverse', alignItems: 'center', borderBottomWidth: 1, borderColor: colors.LightBlue }}>
           {/* <TouchableOpacity style={styles.Button} onPress={() => this.props.navigation.navigate('AddOrEditVehicle')}>
-            <Text style={styles.optionText}>إدارة المركبة</Text>
-          </TouchableOpacity> */}
+<Text style={styles.optionText}>إدارة المركبة</Text>
+</TouchableOpacity> */}
           <CustomButton
             style={[styles.Button,]}
             onPress={() => this.props.navigation.navigate('AddOrEditVehicle')}
@@ -236,7 +245,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.LightBlue,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 10,
+
     width: 170,
     height: 40,
     borderRadius: 10,
@@ -290,7 +299,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     marginBottom: 35,
-    margin: 20,
+
     width: 180,
     height: 40,
     borderRadius: 10,
@@ -298,7 +307,7 @@ const styles = StyleSheet.create({
   },
   inputRow: {
     flexDirection: 'row',
-    margin: 7,
+
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     flex: 1,
