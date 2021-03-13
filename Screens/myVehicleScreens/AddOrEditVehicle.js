@@ -19,6 +19,9 @@ import SelectLocation from '../myVehicleScreens/SelectLocation';
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { showMessage } from 'react-native-flash-message';
+import CryptoES from 'crypto-es';
+import { firebase } from '../../Configuration/firebase'
+
 
 const carTypes = [
     { id: 1, label: 'فخمة', value: 'فخمة' },
@@ -31,16 +34,16 @@ const carTypes = [
 ]
 
 // const vehicleFeatures = [
-//     { id: 1, label: 'مفتاح ذكي', value: 'مفتاح ذكي' },
-//     { id: 2, label: 'AUX', value: 'AUX' },
-//     { id: 3, label: 'مكيف أوتوماتك', value: 'مكيف أوتوماتك' },
-//     { id: 4, label: 'CarPlay', value: 'CarPlay' },
-//     { id: 5, label: 'أضواء محيطة', value: 'أضواء محيطة' },
-//     { id: 6, label: 'GPS', value: 'GPS' },
-//     { id: 7, label: 'شاشة تعمل باللمس', value: 'شاشة تعمل باللمس' },
+// { id: 1, label: 'مفتاح ذكي', value: 'مفتاح ذكي' },
+// { id: 2, label: 'AUX', value: 'AUX' },
+// { id: 3, label: 'مكيف أوتوماتك', value: 'مكيف أوتوماتك' },
+// { id: 4, label: 'CarPlay', value: 'CarPlay' },
+// { id: 5, label: 'أضواء محيطة', value: 'أضواء محيطة' },
+// { id: 6, label: 'GPS', value: 'GPS' },
+// { id: 7, label: 'شاشة تعمل باللمس', value: 'شاشة تعمل باللمس' },
 // ]
 
-const vehicleFeatures = [ 'مفتاح ذكي', 'AUX' ,'مكيف أوتوماتك' ,'CarPlay' , 'أضواء محيطة' , 'GPS' , 'شاشة تعمل باللمس' ,]
+const vehicleFeatures = ['مفتاح ذكي', 'AUX', 'مكيف أوتوماتك', 'CarPlay', 'أضواء محيطة', 'GPS', 'شاشة تعمل باللمس',]
 
 export default class AddOrEditVehicle extends Component {
 
@@ -78,25 +81,54 @@ export default class AddOrEditVehicle extends Component {
             car = element.data();
             docId = element.id
         });
+
         if (car) {
+            const features = Object.keys(car?.vehicleDetails?.features).map(key => {
+                return car?.vehicleDetails?.features[key]
+            })
             this.setState({
-                carId: car.carId,
-                carModel: car.carModel,
-                carType: car.carType,
-                availabilities: car.availabilities,
+                selectedFeatures: features,
+                description: car?.vehicleDetails?.description,
+                image: car?.vehicleDetails?.image,
+                transmission: car?.vehicleDetails?.transmission,
+                year: car?.vehicleDetails?.year,
+                carType: car?.vehicleDetails?.type,
+                carModel: car?.vehicleDetails?.model,
+                availabilities: car?.availability,
+                carId: CryptoES.AES.decrypt(car?.vehicleRegistration, firebase.auth().currentUser.uid).toString(CryptoES.enc.Utf8) != "" ? CryptoES.AES.decrypt(car?.vehicleRegistration, firebase.auth().currentUser.uid).toString(CryptoES.enc.Utf8) : car?.vehicleRegistration,
+                carNumber: CryptoES.AES.decrypt(car?.LicensePlateNumber, firebase.auth().currentUser.uid).toString(CryptoES.enc.Utf8) != "" ? CryptoES.AES.decrypt(car?.LicensePlateNumber, firebase.auth().currentUser.uid).toString(CryptoES.enc.Utf8) : car?.LicensePlateNumber,
+                pickUpOption: car?.pickUpOption,
+                pickUpOptionCost: car?.pickUpOptionCost,
+                state: car?.address?.city,
+                coordinates: car?.address?.coordinates,
+                selectedValues: [car?.dailyRate],
+                insuranceType: car?.InsurancePolicy?.type,
+                InsuranceCompany: car?.InsurancePolicy.company,
                 edit: true,
-                image: car.image,
                 docId: docId
             })
         }
+
+        // if (car) {
+        // this.setState({
+        // carId: car.carId,
+        // carModel: car.carModel,
+        // carType: car.carType,
+        // availabilities: car.availabilities,
+        // edit: true,
+        // image: car.image,
+        // docId: docId
+        // })
+        // }
     }
     onError = (e) => {
-       // console.warn(e, "===")
+        // console.warn(e, "===")
     }
     componentDidMount() {
-      //  console.warn('eeee')
-        database.collection('Vehicle').where('userId', "==", auth.currentUser.uid).onSnapshot(this.onResult, this.onError)
-        console.log(this.state.selectedValues)
+        // console.warn('eeee')
+        const { vehicleID = "" } = this.props.route?.params || {}
+        // console.warn(this.props, "====")
+        database.collection('Vehicle').where('vehicleID', "==", vehicleID).onSnapshot(this.onResult, this.onError)
         this.gnerateYears()
     }
 
@@ -105,7 +137,7 @@ export default class AddOrEditVehicle extends Component {
         for (let i = 2021; i > 2010; i--) {
             arr.push({ id: i, label: i.toString(), value: i.toString() },)
         }
-       // console.warn({ arr })
+        // console.warn({ arr })
         this.setState({
             years: arr
         })
@@ -154,7 +186,7 @@ export default class AddOrEditVehicle extends Component {
             aspect: 1,
             allowsEditing: true,
         });
-       // console.warn(result)
+        // console.warn(result)
         if (!result.cancelled) this.setState({ image: result.uri });
     };
 
@@ -199,16 +231,18 @@ export default class AddOrEditVehicle extends Component {
             return;
         }
         this.setState({ loading: true })
+        const { vehicleID = "" } = this.props.route?.params || {}
         if (this.state.edit) {
 
             if (this.state.image.indexOf('http') > -1) {
+                console.warn(this.state.docId, "=====")
                 database.collection('Vehicle').doc(this.state.docId).update({
-                    vehicleID: ref, //document reference
-                    vehicleRegistration: this.state.carId,
+                    vehicleID: vehicleID, //document reference
+                    vehicleRegistration: CryptoES.AES.encrypt(this.state.carId, firebase.auth().currentUser.uid).toString(),
                     vehicleDetails: {
                         features: this.state.selectedFeatures,
                         description: this.state.description,
-                        image: downloadUrl,
+                        image: this.state.image,
                         transmission: this.state.transmission,
                         year: this.state.year,
                         type: this.state.carType,
@@ -216,7 +250,7 @@ export default class AddOrEditVehicle extends Component {
                     },
                     ownerID: auth.currentUser.uid,
                     availability: this.state.availabilities,
-                    LicensePlateNumber: this.state.carNumber,
+                    LicensePlateNumber: CryptoES.AES.encrypt(this.state.carNumber, firebase.auth().currentUser.uid).toString(),
                     pickUpOption: this.state.pickUpOption,
                     pickUpOptionCost: this.state.pickUpOption == "التوصيل لموقع المستأجر" ? this.state.pickUpOptionCost : 0,
                     address: {
@@ -236,7 +270,7 @@ export default class AddOrEditVehicle extends Component {
                 }).catch(e => {
                     this.failureMessage('حصل خطأ ما يرجى المحاولة لاحقا')
                     this.setState({ loading: false })
-                 //   console.warn('error', e);
+                    // console.warn('error', e);
                 })
             } else {
                 const response = await this.uploadFile(this.state.image);
@@ -244,8 +278,8 @@ export default class AddOrEditVehicle extends Component {
                 if (response && response.ref) {
                     const downloadUrl = await response.ref.getDownloadURL();
                     database.collection('Vehicle').doc(this.state.docId).update({
-                        vehicleID: ref, //document reference
-                        vehicleRegistration: this.state.carId,
+                        vehicleID: vehicleID, //document reference
+                        vehicleRegistration: CryptoES.AES.encrypt(this.state.carId, firebase.auth().currentUser.uid,).toString(),
                         vehicleDetails: {
                             features: this.state.selectedFeatures,
                             description: this.state.description,
@@ -257,7 +291,7 @@ export default class AddOrEditVehicle extends Component {
                         },
                         ownerID: auth.currentUser.uid,
                         availability: this.state.availabilities,
-                        LicensePlateNumber: this.state.carNumber,
+                        LicensePlateNumber: CryptoES.AES.encrypt(this.state.carNumber, firebase.auth().currentUser.uid,).toString(),
                         pickUpOption: this.state.pickUpOption,
                         pickUpOptionCost: this.state.pickUpOption == "التوصيل لموقع المستأجر" ? this.state.pickUpOptionCost : 0,
                         address: {
@@ -323,7 +357,7 @@ export default class AddOrEditVehicle extends Component {
                     },
 
                 }).then(success => {
-                    this.successMessage('تم إضافة المركبة بنجاح')
+                    this.successMessage(this.props.route?.params?.vehicleID ? 'تم تعديل المركبة بنجاح' : 'تم إضافة المركبة بنجاح')
                     this.setState({ loading: false })
                     this.props.navigation.pop()
                 }).catch(e => {
@@ -352,52 +386,52 @@ export default class AddOrEditVehicle extends Component {
                         return (<TouchableOpacity
                             onPress={() => {
                                 // if (this.state.selectedFeatures[feature.id]) {
-                                //     const featurs = { ...this.state.selectedFeatures };
-                                //     delete featurs[feature.id]
-                                //     this.setState({
-                                //         selectedFeatures: featurs
-                                //     })
+                                // const featurs = { ...this.state.selectedFeatures };
+                                // delete featurs[feature.id]
+                                // this.setState({
+                                // selectedFeatures: featurs
+                                // })
 
                                 // } else {
-                                //     this.setState({
-                                //         selectedFeatures: { ...this.state.selectedFeatures, [feature.id]: feature }
-                                //     })
-                                //     console.log(this.state.selectedFeatures);
+                                // this.setState({
+                                // selectedFeatures: { ...this.state.selectedFeatures, [feature.id]: feature }
+                                // })
+                                // console.log(this.state.selectedFeatures);
                                 // }
                                 if (this.state.selectedFeatures == undefined) {
                                     console.log('undefined array')
                                     const features = []
                                     feature.push(feature)
                                     console.log(features)
-                  
+
                                     this.setState({
-                                      selectedFeatures: features
+                                        selectedFeatures: features
                                     })
                                     console.log(this.state.selectedFeatures[0])
-                                  }
-                                  else if (this.state.selectedFeatures.indexOf(feature) >= 0) {
+                                }
+                                else if (this.state.selectedFeatures.indexOf(feature) >= 0) {
                                     { console.log('remove element') }
                                     const features = this.state.selectedFeatures;
-                  
+
                                     var index = features.indexOf((String(feature)))
                                     features.splice(index, 1)
                                     console.log(features)
-                  
+
                                     this.setState({
-                                      selectedDates: features
+                                        selectedDates: features
                                     })
-                                  }
-                                  else {
+                                }
+                                else {
                                     const features = this.state.selectedFeatures;
                                     features.push(feature);
                                     console.log(features)
-                  
+
                                     this.setState({
-                                      selectedDates: features
+                                        selectedDates: features
                                     })
-                                  }
+                                }
                             }}
-                            style={{ borderColor: '#01b753', borderWidth: 1, margin: 2, borderRadius: 10, padding: 12, backgroundColor: this.state.selectedFeatures.includes(feature) ? '#01b753' : '#fff' }}>
+                            style={{ borderColor: '#01b753', borderWidth: 1, borderRadius: 10, padding: 12, backgroundColor: this.state.selectedFeatures.includes(feature) ? '#01b753' : '#fff' }}>
                             <Text style={{
                                 fontSize: 14,
                                 fontFamily: "Tajawal_400Regular", color: this.state.selectedFeatures.includes(feature) ? '#fff' : '#01b753'
@@ -531,7 +565,7 @@ style={{ width: 80, height: 80, borderRadius: 4, borderWidth: 1, borderColor: 'g
                 <Input
                     value={this.state.carNumber}
                     onChangeText={(carNumber) => this.setState({ carNumber })}
-                    placeholder="اضافة لوحة السيارة"
+                    placeholder="اضافة لوحة المركبة : مثال ABC123"
                     style={{ width: '100%', backgroundColor: '#F0EEF0', borderBottomWidth: 0, height: 50, borderRadius: 10 }}
                     containerStyle={{ flex: 1, paddingRight: 16, }}
                 />
@@ -741,7 +775,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                             <Text style={{
                                 textAlign: 'left', color: '#01b753',
                                 fontFamily: "Tajawal_400Regular"
-                            }}>إضافة</Text>
+                            }}>{'إضافة'}</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -962,4 +996,3 @@ const styles = StyleSheet.create({
     SectionLabel: { fontSize: 20, fontWeight: 'bold', marginBottom: 24, textAlign: 'right', color: 'grey', fontFamily: 'Tajawal_700Bold' }
 
 });
-
