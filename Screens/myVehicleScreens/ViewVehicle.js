@@ -110,39 +110,6 @@ console.log('retrieve')
     
   }
 
-  // createfakedata = () => {
-  //   var ref = database.collection('Vehicle').doc().id;
-  //   database.collection('Vehicle').doc(ref).set({
-  //     ownerID: auth().currentUser.uid,
-  //     vehicleDetails: {
-  //       features: ['AUX', 'USB Input', 'GPS'],
-  //       description: "During these trying times we are all looking for some sense of normalcy and escape.  While many entertainment venues are closed, we want to offer something that can still bring a smile to your face.",
-  //       images: 'https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/_sHy9Pm0RbOrhgiKeRW2Pw.2880x1400.jpg',
-  //       transmission: 'manual',
-  //       year: '2020',
-  //       model: 'mustang'
-  //     },
-  //     address: {
-  //       city: 'Riyadh',
-  //       street: 'Turki AlAwal',
-  //       coordinates: {
-  //         lat: 24.7240805257,
-  //         lag: 46.6453786543
-  //       }
-  //     },
-  //     Rating: 0,
-  //     LicensePlateNumber: "5496 DMB",
-  //     InsurancePolicy: {
-  //       type: 'شامل',
-  //       company: 'التعاونية'
-  //     },
-  //     dailyRate: 100,
-  //     availability: ['2020-2-12', '2020-8-12', '2020-9-12', '2020-4-12', '2020-10-12']
-  //   })
-  // }
-
-
-
   SelectAvailability = () => {
 
     const calculateTotalPrice = async () => {
