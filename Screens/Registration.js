@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Alert, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, ImageBackground  , Keyboard,TouchableWithoutFeedback} from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import CustomButton from '../components/CustomButton';
@@ -127,7 +127,8 @@ export default class Registration extends Component {
       password: this.state.password,
       mobileNumber: this.state.mobileNumber,
       nationalID: CryptoES.AES.encrypt(this.state.nationalID, firebase.auth().currentUser.uid,).toString(),
-      userRating: 0,
+      Rating: 0,
+      numberofRatings:0,
     }).then(success => {
       this.setState({ loading: false })
     }).catch(e => {
@@ -155,6 +156,7 @@ export default class Registration extends Component {
 
   render() {
     return (
+      <DismissKeyboard >
       <ImageBackground
         source={require('../images/b2.png')}
         style={{ width: '100%', height: '100%' }}
@@ -229,10 +231,16 @@ export default class Registration extends Component {
         </View>
 
       </ImageBackground>
+      </DismissKeyboard>
     );
 
   }
 }
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+);
 
 const styles = StyleSheet.create({
   container: {

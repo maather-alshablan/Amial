@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Switch, Text ,TouchableOpacity, KeyboardAvoidingView} from "react-native";
+import { StyleSheet, View, TouchableWithoutFeedback, Keyboard ,TouchableOpacity, KeyboardAvoidingView} from "react-native";
 import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
 import CryptoES from 'crypto-es';
 
@@ -111,6 +111,7 @@ export default class creditCard extends Component {
   }
   render() {
     return (
+      <DismissKeyboard>
       <View style={s.container}>
         <KeyboardAvoidingView >
             <CreditCardInput
@@ -144,9 +145,16 @@ export default class creditCard extends Component {
       </View>
       <ModalComponent/>
       </View>
+      </DismissKeyboard>
     );
   }
 }
+
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+);
 
 const s = StyleSheet.create({
 

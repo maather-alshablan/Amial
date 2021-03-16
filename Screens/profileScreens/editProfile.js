@@ -1,5 +1,5 @@
 import React , {Component} from 'react';
-import { StyleSheet, View, Text, TextInput,Image , ScrollView } from "react-native";
+import { StyleSheet, View, Text, TextInput,Image , Keyboard, TouchableWithoutFeedback } from "react-native";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {firebase, database} from '../../Configuration/firebase'
 import {FontAwesome, Entypo } from '../../Constants/icons'
@@ -188,9 +188,10 @@ export default class editProfile extends Component{
 
         return(
        //   <ScrollView>
+      
             <View style={styles.container}>
-        
-                  <TouchableOpacity onPress={this.pickImage.bind(this)} >
+            
+             <TouchableOpacity onPress={this.pickImage.bind(this)} >
               <Image 
               style={styles.profilePicture} 
               source={{
@@ -284,14 +285,18 @@ export default class editProfile extends Component{
 
 
         <ModalComponent/>
-       
               </View>
-           //   </ScrollView>
+           
         )
     }
 }
 
 
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+);
 
 const styles = StyleSheet.create({
     container: {

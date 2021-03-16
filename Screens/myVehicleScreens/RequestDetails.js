@@ -48,7 +48,7 @@ this.setState({isDayOfTrip:true});
     this.setState({
       borrowerName: doc.data().name,
       mobileNumber: doc.data().mobileNumber,
-      userRating: doc.data().userRating
+      userRating: doc.data().Rating
     })
 
   })

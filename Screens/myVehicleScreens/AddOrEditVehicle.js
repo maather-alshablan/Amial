@@ -343,6 +343,7 @@ export default class AddOrEditVehicle extends Component {
                     ownerID: auth.currentUser.uid,
                     availability: this.state.availabilities,
                     Rating: 0,
+                    numberofRatings:0,
                     LicensePlateNumber: this.state.carNumber,
                     pickUpOption: this.state.pickUpOption,
                     pickUpOptionCost: this.state.pickUpOption == "التوصيل لموقع المستأجر" ? this.state.pickUpOptionCost : 0,
@@ -469,7 +470,7 @@ export default class AddOrEditVehicle extends Component {
                             source={{
                                 uri: this.state.image
                             }} />
-                        <Entypo name="plus" color={colors.Green} size={50} style={{ position: 'absolute', top: 30, left: 100, opacity: 0.8 }} />
+                        <Entypo name="plus" color={this.state.image? 'white' : colors.Green} size={50} style={{ position: 'absolute', top: 30, left: 100, opacity: 0.8 }} />
                     </TouchableOpacity>
                     {/* <TouchableOpacity
 onPress={this.openImagePickerAsync}

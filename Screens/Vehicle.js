@@ -112,7 +112,8 @@ export default class Vehicle extends Component {
     return (<TouchableOpacity
       activeOpacity={1}
       onPress={() => {
-        this.props.navigation.navigate('VehicleView', { vehicleID: item.vehicleID })
+      //  this.props.navigation.navigate('VehicleView', { vehicleID: item.vehicleID })
+        this.props.navigation.navigate('AddOrEditVehicle', { vehicleID: item.vehicleID })
       }}
       style={{
         direction: 'rtl',
@@ -153,8 +154,8 @@ export default class Vehicle extends Component {
           onPress={() => {
             this.props.navigation.navigate('AddOrEditVehicle', { vehicleID: item.vehicleID })
           }}
-          style={{ padding: 8, backgroundColor: 'red' }}>
-          <FontAwesome5 name="edit" color="#fff" />
+          style={{ padding: 8,  }}>
+          <FontAwesome5 name="edit" color={colors.Subtitle} size={20}/>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>)
@@ -245,7 +246,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.LightBlue,
     justifyContent: 'center',
     alignItems: 'center',
-
+    marginHorizontal:5,
+    marginVertical:3,
     width: 170,
     height: 40,
     borderRadius: 10,

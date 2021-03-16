@@ -61,7 +61,7 @@ export default class BorrowerRequestDetails extends Component {
       this.setState({
         ownerName: doc.data().name,
         mobileNumber: doc.data().mobileNumber,
-        userRating: doc.data().userRating
+        userRating: doc.data().Rating
       })
 
     })
