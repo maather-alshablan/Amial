@@ -79,10 +79,10 @@ export default class ActiveRequests extends Component {
         statusColor = colors.Subtitle
         break;
       case 'rejected': status = 'لم يتم التأكيد'
-      case 'cancelled': status = 'لم يتم التأكيد'
-        statusColor = '#fa4353'
-
-
+      statusColor = '#fa4353'
+      break;
+      case 'cancelled': status = 'ملغية'
+          statusColor = '#fa4353'
     }
 
 
@@ -121,7 +121,7 @@ export default class ActiveRequests extends Component {
             </View>
             <View style={styles.inputRow}>
               <Text style={styles.label}> نوع التسليم </Text>
-              <Text style={styles.input}> {item.details.pickupOption}</Text>
+              <Text style={[styles.input,{width:80,}]}> {item.details.pickupOption}</Text>
             </View>
 
             <View style={styles.inputRow}>
@@ -184,7 +184,13 @@ const styles = StyleSheet.create({
     textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20
   },
   input:
-    { textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20, color: colors.LightBlue, marginHorizontal: 5 },
+    { 
+      textAlign: 'left',
+       fontFamily: 'Tajawal_400Regular',
+        fontSize: 20,
+         color: colors.LightBlue, 
+         marginHorizontal: 5,
+        flexWrap:'wrap' },
 
   Button: {
     shadowColor: '#000',

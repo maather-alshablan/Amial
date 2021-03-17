@@ -23,11 +23,14 @@ export default class tripForm extends Component {
             currentRequest: props?.route?.params?.currentRequest,
             vehicleDescription: null,
             borrowerVerified: false,
+            vehicleSafeConidtionVerified:false,
             violationDescription: null,
             ReportModel: false,
+            Rating:0,
             exteriorImage: null,
             InteriorImage: null,
             RateModal: false,
+            ReportNoShowModel:false,
             cancellationReason: ''
         }
     }
@@ -38,12 +41,12 @@ export default class tripForm extends Component {
        
     }
 
-    submitRating =async(NewRating)=>{
+    submitRating = async ()=>{
        var currentRating=0;
        var numberofRatings=0;
-       var ref = await database.collection('users').doc(borrowerID).get();
+       var ref =  database.collection('users').doc(this.state.currentRequest.borrowerID).get();
         //For Rating borrower on owners checkout step
-        if(this.state.formType=='checkOut'){
+        if(this.state.formType =='checkOut'){
         var borrowerID = this.state.currentRequest.borrowerID;
         // calculate all Ratings on 
          ref = await database.collection('users').doc(borrowerID).get();
@@ -56,7 +59,7 @@ export default class tripForm extends Component {
 
          if(this.state.formType=='lock'){
         var vehicleID = this.state.currentRequest.vehicleID;
-         ref = await database.collection('Vehicle').doc(vehicleID).get();
+         ref = await database.collection('Vehicle').doc(vehicleID).get()
         var vehicle =  ref.data();
             console.log('Vehicle Rating: ',vehicle.Rating)
           currentRating= vehicle.Rating;
@@ -64,6 +67,12 @@ export default class tripForm extends Component {
     }
    
     await database.runTransaction((transaction)=>{
+        if (this.state.formType =='checkOut')
+        ref =  database.collection('users').doc(borrowerID);
+        else
+        ref =  database.collection('Vehicle').doc(vehicleID);
+
+
         return transaction.get(ref).then((res) => {
             if (!res.exists) {
                 throw "Document does not exist!";
@@ -73,8 +82,9 @@ export default class tripForm extends Component {
 
             // Compute new average rating
             var oldRatingTotal = currentRating * numberofRatings;
-            var newAvgRating = (oldRatingTotal + NewRating) / newNumRatings;
+            var newAvgRating = (oldRatingTotal + this.state.Rating) / newNumRatings;
 
+            console.log('before transaction update of rating')
             // Commit to Firestore
             transaction.update(ref, {
                 Rating: newAvgRating,
@@ -83,8 +93,13 @@ export default class tripForm extends Component {
         }).then(()=>{
             console.log('successful rating')
             this.successMessage('تم اكتمال الرحلة بنجاح');
-            this.props.navigation.navigate.popToTop();
-        })
+                }).catch(()=>{ console.log('rating was not saved')
+                }).
+        finally(()=>{
+            console.log('rating')
+            this.props.navigation.popToTop();
+
+                })
     })
 
     }
@@ -144,10 +159,22 @@ export default class tripForm extends Component {
     validateForm = () => {
 
         var formValid = true;
+
+        if (this.state.formType =='checkIn' && !this.state.borrowerVerified){
+            this.failureMessage('يرجى مطابقة المستأجر برخصة القيادة ')
+            formValid = false;
+        }
+
+        if (this.state.formType =='checkOut' && !this.state.vehicleSafeConidtionVerified){
+            this.failureMessage('يرجى التأكد من سلامة المركبة ')
+            formValid = false;
+        }
+
         if (this.state.vehicleDescription == null) {
             this.failureMessage('يرجى تزويدنا بوصف عن حالة المركبة ')
             formValid = false;
         }
+
         if (this.state.InteriorImage == null) {
             this.failureMessage('يرجى إضافة صورة داخلية للمركبة ')
             formValid = false;
@@ -236,7 +263,7 @@ export default class tripForm extends Component {
                         <CustomButton
                                 style={{ marginTop: 30 }}
                                 title={'حفظ'}
-                                onPress={() => this.submitRating(this.state.Rating)}
+                                onPress={() => this.submitRating()}
                             />
                 </View>
             </Modal>
@@ -289,6 +316,50 @@ export default class tripForm extends Component {
                                 style={{ marginTop: 10 }}
                                 title={'حفظ'}
                                 onPress={() => this.setState({ ReportModel: !this.state.ReportModel })}
+                            />
+
+
+                        </View>
+                    </View>
+                </Modal>
+            </View>
+        )
+    }
+
+    reportNoShow = () => {
+        console.log('inside violation modal')
+        return (
+            <View>
+                <Modal
+                    onBackdropPress={() => this.setState({ ReportNoShowModel: !this.state.ReportNoShowModel })}
+                    onSwipeComplete={() => this.setState({ ReportNoShowModel: !this.state.ReportNoShowModel })}
+                    swipeDirection='down'
+                    isVisible={this.state.ReportNoShowModel}
+                    style={styles.Modal}>
+
+                    <View style={{
+                    height: '30%',
+                    width: 370,
+                    alignSelf: 'center',
+                    borderRadius: 10,
+                    backgroundColor: 'white'
+                }}>
+                    <View>
+                        <Text style={[styles.modalLabel, { marginTop: 20, fontSize: 25, alignSelf: 'center' }]}>إلغاء الطلب</Text>
+                        <Text style={[styles.vehicleDescriptionParagraph, { justifyContent: 'center', alignSelf: 'center', textAlign: 'justify', marginTop: 20, width: 300 }]}>
+                          سيتم إلغاء الطلب في حال عدم عدم حضور المؤجر لموقع التسليم</Text>
+                        <Text style={[styles.vehicleDescriptionParagraph, { fontFamily:'Tajawal_700Bold',justifyContent: 'center', alignSelf: 'center', textAlign: 'justify', marginTop: 20, width: 300 }]}>
+                           هل انت متأكد من إلغاء الطلب؟
+                        </Text>
+
+                            <CustomButton
+                                style={{ marginTop: 10 }}
+                                title={'إلغاء'}
+                                onPress={() => {
+                                    this.cancelTrip()
+                                    //this.setState({ ReportNoShowModel: !this.state.ReportNoShowModel })
+                                 }
+                                }
                             />
 
 
@@ -524,24 +595,25 @@ export default class tripForm extends Component {
                 </View>
                 <TouchableOpacity
                     onPress={() => {
-                        Alert.alert(
-                            "إلغاء الطلب",
-                            "سيتم إلغاء الطلب في حال عدم إبراز رخصة سارية او عدم حضور المستأجر لموقع التسليم، هل انت متأكد من إلغاء الطلب؟",
-                            [
-                                {
-                                    text: 'لا',
-                                    style: 'default',
-                                }, {
-                                    text: "نعم",
-                                    onPress: () => Alert.prompt("إلغاء الطلب", 'يرجى ذكر السبب', (value) => {
-                                        this.setState({ cancellationReason: value })
-                                        this.cancelTrip();
+                        this.setState({ReportNoShowModel:true})
+                        // Alert.alert(
+                        //     "إلغاء الطلب",
+                        //     "سيتم إلغاء الطلب في حال عدم إبراز رخصة سارية او عدم حضور المستأجر لموقع التسليم، هل انت متأكد من إلغاء الطلب؟",
+                        //     [
+                        //         {
+                        //             text: 'لا',
+                        //             style: 'default',
+                        //         }, {
+                        //             text: "نعم",
+                        //             onPress: () => Alert.prompt("إلغاء الطلب", 'يرجى ذكر السبب', (value) => {
+                        //                 this.setState({ cancellationReason: value })
+                        //                 this.cancelTrip();
 
-                                    }),
-                                    style: "destructive",
-                                }
-                            ],
-                        );
+                        //             }),
+                        //             style: "destructive",
+                        //         }
+                        //     ],
+                        // );
                     }}
                     style={{ alignSelf: 'center', marginHorizontal: 30 }}>
                     <Text style={styles.reportLabel} >
@@ -636,8 +708,8 @@ export default class tripForm extends Component {
                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 20, marginLeft: 15 }}>
                     <TouchableOpacity
                         style={{ height: 25, width: 25, borderRadius: 10, borderWidth: 1, borderColor: colors.Subtitle, marginLeft: 10 }}
-                        onPress={() => this.setState({ borrowerVerified: !this.state.borrowerVerified })} >
-                        {this.state.borrowerVerified ? <View style={{ alignItems: 'center', justifyContent: 'center', }}>
+                        onPress={() => this.setState({ vehicleSafeConidtionVerified: !this.state.vehicleSafeConidtionVerified })} >
+                        {this.state.vehicleSafeConidtionVerified ? <View style={{ alignItems: 'center', justifyContent: 'center', }}>
                             <Entypo name={'check'} color={colors.LightBlue} size={25} />
                         </View> : <View></View>}
                     </TouchableOpacity>
@@ -713,9 +785,7 @@ export default class tripForm extends Component {
                     <CustomButton
                         style={{ marginTop: 10 }}
                         title={'إنهاء الرحلة'}
-                        onPress={() =>this.setState({ RateModal: true})
-                            // this.checkOut()
-                            }
+                        onPress={() =>this.checkOut()  }
                     />
 
                 </View>
@@ -888,6 +958,7 @@ export default class tripForm extends Component {
         const form = this.renderFormType();
         const ViolationModal = this.reportViolation();
         const RateModal = this.Rate();
+        const NoShowModal = this.reportNoShow();
 
 
         return (
@@ -900,6 +971,7 @@ export default class tripForm extends Component {
 
                     {ViolationModal}
                     {RateModal}
+                    {NoShowModal}
                 </View>
             </View>
 

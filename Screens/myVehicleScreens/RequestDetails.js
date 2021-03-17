@@ -27,7 +27,7 @@ export default class OwnerRequestDetails extends Component {
     this.retrieveBorrower(this.state.currentRequest.borrowerID);
 
     //check day of trip
-    this.isDayOfTrip();
+  this.isDayOfTrip();
 
     
   }
@@ -39,7 +39,9 @@ var bookedDate = new Date(this.state.currentRequest.details.bookedDates[0])
 var currentDate = new Date();
 
 console.log(currentDate.toDateString()==bookedDate.toDateString())
+if(currentDate.toDateString()==bookedDate.toDateString())
 this.setState({isDayOfTrip:true});
+
   }
   retrieveBorrower =  async (user)=>{
 
@@ -48,7 +50,7 @@ this.setState({isDayOfTrip:true});
     this.setState({
       borrowerName: doc.data().name,
       mobileNumber: doc.data().mobileNumber,
-      userRating: doc.data().Rating
+      Rating: doc.data().Rating
     })
 
   })
@@ -283,7 +285,7 @@ var statusColor =''
     break;
     case 'confirmed':
       statusColor = colors.Green
-      if (this.state.isDayOfTrip)
+      if (this.state.isDayOfTrip == true)
       button=  (<TouchableOpacity style={[styles.Button,{borderColor:statusColor,borderWidth:1,width:150,marginHorizontal:10, alignSelf:'flex-start'}]}  
       onPress={() => {
        this.handleCheckInTrip();
@@ -412,15 +414,17 @@ var statusColor =''
             {this.state.currentRequest.status =='pending'? 
             <View>
               <Text style={[styles.ModalTitle,{fontSize:20,marginHorizontal:10,flexWrap:'wrap'}]}> الوقت المتبقي لقبولك للطلب </Text>
-                </View> : 
+                </View> : this.state.currentRequest.status =='accepted' ?
                     <View>
                     <Text style={[styles.ModalTitle,{fontSize:20,marginHorizontal:10,flexWrap:'wrap-reverse'}]}> الوقت المتبقي لتأكيد المستأجر للطلب </Text>
-                     </View> }
+                     </View> :<View></View>}
 
            </View>
+           {this.state.currentRequest.status =='pending' || this.state.currentRequest.status =='accepted'? 
+
            <View style={{alignSelf:'flex-end', marginRight:40, marginVertical:10}}>
             {this.TimerComponent()}
-            </View>
+            </View> : <View></View>}
 
 
             <View style={{flexDirection:'row-reverse', alignSelf:'center'}}>

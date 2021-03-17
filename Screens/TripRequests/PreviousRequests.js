@@ -78,6 +78,10 @@ export default class ActiveRequests extends Component {
       case 'cancelled': status = 'ملغية'
         statusColor = '#fa4353'
         break;
+        default:
+          status = 'ملغية'
+          statusColor = '#fa4353'
+          break;
     }
 
 
