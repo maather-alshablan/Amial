@@ -212,7 +212,24 @@ export default class BorrowerRequestDetails extends Component {
                 // on success
                 console.log('cancel request is successful ')
                 this.successMessage('تم الإلغاء بنجاح');
-                this.props.navigation.pop();
+                   database.collection('users').doc(this.state.currentRequest.ownerID).get().then((doc) => {
+                  let response = fetch('https://exp.host/--/api/v2/push/send', {
+                    method: 'POST',
+                    headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      to: doc.data().push_token,
+                      sound: 'default',
+                      title: 'إلغاء الطلب',
+                      body: "تم الغاء الطلب"
+                    })
+                  })
+                  console.warn({ response })
+
+                })      
+                          this.props.navigation.pop();
               }
               ).catch((e) => {
                 console.log('cancel request is unsuccessful ')
@@ -275,7 +292,6 @@ export default class BorrowerRequestDetails extends Component {
     var vehicleData = (await vehicleRef).data();
     availability= vehicleData.availability;
 
-    for (var i=0 ; i< availability.length ; i++ )
     var newAvailability = availability.filter(function(x) { 
       return bookedDates.indexOf(x) < 0;
     });

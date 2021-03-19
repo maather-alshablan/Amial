@@ -94,7 +94,7 @@ export default class viewVehicle extends Component {
   }
 
   retrieveVehicle = async () => {
-console.log('retrieve')
+    console.log('retrieve')
     var vehicle = database.collection('Vehicle').doc(this.state.vehicleID).get();
     var vehicleData = (await vehicle).data();
     this.IsVehicleOwner(vehicleData.ownerID);
@@ -322,14 +322,35 @@ console.log(new Date(x))
     var borrowerRequests = database.collection('users').doc(borrowerID).collection('Requests').doc(requestID);
     batch.set(borrowerRequests, tripRequest);
 
-    batch.commit().then(() =>
-      // on success
-      this.setState({ sentRequest: true })).catch(() => {
-        console.log('failed request')
-        this.setState({ failedRequest: true })
+    batch.commit().then(() => {
+      database.collection('users').doc(ownerID).get().then((doc) => {
+        let response = fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: doc.data().push_token,
+            sound: 'default',
+            title: 'طلب جديد',
+            body: 'تم ارسال طلب جديد يرجى التحقق منه.'
+          })
+        })
+        console.warn({ response })
 
-        this.unsuccessfulRequest();
       })
+
+      // on success
+      this.setState({ sentRequest: true })
+    }
+
+    ).catch(() => {
+      console.log('failed request')
+      this.setState({ failedRequest: true })
+
+      this.unsuccessfulRequest();
+    })
 
 
   }
@@ -411,7 +432,7 @@ console.log(new Date(x))
                   <View style={{ bottom: 20 }}>
                     <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
                       <CustomButton
-                        onPress = {()=> this.handleRequest()}
+                        onPress={() => this.handleRequest()}
                         title='إرسال الطلب'
                       />
                     </TouchableOpacity>

@@ -1,16 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Dimensions, Image, FlatList, ImageBackground, Picker } from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, Image, FlatList, ImageBackground, Picker, Platform } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Map from '../Screens/maps'
 import colors from '../Constants/colors'
 import { Entypo, FontAwesome5, Ionicons } from '../Constants/icons';
 import SwitchSelector from "react-native-switch-selector";
-import { database } from '../Configuration/firebase';
+import { auth, database } from '../Configuration/firebase';
 import ExploreScreen from './ExploreScreen';
 import Modal from 'react-native-modal';
 import DatePicker from 'react-native-datepicker'
 import { Rating, AirbnbRating, } from 'react-native-ratings';
+
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
+
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
+
 const carTypes = [
   { id: 1, label: 'فخمة', value: 'فخمة' },
   { id: 2, label: 'اقتصادية', value: 'اقتصادية' },
@@ -47,10 +62,58 @@ export default class Homescreen extends Component {
   // onError = (e) => {	
   // console.log(e, "===")	
   // }	
-   async componentDidMount() {
+  componentDidMount() {
     //await database.collection('Vehicle').onSnapshot(this.onResult, this.onError)	
-     this.retreiveVehicles();
+    this.retreiveVehicles();
+    this.generateToken()
   }
+
+  generateToken = async () => {
+
+    const token = await this.registerForPushNotificationsAsync();
+    console.warn(token, "====")
+    database.collection('users').doc(auth.currentUser.uid).update({
+      push_token: token,
+
+    }).then(success => {
+    }).catch(e => {
+      alert('failureMessage')
+
+    })
+
+  }
+
+  registerForPushNotificationsAsync = async () => {
+    let token;
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+
+    return token;
+  }
+
   retreiveVehicles = () => {
     database.collection('Vehicle').onSnapshot((doc) => {
       let vehicles = []
@@ -58,10 +121,10 @@ export default class Homescreen extends Component {
         vehicles.push(vehicle.data())
       })
       this.setState({ cars: vehicles, originalCars: vehicles })
-    }).catch((error) => {
-      console.log("Error getting document:", error);
-    });
+    })
   }
+
+
   switchSelector = () => {
     return (
       <SwitchSelector
