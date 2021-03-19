@@ -28,7 +28,7 @@ export default class ConfirmedRequests extends Component {
 
     database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("ownerID", '==', auth.currentUser.uid)
-      .where('status', 'in', ['confirmed', 'active','checkedIn','unlocked','locked'])
+      .where('status', 'in', ['confirmed', 'active', 'checkedIn', 'unlocked', 'locked'])
       .onSnapshot((querySnapshot) => {
         let requests = []
         if (!querySnapshot.empty) {
@@ -136,11 +136,11 @@ export default class ConfirmedRequests extends Component {
               <Text style={[styles.label, { color: statusColor }]}> {status}</Text>
             </View>
           </View>
-          <View style={{ width: 120, height: 80 }}>
+          {/* <View style={{ width: 120, height: 80 }}>
             <Image source={{
               uri: item.image
             }} style={{ width: '100%', height: '100%' }} />
-          </View>
+          </View> */}
         </View>
         <View style={{ alignSelf: 'center' }}>
           {button}

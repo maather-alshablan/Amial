@@ -5,7 +5,7 @@ import { StyleSheet, Animated, Text, View, Alert, TouchableOpacity, Image, FlatL
 import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { database, auth } from '../../Configuration/firebase';
-import { MaterialCommunityIcons,  } from '../../Constants/icons';
+import { MaterialCommunityIcons, } from '../../Constants/icons';
 
 
 export default class PendingRequests extends Component {
@@ -139,11 +139,11 @@ export default class PendingRequests extends Component {
               <Text style={[styles.label, { color: statusColor }]}> {status}</Text>
             </View>
           </View>
-          <View style={{ width: 120, height: 80 }}>
+          {/* <View style={{ width: 120, height: 80 }}>
             <Image source={{
               uri: item.image
             }} style={{ width: '100%', height: '100%' }} />
-          </View>
+          </View> */}
         </View>
         <View style={{ alignSelf: 'center' }}>
 
