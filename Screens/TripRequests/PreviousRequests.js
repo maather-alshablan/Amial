@@ -78,10 +78,10 @@ export default class ActiveRequests extends Component {
       case 'cancelled': status = 'ملغية'
         statusColor = '#fa4353'
         break;
-        default:
-          status = 'ملغية'
-          statusColor = '#fa4353'
-          break;
+      default:
+        status = 'ملغية'
+        statusColor = '#fa4353'
+        break;
     }
 
 
@@ -128,11 +128,11 @@ export default class ActiveRequests extends Component {
               <Text style={[styles.label, { color: statusColor }]}> {status}</Text>
             </View>
           </View>
-          <View style={{ width: 120, height: 80 }}>
+          {/* <View style={{ width: 120, height: 80 }}>
             <Image source={{
               uri: item.image
             }} style={{ width: '100%', height: '100%' }} />
-          </View>
+          </View> */}
         </View>
         <View style={{ alignSelf: 'center' }}>
           {button}

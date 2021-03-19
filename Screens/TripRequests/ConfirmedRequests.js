@@ -77,11 +77,11 @@ export default class ConfirmedRequests extends Component {
       case 'confirmed': status = 'مؤكدة'
         statusColor = colors.LightBlue
         break;
-      
+
       case 'active': status = 'نشطة'
         statusColor = colors.Green
         break;
-        case 'checkedIn': status = 'تم التسليم'
+      case 'checkedIn': status = 'تم التسليم'
         statusColor = colors.Green
         break;
 
@@ -133,11 +133,11 @@ export default class ConfirmedRequests extends Component {
               <Text style={[styles.label, { color: statusColor }]}> {status}</Text>
             </View>
           </View>
-          <View style={{ width: 120, height: 80 }}>
+          {/* <View style={{ width: 120, height: 80 }}>
             <Image source={{
               uri: item.image
             }} style={{ width: '100%', height: '100%' }} />
-          </View>
+          </View> */}
         </View>
         <View style={{ alignSelf: 'center' }}>
           {button}

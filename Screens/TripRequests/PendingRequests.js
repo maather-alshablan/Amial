@@ -29,8 +29,6 @@ export default class PendingRequests extends Component {
 
   retreiveRequests = () => {
 
-
-    console.log('user is borrower')
     database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("borrowerID", '==', auth.currentUser.uid)
       .where('status', 'in', ['pending', 'accepted',])
@@ -121,7 +119,7 @@ export default class PendingRequests extends Component {
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-          <View style={{ padding: 10 }}>
+          <View style={{ padding: 10, flex: 1 }}>
             <View style={styles.inputRow}>
               <Text style={styles.label}>موديل المركبة </Text>
               <Text style={styles.input}> {item.model}</Text>
@@ -136,11 +134,11 @@ export default class PendingRequests extends Component {
               <Text style={[styles.label, { color: statusColor }]}> {status}</Text>
             </View>
           </View>
-          <View style={{ width: 120, height: 80 }}>
+          {/* <View style={{ width: 80, height: 80 }}>
             <Image source={{
               uri: item.image
-            }} style={{ width: '100%', height: '100%' }} />
-          </View>
+            }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
+          </View> */}
         </View>
         <View style={{ alignSelf: 'center' }}>
           {button}
