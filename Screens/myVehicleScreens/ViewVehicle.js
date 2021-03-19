@@ -98,15 +98,41 @@ console.log('retrieve')
     var vehicle = database.collection('Vehicle').doc(this.state.vehicleID).get();
     var vehicleData = (await vehicle).data();
     this.IsVehicleOwner(vehicleData.ownerID);
+    var availability = this.checkExpiredDates(vehicleData.availability)
+
     this.setState({
       ownerID: vehicleData.ownerID,
       vehicleDetails: vehicleData.vehicleDetails,
-      availability: vehicleData.availability,
+      availability: availability,
       address: vehicleData.address,
       dailyRate: vehicleData.dailyRate,
       Rating: vehicleData.Rating,
       InsurancePolicy: vehicleData.InsurancePolicy,
     })
+
+    if (availability.length == vehicleData.availability)
+    console.log('no update needed')
+    else
+    {console.log(' update of date has occured')
+    database.collection('Vehicle').doc(this.state.vehicleID).update({availability: availability})
+      }
+    
+  }
+
+  checkExpiredDates  = (dates)=>{
+    console.log('original dates: ', dates)
+    var currentDate = new Date()
+    console.log('current date' , currentDate)
+
+    var checkedDates =  dates.filter(function(x) { 
+      //return only those dates equal or ahead of current date
+console.log(new Date(x))
+      return currentDate <= new Date(x);
+    });
+
+
+    console.log('new dates' , checkedDates)
+    return checkedDates
     
   }
 

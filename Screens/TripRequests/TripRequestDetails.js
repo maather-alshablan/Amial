@@ -265,7 +265,25 @@ export default class BorrowerRequestDetails extends Component {
 
   }
 
-  handleConfirmRequest = () => {
+  handleConfirmRequest = async () => {
+
+    // Remove booked dates from vehicles availability dates 
+    var bookedDates = this.state.currentRequest.details.bookedDates;
+    var availability = []
+    
+    var vehicleRef = database.collection('Vehicle').doc(this.state.currentRequest.vehicleID).get();
+    var vehicleData = (await vehicleRef).data();
+    availability= vehicleData.availability;
+
+    for (var i=0 ; i< availability.length ; i++ )
+    var newAvailability = availability.filter(function(x) { 
+      return bookedDates.indexOf(x) < 0;
+    });
+    console.log('booked dates: ',bookedDates)
+    console.log('availabliity dates: ',availability)
+
+    console.log('new dates: ' , newAvailability)
+ 
 
     var batch = database.batch();
 
@@ -279,6 +297,9 @@ export default class BorrowerRequestDetails extends Component {
     var ownerRequest = database.collection('users').doc(this.state.currentRequest.ownerID)
       .collection('Requests').doc(this.state.currentRequest.tripID);
     batch.update(ownerRequest, { status: 'confirmed' });
+
+    var vehicle = database.collection('Vehicle').doc(this.state.currentRequest.vehicleID)
+    batch.update(vehicle,{availability: newAvailability})
 
 
     batch.commit().then(() => {
@@ -479,8 +500,10 @@ export default class BorrowerRequestDetails extends Component {
                     <Text style={[styles.reportLabel,{fontSize:20}]} >
                           تعذر حضور المستأجر لمنطقة التسليم؟               
                          </Text></TouchableOpacity>
-          </View> : <View style={{flexDirection:'row-reverse'}}>{this.actionButton()}
-          </View>}
+          </View> : 
+          <View></View>}
+          <View style={{flexDirection:'row-reverse'}}>{this.actionButton()}
+       
           {//dont show cancel request button if the request is already rejected
             this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' || this.state.currentRequest.status == 'confirmed' ? <View>
               <CustomButton
@@ -492,6 +515,7 @@ export default class BorrowerRequestDetails extends Component {
               />
             </View> :
               <View></View>}
+                 </View>
 
         </View>
       </View>
@@ -534,9 +558,6 @@ export default class BorrowerRequestDetails extends Component {
                             }
                             }
                         />
-
-
-
                     </View>
                 </View>
             </Modal>
