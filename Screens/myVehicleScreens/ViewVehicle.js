@@ -1,4 +1,3 @@
-
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Button, ScrollView, Image, } from 'react-native';
@@ -111,29 +110,29 @@ export default class viewVehicle extends Component {
     })
 
     if (availability.length == vehicleData.availability)
-    console.log('no update needed')
-    else
-    {console.log(' update of date has occured')
-    database.collection('Vehicle').doc(this.state.vehicleID).update({availability: availability})
-      }
-    
+      console.log('no update needed')
+    else {
+      console.log(' update of date has occured')
+      database.collection('Vehicle').doc(this.state.vehicleID).update({ availability: availability })
+    }
+
   }
 
-  checkExpiredDates  = (dates)=>{
+  checkExpiredDates = (dates) => {
     console.log('original dates: ', dates)
     var currentDate = new Date()
-    console.log('current date' , currentDate)
+    console.log('current date', currentDate)
 
-    var checkedDates =  dates.filter(function(x) { 
+    var checkedDates = dates.filter(function (x) {
       //return only those dates equal or ahead of current date
-console.log(new Date(x))
+      console.log(new Date(x))
       return currentDate <= new Date(x);
     });
 
 
-    console.log('new dates' , checkedDates)
+    console.log('new dates', checkedDates)
     return checkedDates
-    
+
   }
 
   SelectAvailability = () => {
@@ -284,7 +283,7 @@ console.log(new Date(x))
     var requestTime = new Date();
 
 
-    //create request 
+    //create request
     var tripDocument = database.collection('Trips').doc();
 
     var requestID = tripDocument.id;
@@ -461,7 +460,7 @@ console.log(new Date(x))
             width: 0
           }
         }}>
-        {data.icon && data.icon != "" ? <Icon name={data.icon} color={'#01b753'} size={18} style={{ marginRight: 8 }} /> : <Text style={{ fontSize: 17, textAlign: 'left', fontFamily: 'Tajawal_400Regular' }}> {data.name}   </Text>}
+        {data.icon && data.icon != "" ? <Icon name={data.icon} color={'#01b753'} size={18} style={{ marginRight: 8 }} /> : <Text style={{ fontSize: 17, textAlign: 'left', fontFamily: 'Tajawal_400Regular' }}> {data.name} </Text>}
         <Text style={{ fontSize: 17, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', marginHorizontal: 3 }}> {data.value}</Text>
       </View>
     )
@@ -524,10 +523,10 @@ console.log(new Date(x))
       <View style={{ flexDirection: 'row', }}>
 
         {/* {this.renderCell({ name: 'نوع التأمين ', value: this.state.InsurancePolicy.type })}
-        <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
-        </View> */}
+<View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
+</View> */}
       </View>
-      {this.state.vehicleDetails.features === undefined ? <View ></View> :
+      {this.state.vehicleDetails.features === undefined || !Array.isArray(this.state.vehicleDetails.features) ? <View ></View> :
 
         <View style={{
           padding: 12, backgroundColor: '#fff', borderRadius: 20, margin: 8, shadowColor: '#000',
@@ -634,4 +633,3 @@ const styles = StyleSheet.create({
     fontFamily: 'Tajawal_500Medium'
   }
 })
-
