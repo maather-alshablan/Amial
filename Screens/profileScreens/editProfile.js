@@ -211,7 +211,7 @@ export default class editProfile extends Component{
 
 
       <View style={styles.InputView}>
-      <FontAwesome name='flag' color={colors.Subtitle} size={30} style={styles.icon}  />
+      <FontAwesome name='id-card-o' color={colors.Subtitle} size={30} style={styles.icon}  />
       <TextInput
       style={styles.InputField}
       placeholder='الهوية/ الإقامة'
@@ -278,7 +278,8 @@ export default class editProfile extends Component{
       </TouchableOpacity>
       </View> */}
       <CustomButton 
-      style={styles.Button} onPress = {() => this.handleSaveInfo()}
+       onPress = {() => this.handleSaveInfo()}
+       style={{marginVertical:25}}
         title='حفظ'/>
       
 

@@ -127,7 +127,10 @@ marginBottom: 140
 
 },
 title: {
-marginBottom: 5,
+
+marginBottom: 3,
+padding:10,
+
 color: 'black',
 fontSize: 20,
 fontFamily: 'Tajawal_400Regular'

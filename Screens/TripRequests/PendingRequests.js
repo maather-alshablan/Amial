@@ -134,11 +134,11 @@ export default class PendingRequests extends Component {
               <Text style={[styles.label, { color: statusColor }]}> {status}</Text>
             </View>
           </View>
-          {/* <View style={{ width: 80, height: 80 }}>
+          <View style={{ width: 120, height: 100 }}>
             <Image source={{
               uri: item.image
-            }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
-          </View> */}
+            }} style={{ width: 120, height: 100, resizeMode:'contain'}}/>
+          </View>
         </View>
         <View style={{ alignSelf: 'center' }}>
           {button}

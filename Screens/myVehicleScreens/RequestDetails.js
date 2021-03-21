@@ -330,11 +330,11 @@ export default class OwnerRequestDetails extends Component {
     switch (status) {
       case 'pending': status = "ينتظر الرد"
         statusColor = colors.Subtitle
-        button = (<TouchableOpacity style={[styles.Button, { borderColor: colors.Green, borderWidth: 1, marginHorizontal: 4 }]}
+        button = (<TouchableOpacity style={[styles.Button, { backgroundColor: colors.Green,  marginHorizontal: 5 }]}
           onPress={() => {
             this.handleAcceptRequest()
           }} >
-          <Text style={[styles.ButtonText, { color: colors.Green }]}> قبول الطلب  </Text>
+          <Text style={[styles.ButtonText, { color: 'white' }]}> قبول الطلب  </Text>
         </TouchableOpacity>)
         break;
       case 'accepted': status = 'ينتظر التأكيد'
@@ -343,22 +343,22 @@ export default class OwnerRequestDetails extends Component {
       case 'confirmed':
         statusColor = colors.Green
         if (this.state.isDayOfTrip == true)
-          button = (<TouchableOpacity style={[styles.Button, { borderColor: statusColor, borderWidth: 1, width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
+          button = (<TouchableOpacity style={[styles.Button, { backgroundColor: statusColor,  width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
             onPress={() => {
               this.handleCheckInTrip();
             }}>
-            <Text style={[styles.ButtonText, { color: statusColor }]}>  ابدأ الرحلة   </Text>
+            <Text style={[styles.ButtonText, { color: 'white' }]}>  ابدأ الرحلة   </Text>
           </TouchableOpacity>)
         break;
       case 'completed':
       case 'rejected': status = 'لم يتم التأكيد'
       case 'cancelled': status = 'لم يتم التأكيد'
         statusColor = '#fa4353'
-        button = (<TouchableOpacity style={[styles.Button, { borderColor: statusColor, borderWidth: 1, width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
+        button = (<TouchableOpacity style={[styles.Button, { backgroundColor: statusColor, width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
           onPress={() => {
             this.handleDeleteRequest();
           }}>
-          <Text style={[styles.ButtonText, { color: statusColor }]}> حذف الطلب  </Text>
+          <Text style={[styles.ButtonText, { color: 'white' }]}> حذف الطلب  </Text>
         </TouchableOpacity>)
         break;
       case 'locked':
@@ -488,11 +488,11 @@ export default class OwnerRequestDetails extends Component {
           {this.actionButton()}
           {this.state.currentRequest.status == 'pending' ? <View style={{ flexDirection: 'row-reverse', alignSelf: 'center' }}>
 
-            <TouchableOpacity style={[styles.Button, { borderColor: 'grey', borderWidth: 1, }]}
+            <TouchableOpacity style={[styles.Button, { backgroundColor: 'grey',  }]}
               onPress={() => {
                 this.handleCancelRequest('rejected');
               }}>
-              <Text style={[styles.ButtonText, { color: 'grey' }]}> رفض الطلب  </Text>
+              <Text style={[styles.ButtonText, { color: 'white' }]}> رفض الطلب  </Text>
             </TouchableOpacity>
           </View> : <View></View>}
 

@@ -118,7 +118,7 @@ export default class Vehicle extends Component {
       style={{
         direction: 'rtl',
         width: 320,
-        minHeight: 220,
+        minHeight: 200,
         backgroundColor: '#fff',
         marginVertical: 10,
         borderWidth: 0.2,
@@ -149,7 +149,7 @@ export default class Vehicle extends Component {
 
         </View>
       </View>
-      <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', paddingBottom: 6 }}>
+      {/* <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', paddingBottom: 6 }}>
         <TouchableOpacity
           onPress={() => {
             this.props.navigation.navigate('AddOrEditVehicle', { vehicleID: item.vehicleID })
@@ -157,7 +157,7 @@ export default class Vehicle extends Component {
           style={{ padding: 8,  }}>
           <FontAwesome5 name="edit" color={colors.Subtitle} size={20}/>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </TouchableOpacity>)
   }
 

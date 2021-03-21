@@ -235,9 +235,9 @@ export default class AddOrEditVehicle extends Component {
         if (this.state.edit) {
 
             if (this.state.image.indexOf('http') > -1) {
-                console.warn(this.state.docId, "=====")
+                console.log(this.state.docId, "=====")
                 database.collection('Vehicle').doc(this.state.docId).update({
-                    vehicleID: ref, //document reference
+                    vehicleID: this.state.docId, //document reference
                     vehicleRegistration: CryptoES.AES.encrypt(this.state.carId, firebase.auth().currentUser.uid,).toString(),
                     vehicleDetails: {
                         features: this.state.selectedFeatures,
@@ -274,11 +274,12 @@ export default class AddOrEditVehicle extends Component {
                 })
             } else {
                 const response = await this.uploadFile(this.state.image);
+                console.log(this.state.docId, "=====")
 
                 if (response && response.ref) {
                     const downloadUrl = await response.ref.getDownloadURL();
                     database.collection('Vehicle').doc(this.state.docId).update({
-                        vehicleID: vehicleID, //document reference
+                        vehicleID: vehicleID,//document reference
                         vehicleRegistration: CryptoES.AES.encrypt(this.state.carId, firebase.auth().currentUser.uid,).toString(),
                         vehicleDetails: {
                             features: this.state.selectedFeatures,
@@ -432,7 +433,7 @@ export default class AddOrEditVehicle extends Component {
                                     })
                                 }
                             }}
-                            style={{ borderColor: '#01b753', borderWidth: 1, borderRadius: 10, padding: 12, backgroundColor: this.state.selectedFeatures.includes(feature) ? '#01b753' : '#fff' }}>
+                            style={{ borderColor: '#01b753', borderWidth: 1, borderRadius: 10, margin:3,padding: 15, backgroundColor: this.state.selectedFeatures.includes(feature) ? '#01b753' : '#fff' }}>
                             <Text style={{
                                 fontSize: 14,
                                 fontFamily: "Tajawal_400Regular", color: this.state.selectedFeatures.includes(feature) ? '#fff' : '#01b753'
@@ -808,7 +809,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                     }}>{'سعر التوصيل' + ` ${this.state.pickUpOptionCost[0]} ريال`}</Text>
 
                     <MultiSlider
-                        values={[15]}
+                        values={this.state.pickUpOptionCost}
                         sliderLength={Dimensions.get('screen').width - 100}
                         onValuesChange={(val) => {
                             this.setState({
@@ -835,7 +836,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                     }}>{'السعر' + ` ${this.state.selectedValues[0]}يوم/ريال`}</Text>
 
                     <MultiSlider
-                        values={[50]}
+                        values={this.state.selectedValues}
                         sliderLength={Dimensions.get('screen').width - 100}
                         onValuesChange={(val) => {
                             this.setState({
@@ -844,7 +845,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                             console.log(this.state.selectedValues[0])
                         }}
                         min={50}
-                        max={500}
+                        max={800}
                         step={10}
                         // allowOverlap
                         // snapped
@@ -980,8 +981,8 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                     </ProgressSteps>
                 </DismissKeyboard>
                 <ModalComponent />
-
-                {this.state.loading ? <OverLay /> : null}
+{/* 
+                {this.state.loading ? <OverLay /> : null} */}
             </View>
         );
     }

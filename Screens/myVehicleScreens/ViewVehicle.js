@@ -1,7 +1,7 @@
 
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Button, ScrollView, Image, } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, } from 'react-native';
 import colors from '../../Constants/colors';
 import Modal from 'react-native-modal';
 import { firebase, database } from '../../Configuration/firebase'
@@ -11,6 +11,7 @@ import { EvilIcons, FontAwesome5, MaterialIcons } from '../../Constants/icons'
 import { auth, } from 'firebase';
 import { showMessage, hideMessage } from "react-native-flash-message";
 import CustomButton from '../../components/CustomButton';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 
 
@@ -30,6 +31,7 @@ export default class viewVehicle extends Component {
       InsurancePolicy: {},
       isModalVisible: false,
       calculatedTotalPrice: 0,
+      pickUpOptionCost:0,
       sentRequest: false,
       failedRequest: false,
       selectedPickUp: [],
@@ -106,6 +108,7 @@ export default class viewVehicle extends Component {
       availability: availability,
       address: vehicleData.address,
       dailyRate: vehicleData.dailyRate,
+      pickupOptionCost:vehicleData.pickUpOptionCost ,
       Rating: vehicleData.Rating,
       InsurancePolicy: vehicleData.InsurancePolicy,
     })
@@ -142,7 +145,7 @@ console.log(new Date(x))
       if (this.state.selectedDates != undefined) {
         var price = this.state.selectedDates.length * this.state.dailyRate;
         var tax = price * 0.15;
-        var totalAmount = price + tax;
+        var totalAmount = price + tax + this.state.pickUpOptionCost;
         this.state.calculatedTotalPrice = totalAmount;
       }
     }
@@ -150,6 +153,8 @@ console.log(new Date(x))
     return (
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
+    
+
         {this.state.availability.map(date => {
           return (<TouchableOpacity
             style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
@@ -207,8 +212,6 @@ console.log(new Date(x))
 
 
   SelectPickUpOption = () => {
-
-
 
     return (
 
@@ -417,7 +420,14 @@ console.log(new Date(x))
                   <Text style={styles.requestModalTitle}>طلب حجز المركبة</Text>
 
                   <Text style={styles.requestModalLabel}>التواريخ المتاحة </Text>
-                  {this.SelectAvailability()}
+                  {this.state.availability[0]== null? 
+                
+                  <View style={{alignSelf:'center'}}>
+                    <Text style={{fontFamily:'Tajawal_400Regular', fontSize:20, color:colors.Subtitle}}>
+                      لا يوجد تواريخ متاحة
+                    </Text>
+                  </View>:<View>{this.SelectAvailability()}</View> }
+                         
 
 
                   <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
@@ -428,15 +438,16 @@ console.log(new Date(x))
                   <Text style={[styles.requestModalLabel, { fontSize: 20, }]}>المجموع</Text>
                   <Text style={[styles.requestModalLabel, { fontSize: 25, fontFamily: 'Tajawal_500Medium', bottom: 20 }]}> {this.state.calculatedTotalPrice} ريال</Text>
 
-
+                  
                   <View style={{ bottom: 20 }}>
-                    <TouchableOpacity style={styles.Button} onPress={() => this.setState({ isModalVisible: true })}>
                       <CustomButton
-                        onPress={() => this.handleRequest()}
+                        onPress={() => {
+                          this.state.availability[0]!= null? this.handleRequest():{}}}
+                          style={
+                            this.state.availability[0]== null? {backgroundColor:colors.Subtitle, }:{}}
                         title='إرسال الطلب'
                       />
-                    </TouchableOpacity>
-                  </View>
+                  </View> 
 
                 </View>}
               </View>
@@ -468,6 +479,7 @@ console.log(new Date(x))
   }
 
   renderFeature = () => {
+    {console.log('features: ',this.state.vehicleDetails.features)}
     const features = [];
     for (let i = 0; i < this.state.vehicleDetails.features.length; i += 2) {
 
@@ -523,12 +535,9 @@ console.log(new Date(x))
       </View>
       <View style={{ flexDirection: 'row', }}>
 
-        {/* {this.renderCell({ name: 'نوع التأمين ', value: this.state.InsurancePolicy.type })}
-        <View style={{ padding: 12, flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 4, borderLeftColor: '#F0EEF0', borderLeftWidth: 1 }}>
-        </View> */}
+      
       </View>
-      {this.state.vehicleDetails.features === undefined ? <View ></View> :
-
+     
         <View style={{
           padding: 12, backgroundColor: '#fff', borderRadius: 20, margin: 8, shadowColor: '#000',
           shadowOpacity: 0.12,
@@ -541,10 +550,16 @@ console.log(new Date(x))
 
           <View>
             <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>خصائص المركبة</Text>
-            {this.renderFeature()}
+           {this.state.vehicleDetails.features != null  && this.state.vehicleDetails.features[0] != null ?
+            this.renderFeature() 
+            : <View style={{alignSelf:'center'}}>
+              <Text style={{fontFamily:'Tajawal_400Regular', fontSize:16, color:colors.Subtitle}}>
+                      لا يوجد مميزات مضافة
+                    </Text>
+              </View>}
           </View>
         </View>
-      }
+      
 
 
       <View style={{ flexDirection: 'row', }}>

@@ -938,7 +938,7 @@ export default class tripForm extends Component {
                     </TouchableOpacity>
 
                     <CustomButton
-                        style={{ alignSelf: 'center', justifyContent: 'center', marginTop: 120, }}
+                        style={{ alignSelf: 'center', justifyContent: 'center', marginTop: 120,backgroundColor:colors.Subtitle }}
                         title={'إنهاء الرحلة'}
                         onPress={() => this.lockVehicle()}
                     />

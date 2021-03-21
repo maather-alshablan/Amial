@@ -81,7 +81,7 @@ export default class Person extends Component {
         <View style={{ flexDirection: 'column', alignSelf: 'center', alignItems: 'center', }}>
           <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
             <Rating type='star' ratingCount={1} readonly={true} imageSize={20} startingValue={1} style={{ marginBottom: 5 }} />
-            <Text style={{ color: '#f1c40f', fontSize: 20, fontFamily: 'Tajawal_300Light', marginHorizontal: 5, marginTop: 3 }}>{this.state.userRating}/5</Text>
+            <Text style={{ color: '#f1c40f', fontSize: 20, fontFamily: 'Tajawal_300Light', marginHorizontal: 5, marginTop: 3 }}>{this.state.Rating}/5</Text>
 
             <Text style={styles.Name}>
               {this.state.name}

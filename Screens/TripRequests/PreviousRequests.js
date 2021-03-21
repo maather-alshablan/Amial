@@ -33,7 +33,7 @@ export default class ActiveRequests extends Component {
     console.log('user is borrower')
     database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("borrowerID", '==', auth.currentUser.uid)
-      .where('status', 'in', ['completed', 'rejected', 'cancelled'])
+      .where('status', 'in', ['completed', 'rejected', 'cancelled']).orderBy('requestTime','asc')
       .onSnapshot((querySnapshot) => {
         let requests = []
         if (!querySnapshot.empty) {
@@ -111,16 +111,16 @@ export default class ActiveRequests extends Component {
         }}>
         <View style={{
           flexDirection: 'row',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
         }}>
           <View style={{ padding: 10 }}>
             <View style={styles.inputRow}>
               <Text style={styles.label}>موديل المركبة </Text>
-              <Text style={styles.input}> {item.model}</Text>
+              <Text style={[styles.input, { width: 80, flexWrap:'wrap' }]}> {item.model}</Text>
             </View>
             <View style={styles.inputRow}>
               <Text style={styles.label}> نوع التسليم </Text>
-              <Text style={styles.input}> {item.details.pickupOption}</Text>
+              <Text style={[styles.input, { width: 80, flexWrap:'wrap' }]}> {item.details.pickupOption}</Text>
             </View>
 
             <View style={styles.inputRow}>
@@ -128,11 +128,11 @@ export default class ActiveRequests extends Component {
               <Text style={[styles.label, { color: statusColor }]}> {status}</Text>
             </View>
           </View>
-          {/* <View style={{ width: 120, height: 80 }}>
+          <View style={{ width: 120, height: 120 }}>
             <Image source={{
               uri: item.image
-            }} style={{ width: '100%', height: '100%' }} />
-          </View> */}
+            }} style={{ width: 100, height: 120, resizeMode:'contain' }}/>
+          </View>
         </View>
         <View style={{ alignSelf: 'center' }}>
           {button}
@@ -188,10 +188,10 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20
+    textAlign: 'right', fontFamily: 'Tajawal_400Regular', fontSize: 20
   },
   input:
-    { textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20, color: colors.LightBlue, marginHorizontal: 5 },
+    { textAlign: 'center',justifyContent:'center', fontFamily: 'Tajawal_400Regular', fontSize: 18, color: colors.LightBlue, marginHorizontal: 5 },
 
   Button: {
     shadowColor: '#000',

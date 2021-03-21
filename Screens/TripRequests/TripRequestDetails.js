@@ -118,6 +118,7 @@ export default class BorrowerRequestDetails extends Component {
     }
     console.log('countdown> ', new Date(new Date(this.state.currentRequest.requestTime).addHours(12)).getTime() - new Date().getTime())
 
+    console.log('countdown:  ', countdown)
 
 
     const children = ({ remainingTime }) => {
@@ -133,13 +134,13 @@ export default class BorrowerRequestDetails extends Component {
         isPlaying
         size={80}
         onComplete={() => {
-          if (this.state.currentRequest.status != 'pending' || this.state.currentRequest.status != 'accepted')
-            return
-
+          if (this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted')
           this.handleCancelRequest(true,true);
+
           return [true, 1500] // repeat animation in 1.5 seconds
         }}
-        duration={this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' ? 100 : 0}
+        initialRemainingTime={100}
+        duration={100}
         colors={[
           ['#004777', 0.4],
           ['#F7B801', 0.4],
@@ -347,20 +348,20 @@ export default class BorrowerRequestDetails extends Component {
         break;
       case 'accepted': status = 'ينتظر التأكيد'
         statusColor = colors.Green
-        button = (<TouchableOpacity style={[styles.Button, { borderColor: statusColor, borderWidth: 1, width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
+        button = (<TouchableOpacity style={[styles.Button, { backgroundColor: statusColor,  width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
           onPress={() => {
             this.handleConfirmRequest();
           }}>
-          <Text style={[styles.ButtonText, { color: statusColor }]}> تأكيد الطلب </Text>
+          <Text style={[styles.ButtonText, { color: 'white' }]}> تأكيد الطلب </Text>
         </TouchableOpacity>)
         break;
       case 'checkedIn':
         statusColor = colors.Green
-        button = (<TouchableOpacity style={[styles.Button, { borderColor: statusColor, borderWidth: 1, width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
+        button = (<TouchableOpacity style={[styles.Button, { backgroundColor: statusColor,  width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
           onPress={() => {
             this.handleUnlock();
           }}>
-          <Text style={[styles.ButtonText, { color: statusColor }]}> ابدأ الرحلة </Text>
+          <Text style={[styles.ButtonText, { color: 'white' }]}> ابدأ الرحلة </Text>
         </TouchableOpacity>)
         break;
       case 'unlocked':

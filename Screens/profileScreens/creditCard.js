@@ -166,11 +166,17 @@ const s = StyleSheet.create({
   },
   label: {
     color: "black",
-    fontSize: 12,
+    width:200,
+    textAlign:'right',
+    fontSize: 20,
+    fontFamily:'Tajawal_400Regular'
   },
   input: {
-    fontSize: 16,
+    fontSize: 18,
+    width:200,
+    textAlign:'right',
     color: "black",
+    fontFamily:'Tajawal_400Regular'
   },
   Button:{
     backgroundColor:colors.LightBlue,
