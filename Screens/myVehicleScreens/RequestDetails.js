@@ -160,7 +160,7 @@ export default class OwnerRequestDetails extends Component {
         "إلغاء الطلب",
         "هل أنت متأكد من رفض الطلب ؟ ",
         [{
-          text: "  إلغاء الطلب ",
+          text: " إلغاء الطلب ",
 
           onPress: () => {
             var batch = database.batch();
@@ -241,11 +241,11 @@ export default class OwnerRequestDetails extends Component {
   handleDeleteRequest = () => {
     Alert.alert(
       "حذف الطلب",
-      "هل أنت متأكد من حذف الطلب   ",
+      "هل أنت متأكد من حذف الطلب ",
       [
         { text: "لا", onPress: () => console.log("OK Pressed") },
         {
-          text: "  حذف الطلب ",
+          text: " حذف الطلب ",
 
           onPress: () => {
             database.collection('users').doc(auth.currentUser.uid).collection('Requests').
@@ -367,7 +367,7 @@ export default class OwnerRequestDetails extends Component {
           onPress={() => {
             this.handleCheckOutTrip();
           }}>
-          <Text style={[styles.ButtonText, { color: statusColor }]}>  إنهاء الرحلة   </Text>
+          <Text style={[styles.ButtonText, { color: statusColor }]}> إنهاء الرحلة </Text>
         </TouchableOpacity>)
       case 'checkedIn':
       case 'unlocked':
@@ -422,9 +422,9 @@ export default class OwnerRequestDetails extends Component {
                       }
                     })
                 }}
-                style={{ padding: 8, borderRadius: 6, borderColor: '#3fc250', borderWidth: 1, flexDirection: 'row', alignItems: 'center' }}>
+                style={{ padding: 8, borderRadius: 6, borderColor: '#3fc250', borderWidth: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#3fc250' }}>
                 <Image source={{ uri: 'https://img.icons8.com/color/452/whatsapp--v1.png' }} style={{ width: 24, height: 24 }} />
-                <Text style={{ marginLeft: 8, fontFamily: 'Tajawal_400Regular', }}>تواصل مع المستأجر</Text>
+                <Text style={{ marginLeft: 8, color: '#fff' }}>تواصل مع المستأجر</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -447,12 +447,12 @@ export default class OwnerRequestDetails extends Component {
 
         <View style={{ flexDirection: 'row-reverse', marginHorizontal: 20, marginVertical: 15 }}>
           <View style={{ flexDirection: 'column', marginHorizontal: 50 }}>
-            <Text style={[styles.ModalLabel]}>تاريخ الحجز   </Text>
+            <Text style={[styles.ModalLabel]}>تاريخ الحجز </Text>
             <Text style={[styles.ModalLabel, styles.ModalInput]}>{this.state.currentRequest.details.bookedDates} </Text>
           </View>
 
           <View style={{ flexDirection: 'column', }}>
-            <Text style={styles.ModalLabel}> المبلغ الإجمالي   </Text>
+            <Text style={styles.ModalLabel}> المبلغ الإجمالي </Text>
             <Text style={[styles.ModalLabel, styles.ModalInput]}>{this.state.currentRequest.totalAmount} ريال </Text>
           </View>
         </View>
@@ -460,7 +460,7 @@ export default class OwnerRequestDetails extends Component {
 
         <View style={{ flexDirection: 'row-reverse', marginHorizontal: 20, marginVertical: 15 }}>
           <View style={{ flexDirection: 'column', marginHorizontal: 50 }}>
-            <Text style={[styles.ModalLabel]}>نوع الإستلام   </Text>
+            <Text style={[styles.ModalLabel]}>نوع الإستلام </Text>
             <Text style={[styles.ModalLabel, styles.ModalInput]}>{this.state.currentRequest.details.pickupOption} </Text>
           </View>
         </View>
@@ -497,22 +497,22 @@ export default class OwnerRequestDetails extends Component {
           </View> : <View></View>}
 
 
-          {/* {//dont show cancel request button if the request is already rejected 
-         this.state.currentRequest.status == 'rejected' || this.state.currentRequest.status == 'cancelled' || this.state.currentRequest.status =='completed'? <View>
-           <TouchableOpacity style={[styles.Button,{borderColor:'#fa4353',borderWidth:1,}]}    
-              onPress={() => {
-               this.handleDeleteRequest();
-                }}>
-         <Text style={[styles.ButtonText,{color:'#fa4353'}]}> حذف الطلب  </Text>
-              </TouchableOpacity> 
-         </View>:<View></View>} */}
+          {/* {//dont show cancel request button if the request is already rejected
+this.state.currentRequest.status == 'rejected' || this.state.currentRequest.status == 'cancelled' || this.state.currentRequest.status =='completed'? <View>
+<TouchableOpacity style={[styles.Button,{borderColor:'#fa4353',borderWidth:1,}]}
+onPress={() => {
+this.handleDeleteRequest();
+}}>
+<Text style={[styles.ButtonText,{color:'#fa4353'}]}> حذف الطلب </Text>
+</TouchableOpacity>
+</View>:<View></View>} */}
 
           {this.state.currentRequest.status == 'accepted' || this.state.currentRequest.status == 'confirmed' ? <View>
             <TouchableOpacity style={[styles.Button, { borderColor: 'grey', borderWidth: 1, }]}
               onPress={() => {
                 this.handleCancelRequest('cancelled');
               }}>
-              <Text style={[styles.ButtonText, { color: 'grey' }]}> إلغاء الطلب  </Text>
+              <Text style={[styles.ButtonText, { color: 'grey' }]}> إلغاء الطلب </Text>
             </TouchableOpacity></View> : <View></View>}
 
         </View>
@@ -619,6 +619,3 @@ const styles = StyleSheet.create({
 
 
 });
-
-
-

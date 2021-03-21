@@ -1,4 +1,3 @@
-
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, } from 'react-native';
@@ -114,29 +113,29 @@ export default class viewVehicle extends Component {
     })
 
     if (availability.length == vehicleData.availability)
-    console.log('no update needed')
-    else
-    {console.log(' update of date has occured')
-    database.collection('Vehicle').doc(this.state.vehicleID).update({availability: availability})
-      }
-    
+      console.log('no update needed')
+    else {
+      console.log(' update of date has occured')
+      database.collection('Vehicle').doc(this.state.vehicleID).update({ availability: availability })
+    }
+
   }
 
-  checkExpiredDates  = (dates)=>{
+  checkExpiredDates = (dates) => {
     console.log('original dates: ', dates)
     var currentDate = new Date()
-    console.log('current date' , currentDate)
+    console.log('current date', currentDate)
 
-    var checkedDates =  dates.filter(function(x) { 
+    var checkedDates = dates.filter(function (x) {
       //return only those dates equal or ahead of current date
-console.log(new Date(x))
+      console.log(new Date(x))
       return currentDate <= new Date(x);
     });
 
 
-    console.log('new dates' , checkedDates)
+    console.log('new dates', checkedDates)
     return checkedDates
-    
+
   }
 
   SelectAvailability = () => {
@@ -287,7 +286,7 @@ console.log(new Date(x))
     var requestTime = new Date();
 
 
-    //create request 
+    //create request
     var tripDocument = database.collection('Trips').doc();
 
     var requestID = tripDocument.id;
@@ -472,7 +471,7 @@ console.log(new Date(x))
             width: 0
           }
         }}>
-        {data.icon && data.icon != "" ? <Icon name={data.icon} color={'#01b753'} size={18} style={{ marginRight: 8 }} /> : <Text style={{ fontSize: 17, textAlign: 'left', fontFamily: 'Tajawal_400Regular' }}> {data.name}   </Text>}
+        {data.icon && data.icon != "" ? <Icon name={data.icon} color={'#01b753'} size={18} style={{ marginRight: 8 }} /> : <Text style={{ fontSize: 17, textAlign: 'left', fontFamily: 'Tajawal_400Regular' }}> {data.name} </Text>}
         <Text style={{ fontSize: 17, textAlign: 'left', color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', marginHorizontal: 3 }}> {data.value}</Text>
       </View>
     )
@@ -649,4 +648,3 @@ const styles = StyleSheet.create({
     fontFamily: 'Tajawal_500Medium'
   }
 })
-

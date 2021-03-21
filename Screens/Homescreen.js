@@ -48,7 +48,7 @@ export default class Homescreen extends Component {
   }
   onResult = (queury) => {
     let car = null
-    //let docId = ''	
+    //let docId = ''
     const cars = [];
     queury.forEach(element => {
       car = element.data();
@@ -59,11 +59,11 @@ export default class Homescreen extends Component {
       cars: cars,
     })
   }
-  // onError = (e) => {	
-  // console.log(e, "===")	
-  // }	
+  // onError = (e) => {
+  // console.log(e, "===")
+  // }
   componentDidMount() {
-    //await database.collection('Vehicle').onSnapshot(this.onResult, this.onError)	
+    //await database.collection('Vehicle').onSnapshot(this.onResult, this.onError)
     this.retreiveVehicles();
     this.generateToken()
   }
@@ -115,7 +115,7 @@ export default class Homescreen extends Component {
   }
 
   retreiveVehicles = () => {
-    database.collection('Vehicle').onSnapshot((doc) => {
+    database.collection('Vehicle').orderBy('created_at', 'desc').onSnapshot((doc) => {
       let vehicles = []
       doc.forEach((vehicle) => {
         vehicles.push(vehicle.data())
@@ -130,7 +130,7 @@ export default class Homescreen extends Component {
       <SwitchSelector
         initial={0}
         onPress={value => this.setState({ mapView: !this.state.mapView })}
-        textColor={colors.LightBlue} //'#7a44cf'	
+        textColor={colors.LightBlue} //'#7a44cf'
         selectedColor={'white'}
         buttonColor={colors.LightBlue}
         borderColor={colors.LightBlue}
@@ -139,8 +139,8 @@ export default class Homescreen extends Component {
         textStyle={{ fontSize: 15, fontFamily: 'Tajawal_400Regular', margin: 3, color: colors.Subtitle }}
         selectedTextStyle={{ fontSize: 15, fontFamily: 'Tajawal_400Regular', margin: 3, color: 'white' }}
         options={[
-          { label: "القائمة", customIcon: this.listViewIcon() }, //images.feminino = require('./path_to/assets/img/feminino.png')	
-          { label: "الخريطة", customIcon: this.mapViewIcon() } //images.masculino = require('./path_to/assets/img/masculino.png')	
+          { label: "القائمة", customIcon: this.listViewIcon() }, //images.feminino = require('./path_to/assets/img/feminino.png')
+          { label: "الخريطة", customIcon: this.mapViewIcon() } //images.masculino = require('./path_to/assets/img/masculino.png')
         ]}
       />
     )
@@ -162,9 +162,9 @@ export default class Homescreen extends Component {
   mapView = () => {
     return (
       <View style={{ flex: 1 }} >
-        {/* <Map	
-cars={[...this.state.cars, ...this.state.cars, ...this.state.cars]}	
-navigation={this.props.navigation}	
+        {/* <Map
+cars={[...this.state.cars, ...this.state.cars, ...this.state.cars]}
+navigation={this.props.navigation}
 /> */}
         <ExploreScreen
           cars={this.state.cars}
@@ -227,7 +227,7 @@ navigation={this.props.navigation}
       <FlatList
         data={this.state.cars}
         renderItem={this.renderCar}
-        keyExtractor={(index) => index.toString()}
+        keyExtractor={(index) => index.toString() + "a"}
         contentContainerStyle={{ alignItems: 'center' }}
       />
     )
@@ -235,13 +235,16 @@ navigation={this.props.navigation}
   toggleModal = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible });
   };
-  search = () => {
-    // availability	
-    // type	
-    if (this.state.carType != "" || this.state.date != "") {
+  search = (searchOnly = false) => {
+    // availability
+    // type
+    if (this.state.carType != "" || this.state.date != "" || this.state.searchValue != "") {
       const filterCars = this.state.originalCars.filter(car => {
+        const { image = "", model = "" } = car.vehicleDetails || {}
+
         const avs = car.availability.join(', ')
-        if (this.state.carType == car.type || (avs.indexOf(this.state.date) > -1)) {
+        if ((this.state.carType == car.type || (avs.indexOf(this.state.date) > -1)) &&
+          model.toLocaleLowerCase().indexOf(this.state.searchValue.toLocaleLowerCase()) > -1) {
           return true
         }
       })
@@ -253,7 +256,8 @@ navigation={this.props.navigation}
         cars: [...this.state.originalCars]
       })
     }
-    this.toggleModal()
+    if (!searchOnly)
+      this.toggleModal()
   }
   render() {
     return (
@@ -282,6 +286,12 @@ navigation={this.props.navigation}
                   style={{ justifyContent: 'flex-end', textAlign: 'right', padding: 10, fontWeight: '600', fontFamily: 'Tajawal_400Regular', color: 'black', fontSize: 20 }}
                   placeholder={'ابحث عن مركبة..'}
                   value={this.state.searchValue}
+                  onChangeText={(text) => {
+
+                    this.setState({ searchValue: text }, () => {
+                      this.search(true)
+                    })
+                  }}
                 />
               </View>
             </View>
@@ -315,7 +325,7 @@ navigation={this.props.navigation}
                   placeholder="حدد التاريخ"
                   format="YYYY-MM-DD"
                   minDate={new Date()}
-                  // maxDate="2016-06-01"	
+                  // maxDate="2016-06-01"
                   confirmBtnText="تاكيد"
                   cancelBtnText="الغاء"
                   customStyles={{
@@ -328,7 +338,7 @@ navigation={this.props.navigation}
                     dateInput: {
                       marginLeft: 36
                     }
-                    // ... You can check the source to find the other keys.	
+                    // ... You can check the source to find the other keys.
                   }}
                   onDateChange={(date) => { this.setState({ date: date }) }}
                 />
@@ -385,8 +395,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
 
-    // alignItems: 'center',	
-    // justifyContent: 'center',	
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   searchContainer: {
     backgroundColor: '#cad1d1',
@@ -424,7 +434,7 @@ const styles = StyleSheet.create({
   selectedView: {
   },
   Modal: {
-    // backgroundColor:'white',	
+    // backgroundColor:'white',
     alignSelf: 'center',
     borderTopEndRadius: 120,
     color: '#5dbcd2',
@@ -438,7 +448,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   EmptyaddVehicleButton: {
-    backgroundColor: '#1894E5', // #1BB754	
+    backgroundColor: '#1894E5', // #1BB754
     flexDirection: "row-reverse",
     shadowColor: '#000',
     shadowOpacity: 0.25,
@@ -456,4 +466,3 @@ const styles = StyleSheet.create({
     minWidth: 160
   },
 });
-
