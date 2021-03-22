@@ -66,12 +66,124 @@ export default class Homescreen extends Component {
     //await database.collection('Vehicle').onSnapshot(this.onResult, this.onError)
     this.retreiveVehicles();
     this.generateToken()
+    this.getMyRequests()
+    this.getMyCars()
+  }
+
+  getMyRequests = () => {
+
+
+    database.collection('users').doc(auth.currentUser.uid)
+      .collection('Requests').onSnapshot((doc) => {
+        let vehicles = []
+        doc.forEach((vehicle) => {
+          this.cancelAllScheduledNotificationsAsync()
+          const vv = vehicle.data()
+          const { details = {}, status = "" } = vv || {}
+          const { bookedDates = [] } = details || {}
+
+          if (status == 'accepted') {
+            console.warn('send')
+            const endDate = new Date(bookedDates[0]);
+            const nowDate = new Date();
+            // alert(new Date().getUTCDate() + "," + new Date(bookedDates[0]).getUTCDate() + "," + new Date().getHours() + "," + bookedDates[0])
+            if (new Date().getUTCDate() == new Date(bookedDates[0]).getUTCDate() && new Date().getHours() <= 15) {
+              // alert('yess')
+              this.scheduleNotification(10);
+            } else {
+              // alert((endDate / 1000 - nowDate / 1000))
+              // this.scheduleNotification((endDate / 1000 - nowDate / 1000));
+            }
+          }
+          // alert(JSON.stringify(vehicle.data()))
+        })
+      })
+
+    // if ((endDate / 1000 - nowDate / 1000) > (24 * 60 * 60)) { // offer has more than one day 
+    //   this.scheduleNotification(offers[key], ((endDate / 1000 - nowDate / 1000) - (24 * 60 * 60)));
+    // }
+
+  }
+
+  getMyCars = () => {
+    database.collection('Vehicle').where("ownerID", '==', auth.currentUser.uid).get().then((doc) => {
+      console.log('true')
+
+      if (doc.empty) {
+
+        console.log('user has no vehicles listed')
+        this.setState({ hasVehicle: false });
+      }
+      else {
+        let vehicles = []
+        doc.forEach((vehicle) => {
+          const { availability = [], vehicleDetails = {}, } = vehicle.data() || {}
+          const { model = "" } = vehicleDetails || {}
+          let found = false
+          for (let i = 0; i < availability.length; i++) {
+            if (new Date(availability[i]) - new Date() < 0) {
+              found = true
+            } else {
+              found = false
+            }
+          }
+          if (found) {
+            Notifications.scheduleNotificationAsync({
+              content: {
+                sound: 'default',
+                title: "تحديث تواريخ العرض",
+                body: "يرجى تحديث التواريخ المتاحة للعرض للمركبة " + model
+              },
+              trigger: {
+                seconds: 10,
+                repeats: false
+              },
+            });
+          }
+
+        })
+
+      }
+
+    }).catch((error) => {
+      console.log("Error getting document:", error);
+    });
+  }
+
+  onResultCars = (queury) => {
+    let cars = []
+    let docId = ''
+    queury.forEach(element => {
+      cars.push({ docId: element.id, car: element.data() })
+
+    });
+    alert(cars.length)
+  }
+  onError = (e) => {
+    console.warn(e, "===")
+  }
+  cancelAllScheduledNotificationsAsync = async () => {
+    return await Notifications.cancelAllScheduledNotificationsAsync()
+  }
+
+  scheduleNotification = (seconds) => {
+
+    Notifications.scheduleNotificationAsync({
+      content: {
+        sound: 'default',
+        title: "تسليم المركبة",
+        body: 'يرجى التسليم قبل الساعة الثالثة عصرا'
+      },
+      trigger: {
+        seconds: seconds,
+        repeats: false
+      },
+    });
   }
 
   generateToken = async () => {
 
     const token = await this.registerForPushNotificationsAsync();
-    console.warn(token, "====")
     database.collection('users').doc(auth.currentUser.uid).update({
       push_token: token,
 
@@ -97,7 +209,6 @@ export default class Homescreen extends Component {
         return;
       }
       token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log(token);
     } else {
       alert('Must use physical device for Push Notifications');
     }
