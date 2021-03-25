@@ -33,16 +33,6 @@ const carTypes = [
     { id: 7, label: 'متعددة الاستخدامات', value: 'متعددة الاستخدامات' },
 ]
 
-// const vehicleFeatures = [
-// { id: 1, label: 'مفتاح ذكي', value: 'مفتاح ذكي' },
-// { id: 2, label: 'AUX', value: 'AUX' },
-// { id: 3, label: 'مكيف أوتوماتك', value: 'مكيف أوتوماتك' },
-// { id: 4, label: 'CarPlay', value: 'CarPlay' },
-// { id: 5, label: 'أضواء محيطة', value: 'أضواء محيطة' },
-// { id: 6, label: 'GPS', value: 'GPS' },
-// { id: 7, label: 'شاشة تعمل باللمس', value: 'شاشة تعمل باللمس' },
-// ]
-
 const vehicleFeatures = ['مفتاح ذكي', 'AUX', 'مكيف أوتوماتك', 'CarPlay', 'أضواء محيطة', 'GPS', 'شاشة تعمل باللمس',]
 
 export default class AddOrEditVehicle extends Component {
@@ -173,7 +163,6 @@ export default class AddOrEditVehicle extends Component {
                     this.setState({ errors: true })
                     return false;
                 }
-                console.warn('eeee');
             })
             .catch((error) => {
                 console.warn("Error getting documents: ", error);
@@ -569,6 +558,7 @@ style={{ width: 80, height: 80, borderRadius: 4, borderWidth: 1, borderColor: 'g
                 <Input
                     value={this.state.carNumber}
                     onChangeText={(carNumber) => this.setState({ carNumber })}
+                   // onEndEditing = {(plateNumber)=>{ this.checkDataBase(plateNumber)}}
                     placeholder="اضافة لوحة المركبة : مثال ABC123"
                     style={{ width: '100%', backgroundColor: '#F0EEF0', borderBottomWidth: 0, height: 50, borderRadius: 10 }}
                     containerStyle={{ flex: 1, paddingRight: 16, }}

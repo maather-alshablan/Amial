@@ -272,11 +272,6 @@ export default class editProfile extends Component{
       </View>
      
 
-      {/* <View >
-        <TouchableOpacity style={styles.Button} onPress = {() => this.handleSaveInfo()}>
-      <Text style={{color:'white',fontFamily:'Tajawal_400Regular',fontSize:25}}>حفظ </Text>
-      </TouchableOpacity>
-      </View> */}
       <CustomButton 
        onPress = {() => this.handleSaveInfo()}
        style={{marginVertical:25}}

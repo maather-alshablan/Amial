@@ -11,6 +11,8 @@ import { auth, } from 'firebase';
 import { showMessage, hideMessage } from "react-native-flash-message";
 import CustomButton from '../../components/CustomButton';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import {calculateTotalPrice} from '../components/calculateTotalPrice'
+import {checkExpiredDates} from '../components/checkExpiredDates'
 
 
 
@@ -27,6 +29,7 @@ export default class viewVehicle extends Component {
       features: [],
       address: {},
       Rating: 0,
+      dailyRate:0,
       InsurancePolicy: {},
       isModalVisible: false,
       calculatedTotalPrice: 0,
@@ -99,7 +102,7 @@ export default class viewVehicle extends Component {
     var vehicle = database.collection('Vehicle').doc(this.state.vehicleID).get();
     var vehicleData = (await vehicle).data();
     this.IsVehicleOwner(vehicleData.ownerID);
-    var availability = this.checkExpiredDates(vehicleData.availability)
+    var availability = checkExpiredDates(vehicleData.availability)
 
     this.setState({
       ownerID: vehicleData.ownerID,
@@ -107,7 +110,7 @@ export default class viewVehicle extends Component {
       availability: availability,
       address: vehicleData.address,
       dailyRate: vehicleData.dailyRate,
-      pickupOptionCost:vehicleData.pickUpOptionCost ,
+      pickUpOptionCost:vehicleData.pickUpOptionCost ,
       Rating: vehicleData.Rating,
       InsurancePolicy: vehicleData.InsurancePolicy,
     })
@@ -121,34 +124,11 @@ export default class viewVehicle extends Component {
 
   }
 
-  checkExpiredDates = (dates) => {
-    console.log('original dates: ', dates)
-    var currentDate = new Date()
-    console.log('current date', currentDate)
 
-    var checkedDates = dates.filter(function (x) {
-      //return only those dates equal or ahead of current date
-      console.log(new Date(x))
-      return currentDate <= new Date(x);
-    });
-
-
-    console.log('new dates', checkedDates)
-    return checkedDates
-
-  }
 
   SelectAvailability = () => {
 
-    const calculateTotalPrice = async () => {
-      if (this.state.selectedDates != undefined) {
-        var price = this.state.selectedDates.length * this.state.dailyRate;
-        var tax = price * 0.15;
-        var totalAmount = price + tax + this.state.pickUpOptionCost;
-        this.state.calculatedTotalPrice = totalAmount;
-      }
-    }
-
+  
     return (
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
@@ -192,7 +172,9 @@ export default class viewVehicle extends Component {
                   selectedDates: dates
                 })
               }
-              calculateTotalPrice();
+              console.log('pickUpOptionCost', this.state.pickUpOptionCost)
+             
+              this.setState({calculatedTotalPrice: calculateTotalPrice(this.state.selectedDates, this.state.dailyRate, this.state.selectedPickUp[0] === "توصيل"? this.state.pickUpOptionCost: 0  )});
 
 
             }}
@@ -219,12 +201,11 @@ export default class viewVehicle extends Component {
           return (<TouchableOpacity
             style={{ margin: 5, padding: 10, borderColor: 'black', borderRadius: 2, borderWidth: 1, color: '#5dbcd2', }}
             onPress={() => {
-              console.log('here')
-
+              console.log('here in pick up selection')
               if (this.state.selectedPickUp) {
                 const selection = []
                 selection.push(option)
-
+                
                 //var newSelection = this.state.selectedDates.push(date)
                 this.setState({
                   selectedPickUp: selection
@@ -242,6 +223,8 @@ export default class viewVehicle extends Component {
                   selectedPickUp: selection
                 })
               }
+              this.setState({calculatedTotalPrice: calculateTotalPrice(this.state.selectedDates, this.state.dailyRate, option === "توصيل"? this.state.pickUpOptionCost: 0  )});
+
             }}
             style={{
               borderColor: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? colors.LightBlue : 'black',
@@ -251,9 +234,11 @@ export default class viewVehicle extends Component {
             <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? '#fff' : 'black' }}>{option}</Text>
           </TouchableOpacity>)
         })}
+        
       </View>
 
     )
+    
   }
 
 

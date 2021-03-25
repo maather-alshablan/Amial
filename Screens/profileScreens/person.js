@@ -38,7 +38,7 @@ export default class Person extends Component {
      database.collection('users').doc(personID).onSnapshot(snapshot => {
         this.setState({
           name: snapshot.data().name,
-          Rating: snapshot.data().Rating,
+          Rating: snapshot.data().Rating === NaN? 0: snapshot.data().Rating,
           mobileNumber: snapshot.data().mobileNumber
         })
       });

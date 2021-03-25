@@ -72,8 +72,8 @@ export default class creditCard extends Component {
       }; 
       this.setState({
         formData:ref.data().BillingAccount,
-      cvc: ref.data().BillingAccount.cvc,
-    type: ref.data().BillingAccount.type,
+        cvc: ref.data().BillingAccount.cvc,
+        type: ref.data().BillingAccount.type,
   number:ref.data().BillingAccount.number,
   expiry: ref.data().BillingAccount.expiry,
   addtionalInputsProps:addtionalInputsProps

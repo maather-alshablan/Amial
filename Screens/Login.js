@@ -1,15 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Image, ImageBackground } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View, Keyboard, Image, ImageBackground, KeyboardAvoidingView } from 'react-native';
+import { TextInput, TouchableOpacity ,TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import { firebase } from '../Configuration/firebase'
 import Icon from 'react-native-vector-icons/Entypo';
-import colors from '../Constants/colors';
-import { ModalComponent } from '../Constants/Components/Modal'
 import { showMessage } from "react-native-flash-message";
-import { auth } from 'firebase';
+import {handleSignIn} from './components/handleSignIn'
 import CustomButton from '../components/CustomButton';
 
+
+
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+);
 
 export default class Login extends Component {
 
@@ -19,43 +24,9 @@ export default class Login extends Component {
   }
 
 
-  handleSignIn = () => {
-
-
-    if (this.state.email === '' || this.state.password == '') {
-
-      showMessage({
-        message: 'يجب تحديد البريد الإلكتروني و كلمة المرور',
-        type: 'danger',
-        style: {}
-      });
-      return;
-
-    }
-
-
-    //test account: test@email.com password:123456
-    firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-      .then((userCredential) => {
-        console.log('user signed in')
-
-        console.log('hi')
-
-      })
-      .catch((error) => {
-
-        showMessage({
-          message: 'كلمة المرور او البريد الإلكتروني غير صحيح',
-          type: 'danger'
-        });
-
-      });
-  }
-
 
   render() {
     return (
-
       <ImageBackground
         source={require('../images/b2.png')}
         style={{ width: '100%', height: '100%' }}
@@ -70,6 +41,7 @@ export default class Login extends Component {
               {this.state.errorMessage}
             </Text>}
           </View>
+
           <View style={styles.InputView}>
             {/* <Text>البريد الإلكتروني</Text> */}
             <Icon name='mail' color={'#01b753'} size={30} />
@@ -81,7 +53,6 @@ export default class Login extends Component {
               value={this.state.email}
             />
           </View>
-
 
           <View style={styles.InputView}>
             {/* <Text style={{color:'#01b753'}}>كلمة المرور </Text> */}
@@ -95,6 +66,7 @@ export default class Login extends Component {
             />
 
           </View>
+          
 
 
           <TouchableOpacity
@@ -104,10 +76,9 @@ export default class Login extends Component {
 
             <View style={{ height: 1, width: '100%', backgroundColor: 'gray' }}></View>
           </TouchableOpacity>
-
           <View >
             <CustomButton
-              onPress={() => this.handleSignIn()}
+              onPress={() => handleSignIn(this.state.email, this.state.password)}
               title="تسجيل الدخول"
               style={{ margin: 16, }}
             />
@@ -121,11 +92,13 @@ export default class Login extends Component {
             <View style={{ height: 1, width: '100%', backgroundColor: '#000' }}></View>
 
           </TouchableOpacity>
-          {/* <ModalComponent /> */}
           <StatusBar style="auto" />
 
         </View>
       </ImageBackground>
+   
+     
+      
 
     );
 
