@@ -12,5 +12,5 @@ expect(checkExpiredDates(Dates)).not.toContain("2021-03-23");
  
     var Dates = ["2021-03-26","2021-03-27"]
     
-    expect(checkExpiredDates(Dates)).not.toContain("2021-03-23");
+    expect(checkExpiredDates(Dates)).arrayContaining(["2021-03-26","2021-03-27"]);
       });
