@@ -1,4 +1,4 @@
-import StatusBar  from 'expo-status-bar';
+import {StatusBar}  from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Keyboard, Image, ImageBackground, KeyboardAvoidingView } from 'react-native';
 import { TextInput, TouchableOpacity ,TouchableWithoutFeedback} from 'react-native-gesture-handler';
