@@ -135,7 +135,7 @@ export default class BorrowerRequestDetails extends Component {
         size={80}
         onComplete={() => {
           if (this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted')
-          this.handleCancelRequest(true,true);
+            this.handleCancelRequest(true, true);
 
           return [true, 1500] // repeat animation in 1.5 seconds
         }}
@@ -348,16 +348,20 @@ export default class BorrowerRequestDetails extends Component {
         break;
       case 'accepted': status = 'ينتظر التأكيد'
         statusColor = colors.Green
-        button = (<TouchableOpacity style={[styles.Button, { backgroundColor: statusColor,  width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
+        button = (<TouchableOpacity style={[styles.Button, { backgroundColor: statusColor, width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
           onPress={() => {
-            this.handleConfirmRequest();
+            this.props.navigation.navigate('creditCard', {
+              handleConfirmRequest: this.handleConfirmRequest,
+              amount: this.state.currentRequest.totalAmount
+            })
+            // this.handleConfirmRequest();
           }}>
           <Text style={[styles.ButtonText, { color: 'white' }]}> تأكيد الطلب </Text>
         </TouchableOpacity>)
         break;
       case 'checkedIn':
         statusColor = colors.Green
-        button = (<TouchableOpacity style={[styles.Button, { backgroundColor: statusColor,  width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
+        button = (<TouchableOpacity style={[styles.Button, { backgroundColor: statusColor, width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
           onPress={() => {
             this.handleUnlock();
           }}>

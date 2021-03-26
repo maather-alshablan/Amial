@@ -13,6 +13,16 @@ import TripRequestsNavigation from '../Navigation/tripsRequestsNavigation'
 import CustomHeader from "../components/CustomHeader";
 import TripRequestDetails from '../Screens/TripRequests/TripRequestDetails'
 import TripForm from '../Screens/myVehicleScreens/TripForm'
+import creditCard from '../Screens/profileScreens/creditCard'
+
+
+function CreditCardHeader() {
+  return (
+    <View >
+      <Text style={{ fontSize: 35, color: '#5dbcd2', fontFamily: 'Tajawal_400Regular', }}> بيانات البطاقة البنكية</Text>
+    </View>
+  )
+}
 
 function MainNavigation() {
 
@@ -111,7 +121,16 @@ function TripStack() {
           },
 
         }} />
-        <Stack.Screen name='tripForm'
+
+      <Stack.Screen name="creditCard" component={creditCard}
+        options={{
+          headerTitle: props => <CreditCardHeader {...props} />,
+          headerBackTitleVisible: false,
+          headerBackTitleStyle: { color: '#5dbcd2' },
+          headerTintColor: colors.LightBlue,
+          headerStyle: { shadowColor: 'transparent', height: 140 }
+        }} />
+      <Stack.Screen name='tripForm'
         component={TripForm}
         options={{
           headerRight: null,
