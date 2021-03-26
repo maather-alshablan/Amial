@@ -1,142 +1,178 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Linking } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { firebase } from '../../Configuration/firebase'
+import { auth, database, firebase } from '../../Configuration/firebase'
 import Person from '../profileScreens/person'
-import { SimpleLineIcons, MaterialCommunityIcons, FontAwesome, Entypo } from '../../Constants/icons'
+import { SimpleLineIcons, MaterialCommunityIcons, FontAwesome, Entypo, FontAwesome5 } from '../../Constants/icons'
 export default class Profile extends Component {
 
-state = {
+    state = {
+        total: 0
+    }
+    handleSignOut = () => {
+        firebase.auth().signOut();
+    }
+    componentDidMount() {
 
-}
-handleSignOut = () => {
-firebase.auth().signOut();
-}
+        this.retrieveConfirmedTrips()
+    }
 
 
-render() {
+    retrieveConfirmedTrips = () => {
+
+        // user is a vehicle owner
+        database.collection('users').doc(auth.currentUser.uid).collection('Requests')
+            .where("ownerID", '==', auth.currentUser.uid)
+            .where('status', 'in', ['confirmed', 'active', 'checkedIn', 'unlocked', 'locked'])
+            .onSnapshot((querySnapshot) => {
+                let requests = []
+                if (!querySnapshot.empty) {
+                    let total = 0;
+                    querySnapshot.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        //requests.push(doc.id, " => ", doc.data());
+                        console.log(doc.data(), "=====")
+                        requests.push(doc.data());
+                        total = total + doc.data().totalAmount
+                        //requests[doc.id] = doc.data();
+                    });
+                    this.setState({ total: total });
+                    console.log('array > ', this.state.request)
+                } else {
+                    console.log('No Pending requests found')
+                }
+            })
+    }
 
 
-return (
-<View style={styles.container}>
-<Person />
 
-<View style={styles.list}>
+    render() {
 
-<TouchableOpacity
-style={styles.listItem}
-onPress={() => this.props.navigation.navigate('EditProfile')}>
-<Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-<Text style={styles.title}>
-تعديل بيانات الحساب
+
+        return (
+            <View style={styles.container}>
+                <Person />
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ ...styles.title, marginRight: 8 }}>رصيدك الحالي  {this.state.total} ريال</Text>
+                    <FontAwesome5 name='wallet'
+                        color={"#000"}
+                        size={20} />
+                </View>
+                <View style={styles.list}>
+
+                    <TouchableOpacity
+                        style={styles.listItem}
+                        onPress={() => this.props.navigation.navigate('EditProfile')}>
+                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                        <Text style={styles.title}>
+                            تعديل بيانات الحساب
 </Text>
-</TouchableOpacity>
+                    </TouchableOpacity>
 
-<TouchableOpacity
-style={styles.listItem}
-onPress={() => this.props.navigation.navigate('creditCard')}>
-<Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-<Text style={styles.title}>
-بيانات البطاقة البنكية
+                    <TouchableOpacity
+                        style={styles.listItem}
+                        onPress={() => this.props.navigation.navigate('creditCard')}>
+                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                        <Text style={styles.title}>
+                            بيانات البطاقة البنكية
 </Text>
-</TouchableOpacity>
+                    </TouchableOpacity>
 
-<TouchableOpacity
-style={styles.listItem}
-onPress={() => this.props.navigation.navigate('changePassword')}>
-<Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-<Text style={styles.title}>
-تغيير كلمة المرور
+                    <TouchableOpacity
+                        style={styles.listItem}
+                        onPress={() => this.props.navigation.navigate('changePassword')}>
+                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                        <Text style={styles.title}>
+                            تغيير كلمة المرور
 </Text>
-</TouchableOpacity>
+                    </TouchableOpacity>
 
-<TouchableOpacity
-style={styles.listItem}
-onPress={() => this.props.navigation.navigate('FAQ')}>
-<Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-<Text style={styles.title}>
-الأسئلة الشائعة
+                    <TouchableOpacity
+                        style={styles.listItem}
+                        onPress={() => this.props.navigation.navigate('FAQ')}>
+                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                        <Text style={styles.title}>
+                            الأسئلة الشائعة
 </Text>
-</TouchableOpacity>
+                    </TouchableOpacity>
 
-<TouchableOpacity
-style={styles.listItem}
-onPress={() => {
-const phone = "0505220440"; //admin's phone
-Linking.canOpenURL('https://api.whatsapp.com/send?' + 'phone=' + phone)
-.then(supported => {
-if (!supported) {
-showMessage({
-message: 'يرجى تنزيل برنامج الواتس اب',
-type: 'danger',
-style: {}
-});
-} else {
-return Linking.openURL('https://api.whatsapp.com/send?' + 'phone=' + phone).catch(e => console.warn(e));
-}
-})
-}}
->
-<Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-<Text style={styles.title}>
-تواصل معنا
+                    <TouchableOpacity
+                        style={styles.listItem}
+                        onPress={() => {
+                            const phone = "0505220440"; //admin's phone
+                            Linking.canOpenURL('https://api.whatsapp.com/send?' + 'phone=' + phone)
+                                .then(supported => {
+                                    if (!supported) {
+                                        showMessage({
+                                            message: 'يرجى تنزيل برنامج الواتس اب',
+                                            type: 'danger',
+                                            style: {}
+                                        });
+                                    } else {
+                                        return Linking.openURL('https://api.whatsapp.com/send?' + 'phone=' + phone).catch(e => console.warn(e));
+                                    }
+                                })
+                        }}
+                    >
+                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                        <Text style={styles.title}>
+                            تواصل معنا
 </Text>
-</TouchableOpacity>
+                    </TouchableOpacity>
 
-<TouchableOpacity
-style={styles.listItem}
-onPress={() => this.handleSignOut()}>
-<Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-<Text style={styles.title}>
-تسجيل الخروج
+                    <TouchableOpacity
+                        style={styles.listItem}
+                        onPress={() => this.handleSignOut()}>
+                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                        <Text style={styles.title}>
+                            تسجيل الخروج
 </Text>
-</TouchableOpacity>
-</View>
+                    </TouchableOpacity>
+                </View>
 
-</View>
-);
+            </View>
+        );
 
-}
+    }
 }
 
 const styles = StyleSheet.create({
-container: {
-flex: 1,
-backgroundColor: '#fff',
-alignItems: 'center',
-justifyContent: 'flex-end',
-},
-listItem: {
-flexDirection: 'row-reverse',
-justifyContent: 'flex-start',
-alignItems: 'flex-end',
-margin: 10,
-width: 300,
-height: 34,
-borderColor: 'grey',
-borderWidth: 1,
-borderTopWidth: 0,
-borderLeftWidth: 0,
-borderRightWidth: 0,
-},
-list: {
-alignItems: 'flex-end',
-justifyContent: 'flex-end',
-marginLeft: 40,
-marginBottom: 140
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+    },
+    listItem: {
+        flexDirection: 'row-reverse',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-end',
+        margin: 10,
+        width: 300,
+        height: 34,
+        borderColor: 'grey',
+        borderWidth: 1,
+        borderTopWidth: 0,
+        borderLeftWidth: 0,
+        borderRightWidth: 0,
+    },
+    list: {
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end',
+        marginLeft: 40,
+        marginBottom: 140
 
-},
-title: {
+    },
+    title: {
 
-marginBottom: 3,
-padding:10,
+        marginBottom: 3,
+        padding: 10,
 
-color: 'black',
-fontSize: 20,
-fontFamily: 'Tajawal_400Regular'
-}
+        color: 'black',
+        fontSize: 20,
+        fontFamily: 'Tajawal_400Regular'
+    }
 
 
 });
-
 
