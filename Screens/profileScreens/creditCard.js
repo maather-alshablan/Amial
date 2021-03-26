@@ -256,7 +256,7 @@ export default class creditCard extends Component {
               validColor={"black"}
               invalidColor={"red"}
               values={this.state.number, this.state.expiry, this.state.cvc, this.state.type}
-              inputContainerStyle={{ alignSelf: 'flex-end', marginVertical: 10 }}
+              inputContainerStyle={{ alignSelf: 'flex-end', marginVertical: 10,}}
               placeholderColor={"darkgray"}
               allowScroll={false}
               onFocus={this._onFocus}

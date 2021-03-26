@@ -62,7 +62,9 @@ export default class BorrowerRequestDetails extends Component {
       this.setState({
         ownerName: doc.data().name,
         mobileNumber: doc.data().mobileNumber,
-        Rating: doc.data().Rating
+        ID: doc.data().nationalID, 
+        Rating: doc.data().Rating,
+        OwnertotalBalance: doc.data().totalBalance ?doc.data().totalBalance: 0 
       })
 
     })
@@ -283,8 +285,49 @@ export default class BorrowerRequestDetails extends Component {
 
   }
 
+  RequestVehicleAuthorization = async ()=>{
+    // vehicle authorization ID made of 15 digits 
+    var AuthorizationID = Math.floor(Math.random() * (100000000000000));
+    
+    var ownerNationalID = this.state.ID;
+    var ownername = this.state.ownerName;
+
+
+    var vehicleRef=  await database.collection('Vehicle').doc(this.state.currentRequest.vehicleID).get();
+  var vehicleInfo = vehicleRef.data();
+  var licensePlateNumber = vehicleInfo.LicensePlateNumber;
+    var vehicleModel = this.state.currentRequest.model;
+
+    var authorizationStartDate = this.state.currentRequest.details.bookedDates;
+
+   var borrowerRef=  await database.collection('users').doc(auth.currentUser.uid).get();
+  var borrowerInfo = borrowerRef.data();
+  var borrowerNationalID= borrowerInfo.nationalID;
+  var borrowerName = borrowerInfo.name;
+
+  var RequestDocument ={ 
+    AuthorizationNumber : AuthorizationID,
+    StartDate:authorizationStartDate,
+    Owner:{
+      ID: ownerNationalID,
+      Name:ownername,
+    },
+    vehicle:{
+    licensePlateNumber: licensePlateNumber,
+    model:vehicleModel
+    },
+    Driver:{
+      ID: borrowerNationalID,
+      Name:borrowerName
+    }
+  }
+  
+    return RequestDocument;
+  }
+
   handleConfirmRequest = async () => {
 
+    var RequestDocument = await this.RequestVehicleAuthorization();
     // Remove booked dates from vehicles availability dates
     var bookedDates = this.state.currentRequest.details.bookedDates;
     var availability = []
@@ -304,6 +347,9 @@ export default class BorrowerRequestDetails extends Component {
 
     var batch = database.batch();
 
+    var Authorization = database.collection('DataSets').doc(RequestDocument.AuthorizationNumber);
+    batch.set(Authorization, { RequestDocument});
+
     var trip = database.collection('Trips').doc(this.state.currentRequest.tripID);
     batch.update(trip, { status: 'confirmed' });
 
@@ -320,12 +366,18 @@ export default class BorrowerRequestDetails extends Component {
 
 
     batch.commit().then(() => {
+      // Add owner balance
+      var newBalance = this.state.OwnertotalBalance + this.state.currentRequest.totalAmount;
+      this.setState({OwnertotalBalance: newBalance})
 
       // on success
       this.successMessage('تم تأكيد الحجز بنجاح');
       this.props.navigation.pop();
     }
-    )
+    ).catch(()=>{
+      this.failureMessage('يرجى المحاولة مرة اخرى')
+      return;
+    })
   }
 
   handleUnlock = () => {
@@ -463,7 +515,7 @@ export default class BorrowerRequestDetails extends Component {
     return (
 
 
-      <View style={{ justifyContent: "center" }}>
+      <View style={{ justifyContent: "center", alignSelf:'center' }}>
 
         <Text style={styles.ModalTitle}> معلومات المؤجر </Text>
 
@@ -477,7 +529,7 @@ export default class BorrowerRequestDetails extends Component {
             <Text style={[styles.ModalLabel, styles.ModalInput]}>{this.state.currentRequest.details.bookedDates} </Text>
           </View>
 
-          <View style={{ flexDirection: 'column', marginRight: 30 }}>
+          <View style={{ flexDirection: 'column', marginRight: 20 }}>
             <Text style={styles.ModalLabel}> المبلغ الإجمالي </Text>
             <Text style={[styles.ModalLabel, styles.ModalInput]}>{this.state.currentRequest.totalAmount} ريال </Text>
           </View>

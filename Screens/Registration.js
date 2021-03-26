@@ -129,6 +129,7 @@ export default class Registration extends Component {
       nationalID: CryptoES.AES.encrypt(this.state.nationalID, firebase.auth().currentUser.uid,).toString(),
       Rating: 0,
       numberofRatings:0,
+      totalBalance:0,
     }).then(success => {
       this.setState({ loading: false })
     }).catch(e => {

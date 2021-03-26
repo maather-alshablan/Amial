@@ -3,6 +3,7 @@ import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import colors from '../Constants/colors';
 
 
 export default class SelectLocation extends Component {
@@ -95,6 +96,7 @@ onRegionChange={this.handleChangeRegion}
 >
 <Marker
 title="موقع المركبة"
+style={{color:colors.LightBlue}}
 coordinate={{ latitude: this.state.latitude, longitude: this.state.longitude }}
 // image={require('../assets/pin.png')}
 />

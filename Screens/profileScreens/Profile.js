@@ -51,14 +51,16 @@ export default class Profile extends Component {
 
         return (
             <View style={styles.container}>
+                <View style={{flex:1, }}>
                 <Person />
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ ...styles.title, marginRight: 8 }}>رصيدك الحالي  {this.state.total} ريال</Text>
+                </View>
+                {/* <View style={{ flexDirection: 'row', alignItems: 'center' , marginVertical:5, marginBottom:20}}>
+                    <Text style={{ ...styles.title, marginRight: 8, alignSelf:'center' }}>رصيدك الحالي  {this.state.total} ريال</Text>
                     <FontAwesome5 name='wallet'
                         color={"#000"}
                         size={20} />
-                </View>
-                <View style={styles.list}>
+                </View> */}
+                <View style={[styles.list,{marginTop:40}]}>
 
                     <TouchableOpacity
                         style={styles.listItem}
@@ -160,7 +162,8 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
         marginLeft: 40,
-        marginBottom: 140
+        marginBottom: 140,
+        marginTop:20
 
     },
     title: {

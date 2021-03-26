@@ -120,37 +120,38 @@ export default class PendingRequests extends Component {
           padding: 12,
           alignSelf: 'center'
         }}>
-        <View style={{
+   <View style={{
           flexDirection: 'row',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
+          direction:'rtl',
         }}>
-          <View style={{ padding: 10 }}>
+              <View style={{ padding: 10 }}>
             <View style={styles.inputRow}>
-              <Text style={styles.label}>نوع المركبة </Text>
-              <Text style={styles.input}> BMW</Text>
+              <Text style={styles.label}>موديل المركبة </Text>
+              <Text style={[styles.input, { width: 120, flexWrap:'wrap' }]}> {item.model}</Text>
             </View>
             <View style={styles.inputRow}>
               <Text style={styles.label}> نوع التسليم </Text>
-              <Text style={styles.input}> {item.details.pickupOption}</Text>
+              <Text style={[styles.input, { width: 120, flexWrap:'wrap' }]}> {item.details.pickupOption}</Text>
             </View>
 
             <View style={styles.inputRow}>
               <Text style={styles.label}>حالة الطلب</Text>
-              <Text style={[styles.label, { color: statusColor }]}> {status}</Text>
+              <Text style={[styles.input, { width: 120, flexWrap:'wrap', color: statusColor }]}> {status}</Text>
             </View>
           </View>
-          <View style={{ width: 120, height: 80 }}>
+          <View style={{ width: 120, height: 120 }}>
             <Image source={{
               uri: item.image
-            }} style={{ width: 120, height: 100, resizeMode:'contain'}}/>
+            }} style={{ width: 100, height: 120, resizeMode:'contain' }}/>
           </View>
         </View>
         <View style={{ alignSelf: 'center' }}>
-
           {button}
         </View>
 
-      </TouchableOpacity>)
+      </TouchableOpacity>
+      )
 
   }
   userHasNoRequests = () => {
@@ -201,11 +202,6 @@ const styles = StyleSheet.create({
     color: '#5dbcd2',
     fontFamily: 'Tajawal_400Regular'
   },
-  inputRow: {
-    flexDirection: 'row',
-    margin: 7,
-    justifyContent: 'space-evenly'
-  },
   ModalinputRow: {
     flexDirection: 'column',
     justifyContent: "center"
@@ -228,12 +224,19 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontFamily: 'Tajawal_300Light',
   },
+  inputRow: {
+    flexDirection: 'row',
+    margin: 7,
+    justifyContent: 'space-evenly'
+  },
+
   label: {
-    textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20
+    textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20,marginEnd:10
   },
   input:
-    { textAlign: 'left', fontFamily: 'Tajawal_400Regular', fontSize: 20, color: colors.LightBlue, marginHorizontal: 5 },
-  ModalInput:
+    {textAlign:'left' ,justifyContent:'center', fontFamily: 'Tajawal_400Regular', fontSize: 18, color: colors.LightBlue,},
+
+    ModalInput:
   {
     fontFamily: 'Tajawal_400Regular',
     fontSize: 22,

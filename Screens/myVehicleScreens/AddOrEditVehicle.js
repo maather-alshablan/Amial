@@ -223,7 +223,7 @@ export default class AddOrEditVehicle extends Component {
         this.setState({ loading: true })
         const { vehicleID = "" } = this.props.route?.params || {}
         if (this.state.edit) {
-
+            console.log('in vehicle edit')
             if (this.state.image.indexOf('http') > -1) {
                 console.log(this.state.docId, "=====")
                 database.collection('Vehicle').doc(this.state.docId).update({
@@ -263,6 +263,7 @@ export default class AddOrEditVehicle extends Component {
                     // console.warn('error', e);
                 })
             } else {
+
                 const response = await this.uploadFile(this.state.image);
                 console.log(this.state.docId, "=====")
 
@@ -311,6 +312,7 @@ export default class AddOrEditVehicle extends Component {
 
             }
         } else {
+            console.log('in new vehicle')
             const response = await this.uploadFile(this.state.image);
 
 
@@ -725,9 +727,9 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                             fontSize: 16
 
                         }} >الأوقات المتاحة للعرض</Text>
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,}}>
                             {this.state.availabilities.map(availability => {
-                                return (<View style={{ padding: 8, borderColor: 'black', borderRadius: 2, borderWidth: 1 }} >
+                                return (<View style={{ padding: 5, borderColor: 'black', borderRadius: 2, borderWidth: 1 , marginHorizontal:15}} >
                                     <Text>{availability}</Text>
                                 </View>)
                             })}
@@ -765,7 +767,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                                 this.setState(prevState => ({
                                     availabilities: [...prevState.availabilities, this.state.date]
                                 }))
-                            }} style={{ marginLeft: 8, padding: 12, borderWidth: 1, borderRadius: 4, borderColor: '#01b753', justifyContent: 'center', alignItems: 'center' }}>
+                            }} style={{ marginLeft: 8, padding: 12, borderWidth: 1, borderRadius: 4, borderColor: '#01b753', justifyContent: 'center', alignItems: 'center'}}>
                             <Text style={{
                                 textAlign: 'left', color: '#01b753',
                                 fontFamily: "Tajawal_400Regular"
@@ -967,6 +969,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                         >
 
                             <SelectLocation
+                           
                                 setCoordinates={(coordinates) => this.setState({ coordinates })}
                             />
                         </ProgressStep>
