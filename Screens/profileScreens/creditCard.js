@@ -245,12 +245,7 @@ export default class creditCard extends Component {
         <View style={s.container}>
           <KeyboardAvoidingView >
             <CreditCardInput
-
-              //  requiresName
               requiresCVC
-
-              //labels={"رقم البطاقة", "تاريخ انتهاء الصلاحية", "CVV"}
-
               labelStyle={s.label}
               inputStyle={s.input}
               validColor={"black"}

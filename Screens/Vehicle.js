@@ -45,7 +45,7 @@ export default class Vehicle extends Component {
   determineUserHasVehicle = () => {
     // console.log('true')
 
-    database.collection('Vehicle').where("ownerID", '==', auth().currentUser.uid).get().then((doc) => {
+    database.collection('Vehicle').where("ownerID", '==', auth().currentUser.uid).onSnapshot(((doc) => {
       console.log('true')
 
       if (doc.empty) {
@@ -62,8 +62,9 @@ export default class Vehicle extends Component {
         this.setState({ hasVehicle: true, vehicles: vehicles });
         console.log(vehicles)
       }
+    
 
-    }).catch((error) => {
+    })).catch((error) => {
       console.log("Error getting document:", error);
     });
   }
@@ -84,18 +85,14 @@ export default class Vehicle extends Component {
           contentContainerStyle={{ paddingTop: 5 }}
         />
 
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.navigate('AddOrEditVehicle')
-          }}>
+     
           <CustomButton
-            style={[styles.Button]}
+            style={[styles.Button,{marginBottom:25}]}
             title='إضافة مركبة'
             onPress={() => {
               this.props.navigation.navigate('AddOrEditVehicle')
             }} />
 
-        </TouchableOpacity>
 
       </View>
     )
@@ -149,15 +146,7 @@ export default class Vehicle extends Component {
 
         </View>
       </View>
-      {/* <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', paddingBottom: 6 }}>
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.navigate('AddOrEditVehicle', { vehicleID: item.vehicleID })
-          }}
-          style={{ padding: 8,  }}>
-          <FontAwesome5 name="edit" color={colors.Subtitle} size={20}/>
-        </TouchableOpacity>
-      </View> */}
+   
     </TouchableOpacity>)
   }
 

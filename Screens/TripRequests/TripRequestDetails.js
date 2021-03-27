@@ -328,6 +328,8 @@ export default class BorrowerRequestDetails extends Component {
   handleConfirmRequest = async () => {
 
     var RequestDocument = await this.RequestVehicleAuthorization();
+
+    
     // Remove booked dates from vehicles availability dates
     var bookedDates = this.state.currentRequest.details.bookedDates;
     var availability = []

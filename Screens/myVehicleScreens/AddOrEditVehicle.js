@@ -133,7 +133,7 @@ export default class AddOrEditVehicle extends Component {
         })
     }
     checkDataBase = (PlatNumber) => {
-        return database.collection('DataSets').where('PlatNumber', "==", PlatNumber)
+        return database.collection('DataSets').where('Vehicle License Plate Number', "==", PlatNumber)
             .get()
             .then((querySnapshot) => {
                 let found = false;
@@ -729,7 +729,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                         }} >الأوقات المتاحة للعرض</Text>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,}}>
                             {this.state.availabilities.map(availability => {
-                                return (<View style={{ padding: 5, borderColor: 'black', borderRadius: 2, borderWidth: 1 , marginHorizontal:15}} >
+                                return (<View style={{ padding: 5, borderColor: 'black', borderRadius: 2, borderWidth: 1 , marginHorizontal:10}} >
                                     <Text>{availability}</Text>
                                 </View>)
                             })}

@@ -51,7 +51,7 @@ export default class Profile extends Component {
 
         return (
             <View style={styles.container}>
-                <View style={{flex:1, }}>
+                <View style={{flex:1,marginBottom:15 }}>
                 <Person />
                 </View>
                 {/* <View style={{ flexDirection: 'row', alignItems: 'center' , marginVertical:5, marginBottom:20}}>
@@ -60,7 +60,7 @@ export default class Profile extends Component {
                         color={"#000"}
                         size={20} />
                 </View> */}
-                <View style={[styles.list,{marginTop:40}]}>
+                <View style={[styles.list,{marginVertical:40, alignSelf:'center'}]}>
 
                     <TouchableOpacity
                         style={styles.listItem}
