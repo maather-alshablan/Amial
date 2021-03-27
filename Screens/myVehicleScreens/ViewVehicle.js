@@ -268,7 +268,7 @@ export default class viewVehicle extends Component {
 
     console.log('handling request..')
 
-    var requestTime = new Date();
+    var requestTime = new Date().toISOString();
 
 
     //create request
@@ -283,7 +283,7 @@ export default class viewVehicle extends Component {
       tripID: requestID,
       ownerID: ownerID,
       borrowerID: borrowerID,
-      requestTime: requestTime.toLocaleString(),
+      requestTime: requestTime,
       status: 'pending',
       model: this.state.vehicleDetails.model,
       vehicleID: vehicleID,

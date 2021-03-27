@@ -10,6 +10,7 @@ import { database, auth } from '../../Configuration/firebase';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import CustomButton from '../../components/CustomButton';
 import Modal from 'react-native-modal';
+import {RequestDropAuthorization} from '../components/RequestDropAuthorization';
 
 export default class BorrowerRequestDetails extends Component {
   constructor(props) {
@@ -101,28 +102,23 @@ export default class BorrowerRequestDetails extends Component {
       this.setTime(this.getTime() + (h * 60 * 60 * 1000));
       return this;
     }
-
     var countdown = 0;
 
     switch (this.state.currentRequest.status) {
       case 'pending':
-        countdown = new Date(new Date(this.state.currentRequest.requestTime).addHours(12)).getTime() - new Date().getTime();
+        countdown = new Date(new Date(this.state.currentRequest.requestTime).addHours(12)) - new Date();
 
         break;
       case 'accepted':
-        countdown = new Date(new Date(this.state.currentRequest.requestAcceptTime).addHours(12)).getTime() - new Date().getTime();
+        countdown = new Date(new Date(this.state.currentRequest.requestAcceptTime).addHours(12)) - new Date();
         break;
 
-      case 'rejected':
-      case 'cancelled':
-        countdown = 0;
-
     }
-    console.log('countdown> ', new Date(new Date(this.state.currentRequest.requestTime).addHours(12)).getTime() - new Date().getTime())
+    console.log('countdown> ', countdown )
+    console
+    console.log('countdown:  ',new Date(new Date(this.state.currentRequest.requestTime).addHours(12)).getTime() - new Date().getTime())
 
-    console.log('countdown:  ', countdown)
-
-
+    console.log('countdown' , new Date().getHours());
     const children = ({ remainingTime }) => {
       const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((remainingTime % 3600) / 60)
@@ -134,15 +130,14 @@ export default class BorrowerRequestDetails extends Component {
     return (
       <CountdownCircleTimer
         isPlaying
-        size={80}
+        size={100}
         onComplete={() => {
           if (this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted')
             this.handleCancelRequest(true, true);
-
           return [true, 1500] // repeat animation in 1.5 seconds
         }}
-        initialRemainingTime={100}
-        duration={100}
+        initialRemainingTime={countdown}
+        duration={countdown}
         colors={[
           ['#004777', 0.4],
           ['#F7B801', 0.4],
@@ -156,12 +151,22 @@ export default class BorrowerRequestDetails extends Component {
         )}
       </CountdownCircleTimer>)
   }
-  handleCancelRequest = (automatically, timer) => {
+  handleCancelRequest =  async(automatically, timer) => {
     var cancellationReason;
 
     if (this.state.cancellationReason != null) // case where cancellationReason is not null is when borrower reports owner no show
       cancellationReason = this.state.cancellationReason
 
+   if(this.state.currentRequest.status =='confirmed') //drop request authorization
+      {
+        var borrowerRef=   database.collection('users').doc(auth.currentUser.uid).get();
+        var borrowerInfo = borrowerRef.data();
+        var borrowerNationalID= borrowerInfo.nationalID;
+        
+        if(! RequestDropAuthorization(this.state.ID,borrowerNationalID, this.state.currentRequest.details.bookedDates ))
+        this.failureMessage('يرجى المحاولة مرة أخرى')
+        return;
+      }
     if (timer == true)
       cancellationReason = 'session-expired'
 

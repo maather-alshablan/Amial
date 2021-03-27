@@ -3,6 +3,7 @@ import { StyleSheet, Animated, Text, View, Alert, TouchableOpacity, Image, Linki
 import { showMessage } from 'react-native-flash-message';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 import { Rating, AirbnbRating, } from 'react-native-ratings';
+import CustomButton from '../../components/CustomButton';
 
 import colors from '../../Constants/colors';
 import { database, auth } from '../../Configuration/firebase';
@@ -90,16 +91,17 @@ export default class OwnerRequestDetails extends Component {
       return this;
     }
 
-    var countdown;
-    switch (this.state.currentRequest.status) {
-      case 'pending':
-        countdown = new Date(this.state.currentRequest.requestTime).addHours(12);
-        break;
-      case 'rejected':
-      case 'cancelled':
-        countdown = 0;
+    switch (this.state.currentRequest.status){
+      case 'pending': 
+      var countdown = new Date(this.state.currentRequest.requestTime).addHours(12) - new Date();
+      break;
+      case 'accepted': 
+      var countdown = new Date(this.state.currentRequest.requestAcceptTime).addHours(12) - new Date();
+      break;
+      default:  var countdown = new Date(this.state.currentRequest.requestTime).addHours(12) - new Date();
 
     }
+  
 
 
     const children = ({ remainingTime }) => {
@@ -115,17 +117,14 @@ export default class OwnerRequestDetails extends Component {
         isPlaying
         size={80}
         onComplete={() => {
-          if (this.state.currentRequest.status != 'pending' || this.state.currentRequest.status != 'accepted')
-            return
-
           this.handleCancelRequest('cancelled', true)
           return [true, 1500] // repeat animation in 1.5 seconds
         }}
-        duration={this.state.currentRequest.status == 'pending' || this.state.currentRequest.status == 'accepted' ? 100 : 0}
+        duration={countdown}
         colors={[
-          ['#004777', 0.4],
-          ['#F7B801', 0.4],
-          ['#A30000', 0.2],
+          ['#004777', 0.3],
+          ['#F7B801', 0.3],
+          ['#A30000', 0.3],
         ]}
       >
         {({ remainingTime, animatedColor }) => (
@@ -272,7 +271,7 @@ export default class OwnerRequestDetails extends Component {
 
   handleAcceptRequest = () => {
 
-    var requestAcceptTime = new Date();
+    var requestAcceptTime = new Date().toISOString();
     var batch = database.batch();
 
     var trip = database.collection('Trips').doc(this.state.currentRequest.tripID);
@@ -330,12 +329,14 @@ export default class OwnerRequestDetails extends Component {
     switch (status) {
       case 'pending': status = "ينتظر الرد"
         statusColor = colors.Subtitle
-        button = (<TouchableOpacity style={[styles.Button, { backgroundColor: colors.Green,  marginHorizontal: 5 }]}
-          onPress={() => {
-            this.handleAcceptRequest()
-          }} >
-          <Text style={[styles.ButtonText, { color: 'white' }]}> قبول الطلب  </Text>
-        </TouchableOpacity>)
+        button = 
+       
+        <CustomButton
+        style={{ marginTop: 10, backgroundColor: colors.Green,  }}
+        title={'قبول الطلب '}
+        onPress={() => {
+          this.handleAcceptRequest()        } }/>
+        
         break;
       case 'accepted': status = 'ينتظر التأكيد'
         statusColor = colors.Subtitle
@@ -484,16 +485,16 @@ export default class OwnerRequestDetails extends Component {
           </View> : <View></View>}
 
 
-        <View style={{ flexDirection: 'row-reverse', alignSelf: 'center' }}>
+        <View style={{ flexDirection: 'row-reverse', alignSelf: 'center' , justifyContent:'center',}}>
           {this.actionButton()}
-          {this.state.currentRequest.status == 'pending' ? <View style={{ flexDirection: 'row-reverse', alignSelf: 'center' }}>
-
-            <TouchableOpacity style={[styles.Button, { borderColor: 'grey',  }]}
-              onPress={() => {
-                this.handleCancelRequest('rejected');
-              }}>
-              <Text style={[styles.ButtonText, { color:'grey' }]}> رفض الطلب  </Text>
-            </TouchableOpacity>
+          {this.state.currentRequest.status == 'pending' ? <View style={{ flexDirection: 'row-reverse', alignSelf: 'center', marginHorizontal:10 }}>
+          <CustomButton
+                style={{ marginTop: 10, }}
+                title={'إلغاء الطلب '}
+                onPress={() => {
+                  this.handleCancelRequest('rejected');
+                } }/>
+          
           </View> : <View></View>}
 
 
@@ -508,15 +509,15 @@ this.handleDeleteRequest();
 </View>:<View></View>} */}
 
           {this.state.currentRequest.status == 'accepted' || this.state.currentRequest.status == 'confirmed' ? <View>
-            <TouchableOpacity style={[styles.Button, { borderColor: 'grey', borderWidth: 1, }]}
-              onPress={() => {
-                this.handleCancelRequest('cancelled');
-              }}>
-              <Text style={[styles.ButtonText, { color: 'grey' }]}> إلغاء الطلب </Text>
-            </TouchableOpacity></View> : <View></View>}
+          <CustomButton
+                style={{ marginTop: 10, }}
+                title={'إلغاء الطلب'}
+                onPress={() => {
+                  this.handleCancelRequest('cancelled'); } }/></View> : <View></View>}
 
         </View>
       </View>
+
 
 
     )
