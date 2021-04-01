@@ -61,11 +61,32 @@ export default class OwnerRequestDetails extends Component {
     var ref = firebase.storage()
       .ref()
       .child('userImages/' + user);
+
     // Get the download URL
     ref.getDownloadURL()
       .then((url) => {
         this.setState({ image: url })
-      })
+      }).catch((error) => {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case 'storage/object-not-found':
+            // File doesn't exist
+            break;
+          case 'storage/unauthorized':
+            // User doesn't have permission to access the object
+            break;
+          case 'storage/canceled':
+            // User canceled the upload
+            break;
+
+          // ...
+
+          case 'storage/unknown':
+            // Unknown error occurred, inspect the server response
+            break;
+        }
+      });
   }
 
   successMessage = (message) => {
@@ -91,18 +112,18 @@ export default class OwnerRequestDetails extends Component {
       return this;
     }
 
-    switch (this.state.currentRequest.status){
-      case 'pending': 
-      var countdown = new Date(this.state.currentRequest.requestTime).addHours(12) - new Date();
-      break;
-      case 'accepted': 
-      var countdown = new Date(this.state.currentRequest.requestAcceptTime).addHours(12) - new Date();
-      break;
-      default:  var countdown = new Date(this.state.currentRequest.requestTime).addHours(12) - new Date();
+    switch (this.state.currentRequest.status) {
+      case 'pending':
+        var countdown = new Date(this.state.currentRequest.requestTime).addHours(12) - new Date();
+        break;
+      case 'accepted':
+        var countdown = new Date(this.state.currentRequest.requestAcceptTime).addHours(12) - new Date();
+        break;
+      default: var countdown = new Date(this.state.currentRequest.requestTime).addHours(12) - new Date();
 
     }
-  
 
+    if (countdown <= 0) return
 
     const children = ({ remainingTime }) => {
       const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -200,6 +221,7 @@ export default class OwnerRequestDetails extends Component {
               else {
                 this.successMessage('تم الإلغاء بنجاح')
                 database.collection('users').doc(this.state.currentRequest.borrowerID).get().then((doc) => {
+
                   let response = fetch('https://exp.host/--/api/v2/push/send', {
                     method: 'POST',
                     headers: {
@@ -329,14 +351,15 @@ export default class OwnerRequestDetails extends Component {
     switch (status) {
       case 'pending': status = "ينتظر الرد"
         statusColor = colors.Subtitle
-        button = 
-       
-        <CustomButton
-        style={{ marginTop: 10, backgroundColor: colors.Green,  }}
-        title={'قبول الطلب '}
-        onPress={() => {
-          this.handleAcceptRequest()        } }/>
-        
+        button =
+
+          <CustomButton
+            style={{ marginTop: 10, backgroundColor: colors.Green, }}
+            title={'قبول الطلب '}
+            onPress={() => {
+              this.handleAcceptRequest()
+            }} />
+
         break;
       case 'accepted': status = 'ينتظر التأكيد'
         statusColor = colors.Subtitle
@@ -344,7 +367,7 @@ export default class OwnerRequestDetails extends Component {
       case 'confirmed':
         statusColor = colors.Green
         if (this.state.isDayOfTrip == true)
-          button = (<TouchableOpacity style={[styles.Button, { backgroundColor: statusColor,  width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
+          button = (<TouchableOpacity style={[styles.Button, { backgroundColor: statusColor, width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
             onPress={() => {
               this.handleCheckInTrip();
             }}>
@@ -359,7 +382,7 @@ export default class OwnerRequestDetails extends Component {
           onPress={() => {
             this.handleDeleteRequest();
           }}>
-          <Text style={[styles.ButtonText, { color: statusColor}]}> حذف الطلب  </Text>
+          <Text style={[styles.ButtonText, { color: statusColor }]}> حذف الطلب  </Text>
         </TouchableOpacity>)
         break;
       case 'locked':
@@ -382,11 +405,13 @@ export default class OwnerRequestDetails extends Component {
   }
 
 
+
+
   showProfile = () => {
 
     return (
       <View style={{ flexDirection: "row-reverse", marginVertical: 20 }} >
-        <View style={{ alignSelf: 'flex-start', marginLeft: 80, marginRight: 30 }}>
+        <View style={{ alignSelf: 'flex-start', marginLeft: 8, marginRight: 30, }}>
           <Image
             style={styles.profilePicture}
             source={{
@@ -394,19 +419,18 @@ export default class OwnerRequestDetails extends Component {
             }} />
         </View>
         <View style={{ flexDirection: 'column', alignSelf: 'center', alignItems: 'center', marginLeft: 100 }}>
-          <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
-            <Rating type='star' ratingCount={1} readonly={true} imageSize={20} startingValue={1} style={{ marginBottom: 5 }} />
-            <Text style={{ color: '#f1c40f', fontSize: 20, fontFamily: 'Tajawal_300Light', marginHorizontal: 5, marginTop: 3 }}>{this.state.userRating}/5</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Rating type='star' ratingCount={5} readonly={true} imageSize={20} startingValue={this.state.userRating} style={{ marginBottom: 5 }} />
+            {/* <Text style={{ color: '#f1c40f', fontSize: 20, fontFamily: 'Tajawal_300Light', marginHorizontal: 5, marginTop: 3 }}>{this.state.userRating}/5</Text> */}
 
             <Text style={styles.Name}>
               {this.state.borrowerName}
             </Text>
           </View>
-          <Text style={styles.Location}>
-            {this.state.mobileNumber}
-          </Text>
+
           <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-            <View style={{ flexDirection: 'row-reverse' }}>
+
+            <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
               <TouchableOpacity
                 onPress={() => {
                   const phone = this.state.mobileNumber; //retrieve user phone
@@ -425,7 +449,9 @@ export default class OwnerRequestDetails extends Component {
                 }}
                 style={{ padding: 8, borderRadius: 6, borderColor: '#3fc250', borderWidth: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#3fc250' }}>
                 <Image source={{ uri: 'https://img.icons8.com/color/452/whatsapp--v1.png' }} style={{ width: 24, height: 24 }} />
-                <Text style={{ marginLeft: 8, color: '#fff' }}>تواصل مع المستأجر</Text>
+                <Text style={[styles.Location, { color: '#fff' }]}>
+                  {this.state.mobileNumber}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -438,7 +464,7 @@ export default class OwnerRequestDetails extends Component {
     return (
 
 
-      <View style={{ justifyContent: "center" }}>
+      <View style={{ justifyContent: "center", alignSelf: 'center' }}>
 
         <Text style={styles.ModalTitle}> معلومات المستأجر </Text>
 
@@ -447,7 +473,7 @@ export default class OwnerRequestDetails extends Component {
         <Text style={styles.ModalTitle}>تفاصيل طلب المركبة</Text>
 
         <View style={{ flexDirection: 'row-reverse', marginHorizontal: 20, marginVertical: 15 }}>
-          <View style={{ flexDirection: 'column', marginHorizontal: 50 }}>
+          <View style={{ flexDirection: 'column', marginHorizontal: 20 }}>
             <Text style={[styles.ModalLabel]}>تاريخ الحجز </Text>
             <Text style={[styles.ModalLabel, styles.ModalInput]}>{this.state.currentRequest.details.bookedDates} </Text>
           </View>
@@ -460,7 +486,7 @@ export default class OwnerRequestDetails extends Component {
 
 
         <View style={{ flexDirection: 'row-reverse', marginHorizontal: 20, marginVertical: 15 }}>
-          <View style={{ flexDirection: 'column', marginHorizontal: 50 }}>
+          <View style={{ flexDirection: 'column', marginHorizontal: 20 }}>
             <Text style={[styles.ModalLabel]}>نوع الإستلام </Text>
             <Text style={[styles.ModalLabel, styles.ModalInput]}>{this.state.currentRequest.details.pickupOption} </Text>
           </View>
@@ -485,16 +511,16 @@ export default class OwnerRequestDetails extends Component {
           </View> : <View></View>}
 
 
-        <View style={{ flexDirection: 'row-reverse', alignSelf: 'center' , justifyContent:'center',}}>
+        <View style={{ flexDirection: 'row-reverse', alignSelf: 'center', justifyContent: 'center', }}>
           {this.actionButton()}
-          {this.state.currentRequest.status == 'pending' ? <View style={{ flexDirection: 'row-reverse', alignSelf: 'center', marginHorizontal:10 }}>
-          <CustomButton
-                style={{ marginTop: 10, }}
-                title={'إلغاء الطلب '}
-                onPress={() => {
-                  this.handleCancelRequest('rejected');
-                } }/>
-          
+          {this.state.currentRequest.status == 'pending' ? <View style={{ flexDirection: 'row-reverse', alignSelf: 'center', marginHorizontal: 10 }}>
+            <CustomButton
+              style={{ marginTop: 10, }}
+              title={'إلغاء الطلب '}
+              onPress={() => {
+                this.handleCancelRequest('rejected');
+              }} />
+
           </View> : <View></View>}
 
 
@@ -509,11 +535,12 @@ this.handleDeleteRequest();
 </View>:<View></View>} */}
 
           {this.state.currentRequest.status == 'accepted' || this.state.currentRequest.status == 'confirmed' ? <View>
-          <CustomButton
-                style={{ marginTop: 10, }}
-                title={'إلغاء الطلب'}
-                onPress={() => {
-                  this.handleCancelRequest('cancelled'); } }/></View> : <View></View>}
+            <CustomButton
+              style={{ marginTop: 10, }}
+              title={'إلغاء الطلب'}
+              onPress={() => {
+                this.handleCancelRequest('cancelled');
+              }} /></View> : <View></View>}
 
         </View>
       </View>
@@ -553,7 +580,7 @@ const styles = StyleSheet.create({
   },
   Location: {
     marginVertical: 3,
-    fontFamily: 'Tajawal_200ExtraLight',
+    // fontFamily: 'Tajawal_200ExtraLight',
     fontSize: 20,
     color: 'grey'
   },

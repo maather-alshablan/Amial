@@ -31,7 +31,7 @@ function myVehicleNavigation() {
       <Stack.Screen name='ManageVehicle'
         component={ManageVehicle}
         options={{
-          headerTitle: props => <CustomHeader title="مركبتي" subTitle="إضافة مركبة" {...props} />,
+          headerTitle: props => <CustomHeader title="مركبتي" subTitle="إدارة مركبة" {...props} />,
           headerBackTitleVisible: false,
           headerStyle: {
             height: 170,
@@ -52,14 +52,14 @@ function myVehicleNavigation() {
         component={AddOrEditVehicle}
         options={{
           headerRight: null,
-          headerTitle: props => <CustomHeader title="مركبتي" subTitle="إضافة مركبة" {...props} />,
+          headerTitle: props => <CustomHeader title="مركبتي" subTitle="إدارة مركبة"  {...props} />,
           headerBackTitleVisible: false,
           headerStyle: {
             height: 170,
             shadowColor: 'transparent',
           }
         }} />
-         
+
 
 
     </Stack.Navigator>
@@ -105,7 +105,7 @@ function RequestStack() {
           headerTintColor: colors.LightBlue
 
         }} />
-         <Stack.Screen name='tripForm'
+      <Stack.Screen name='tripForm'
         component={TripForm}
         options={{
           headerRight: null,
@@ -130,4 +130,3 @@ function RequestHeader() {
 }
 
 export default myVehicleNavigation;
-

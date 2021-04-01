@@ -55,7 +55,7 @@ export default class AddOrEditVehicle extends Component {
         InsuranceCompany: '',
         state: '',
         description: '',
-        selectedValues: [50, 500],
+        selectedValues: [50],
         selectedFeatures: [],
         carNumber: '',
         pickUpOptionCost: [15],
@@ -263,8 +263,9 @@ export default class AddOrEditVehicle extends Component {
                     // console.warn('error', e);
                 })
             } else {
-
+                console.log("before upload")
                 const response = await this.uploadFile(this.state.image);
+                console.log(response, "after upload")
                 console.log(this.state.docId, "=====")
 
                 if (response && response.ref) {
@@ -426,7 +427,7 @@ export default class AddOrEditVehicle extends Component {
                                     })
                                 }
                             }}
-                            style={{ borderColor: '#01b753', borderWidth: 1, borderRadius: 10, margin:3,padding: 15, backgroundColor: this.state.selectedFeatures.includes(feature) ? '#01b753' : '#fff' }}>
+                            style={{ borderColor: '#01b753', borderWidth: 1, borderRadius: 10, margin: 3, padding: 15, backgroundColor: this.state.selectedFeatures.includes(feature) ? '#01b753' : '#fff' }}>
                             <Text style={{
                                 fontSize: 14,
                                 fontFamily: "Tajawal_400Regular", color: this.state.selectedFeatures.includes(feature) ? '#fff' : '#01b753'
@@ -560,7 +561,7 @@ style={{ width: 80, height: 80, borderRadius: 4, borderWidth: 1, borderColor: 'g
                 <Input
                     value={this.state.carNumber}
                     onChangeText={(carNumber) => this.setState({ carNumber })}
-                   // onEndEditing = {(plateNumber)=>{ this.checkDataBase(plateNumber)}}
+                    // onEndEditing = {(plateNumber)=>{ this.checkDataBase(plateNumber)}}
                     placeholder="اضافة لوحة المركبة : مثال ABC123"
                     style={{ width: '100%', backgroundColor: '#F0EEF0', borderBottomWidth: 0, height: 50, borderRadius: 10 }}
                     containerStyle={{ flex: 1, paddingRight: 16, }}
@@ -595,6 +596,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
 
     onNextFirstStep = async () => {
         // we need to handle all the errors
+
         let valid = true;
         if (!this.state.image) {
             this.failureMessage('يرجى ارفاق صورة المركبة')
@@ -727,9 +729,9 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                             fontSize: 16
 
                         }} >الأوقات المتاحة للعرض</Text>
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' ,}}>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', }}>
                             {this.state.availabilities.map(availability => {
-                                return (<View style={{ padding: 5, borderColor: 'black', borderRadius: 2, borderWidth: 1 , marginHorizontal:10}} >
+                                return (<View style={{ padding: 5, borderColor: 'black', borderRadius: 2, borderWidth: 1, marginHorizontal: 10 }} >
                                     <Text>{availability}</Text>
                                 </View>)
                             })}
@@ -767,7 +769,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                                 this.setState(prevState => ({
                                     availabilities: [...prevState.availabilities, this.state.date]
                                 }))
-                            }} style={{ marginLeft: 8, padding: 12, borderWidth: 1, borderRadius: 4, borderColor: '#01b753', justifyContent: 'center', alignItems: 'center'}}>
+                            }} style={{ marginLeft: 8, padding: 12, borderWidth: 1, borderRadius: 4, borderColor: '#01b753', justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{
                                 textAlign: 'left', color: '#01b753',
                                 fontFamily: "Tajawal_400Regular"
@@ -938,7 +940,7 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                         <ProgressStep
                             label="الموقع"
                             previousBtnText="السابق"
-                            finishBtnText="اضافة مركبة"
+                            finishBtnText={this.props.route?.params?.vehicleID ? "تعديل المركبة" : "اضافة مركبة"}
                             isComplete={true}
                             onSubmit={this.handleSaveData}
                             nextBtnTextStyle={{ color: "white", fontSize: 20, }}
@@ -969,15 +971,14 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
                         >
 
                             <SelectLocation
-                           
+
                                 setCoordinates={(coordinates) => this.setState({ coordinates })}
                             />
                         </ProgressStep>
                     </ProgressSteps>
                 </DismissKeyboard>
                 <ModalComponent />
-{/* 
-                {this.state.loading ? <OverLay /> : null} */}
+                {this.state.loading ? <OverLay /> : null}
             </View>
         );
     }
