@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Alert, ImageBackground  , Keyboard,TouchableWithoutFeedback} from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, ImageBackground, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import CustomButton from '../components/CustomButton';
@@ -35,7 +35,7 @@ export default class Registration extends Component {
         let obj = null;
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
-
+          // console.log(doc.data(), doc.id)
           if (doc.id == nationalID) {
             found = true
             obj = doc.data()
@@ -44,8 +44,16 @@ export default class Registration extends Component {
         });
 
         if (found) {
+          if (obj.Name?.toLocaleLowerCase() != this.state.name?.toLocaleLowerCase()) {
+            this.failureMessage("عذرا الاسم غير مطابق لرقم الهوية")
+            return false
+          } else if (obj['Driving License'] != "Active") {
+            this.failureMessage("عذرا يرجى تجديد الرخصة قبل استكمال عملية التسجيل")
+            return false
+          }
           return true
         } else {
+          this.failureMessage("عذرا رقم الهوية المدخل غير صحيح")
           return false;
         }
         console.warn('eeee');
@@ -55,6 +63,7 @@ export default class Registration extends Component {
       });
   }
   handleSignUp = async () => {
+
 
     if (this.state.password !== this.state.confirmPassword) {
       this.state.formValid = false;
@@ -80,7 +89,6 @@ export default class Registration extends Component {
 
     if (this.state.mobileNumber.length != 10) {
       this.state.formValid = false;
-
       this.failureMessage("يرجى استخدام رقم جوال صحيح")
       return
     }
@@ -96,11 +104,12 @@ export default class Registration extends Component {
       this.failureMessage("يرجى استخدام بريد الكتروني صحيح")
       return
     }
+
     const check = await this.checkDataBase(this.state.nationalID);
     if (!check) {
-      this.failureMessage("عذرا رقم الهوية المدخل غير صحيح")
       return;
     }
+
 
     auth.
       createUserWithEmailAndPassword(this.state.email, this.state.password)
@@ -109,8 +118,8 @@ export default class Registration extends Component {
       })
       .catch(
         (e) => {
-          console.warn('successfulRegistration[error]', e)
-          this.failureMessage('يرجى التأكد من ادخال البيانات بالشكل الصحيح')
+          console.log('successfulRegistration[error]', e)
+          this.failureMessage(e?.message ? e?.message : 'يرجى التأكد من ادخال البيانات بالشكل الصحيح')
         })
 
     if (this.state.errorMessage == '') {
@@ -126,10 +135,10 @@ export default class Registration extends Component {
       email: this.state.email,
       password: this.state.password,
       mobileNumber: this.state.mobileNumber,
-      nationalID: CryptoES.AES.encrypt(this.state.nationalID, firebase.auth().currentUser.uid,).toString(),
+      nationalID: CryptoES.AES.encrypt(this.state.nationalID, userid,).toString(),
       Rating: 0,
-      numberofRatings:0,
-      total:0,
+      numberofRatings: 0,
+      total: 0,
     }).then(success => {
       this.setState({ loading: false })
     }).catch(e => {
@@ -158,80 +167,80 @@ export default class Registration extends Component {
   render() {
     return (
       <DismissKeyboard >
-      <ImageBackground
-        source={require('../images/b2.png')}
-        style={{ width: '100%', height: '100%' }}
-      >
-        <View style={styles.container}>
-          <View style={{ marginBottom: 100, marginTop: 20 }}>
-            <CustomHeader
-              subTitle="إنشاء حساب جديد"
+        <ImageBackground
+          source={require('../images/b2.png')}
+          style={{ width: '100%', height: '100%' }}
+        >
+          <View style={styles.container}>
+            <View style={{ marginBottom: 100, marginTop: 20 }}>
+              <CustomHeader
+                subTitle="إنشاء حساب جديد"
+              />
+            </View>
+            <Input
+              placeholder="رقم الهوية / الاقامة"
+              value={this.state.nationalID}
+              onChangeText={(nationalID) => this.setState({ nationalID })}
+              iconName={'flag'}
             />
+            <Input
+              placeholder="الاسم الرباعي"
+              value={this.state.name}
+              onChangeText={(name) => this.setState({ name })}
+              iconName={'user'}
+            />
+            <Input
+              placeholder="البريد الالكتروني"
+              value={this.state.email}
+              onChangeText={(email) => {
+
+                var regex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+                var matches = regex.exec(email);
+                if (matches && matches.length > 0) {
+                  this.setState({ correctEmail: true });
+                } else {
+                  this.setState({ correctEmail: false });
+                }
+                this.setState({ email })
+              }}
+              iconName={'envelope'}
+            />
+            <Input
+              placeholder="رقم الجوال"
+              value={this.state.mobileNumber}
+              onChangeText={(mobileNumber) => this.setState({ mobileNumber })}
+              iconName={'phone'}
+              keyboardType={"phone-pad"}
+              returnKeyType={'done'}
+            />
+            <Input
+              placeholder="كلمة المرور"
+              value={this.state.password}
+              onChangeText={(password) => this.setState({ password })}
+              iconName={'lock'}
+              secureTextEntry={true}
+
+            />
+            <Input
+              placeholder="تاكيد كلمة المرور"
+              value={this.state.confirmPassword}
+              onChangeText={(confirmPassword) => this.setState({ confirmPassword })}
+              iconName={'lock'}
+              secureTextEntry={true}
+            />
+            <CustomButton
+              onPress={this.handleSignUp}
+              title='تســجــيـــــل'
+              style={{ marginTop: 32, marginBottom: 16 }}
+            />
+
+            <Text style={{ fontSize: 14 }} >مسجل مسبقا؟ <Text style={{ textDecorationLine: 'underline', color: '#01b753' }}
+              onPress={() => this.props.navigation.navigate('Login')}
+            >تسجيل الدخول</Text></Text>
+            {this.state.loading ? <OverLay /> : null}
           </View>
-          <Input
-            placeholder="رقم الهوية / الاقامة"
-            value={this.state.nationalID}
-            onChangeText={(nationalID) => this.setState({ nationalID })}
-            iconName={'flag'}
-          />
-          <Input
-            placeholder="الاسم الرباعي"
-            value={this.state.name}
-            onChangeText={(name) => this.setState({ name })}
-            iconName={'user'}
-          />
-          <Input
-            placeholder="البريد الالكتروني"
-            value={this.state.email}
-            onChangeText={(email) => {
 
-              var regex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-              var matches = regex.exec(email);
-              if (matches && matches.length > 0) {
-                this.setState({ correctEmail: true });
-              } else {
-                this.setState({ correctEmail: false });
-              }
-              this.setState({ email })
-            }}
-            iconName={'envelope'}
-          />
-          <Input
-            placeholder="رقم الجوال"
-            value={this.state.mobileNumber}
-            onChangeText={(mobileNumber) => this.setState({ mobileNumber })}
-            iconName={'phone'}
-            keyboardType={"phone-pad"}
-            returnKeyType={'done'}
-          />
-          <Input
-            placeholder="كلمة المرور"
-            value={this.state.password}
-            onChangeText={(password) => this.setState({ password })}
-            iconName={'lock'}
-            secureTextEntry={true}
-
-          />
-          <Input
-            placeholder="تاكيد كلمة المرور"
-            value={this.state.confirmPassword}
-            onChangeText={(confirmPassword) => this.setState({ confirmPassword })}
-            iconName={'lock'}
-            secureTextEntry={true}
-          />
-          <CustomButton
-            onPress={this.handleSignUp}
-            title='تســجــيـــــل'
-            style={{ marginTop: 32, marginBottom: 16 }}
-          />
-
-          <Text style={{ fontSize: 14 }} >مسجل مسبقا؟ <Text style={{ textDecorationLine: 'underline', color: '#01b753' }}
-            onPress={() => this.props.navigation.navigate('Login')}
-          >تسجيل الدخول</Text></Text>
-          {this.state.loading ? <OverLay /> : null}
-        </View>
-
-      </ImageBackground>
+        </ImageBackground>
       </DismissKeyboard>
     );
 

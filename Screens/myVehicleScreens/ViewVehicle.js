@@ -11,8 +11,8 @@ import { auth, } from 'firebase';
 import { showMessage, hideMessage } from "react-native-flash-message";
 import CustomButton from '../../components/CustomButton';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import {calculateTotalPrice} from '../components/calculateTotalPrice'
-import {checkExpiredDates} from '../components/checkExpiredDates'
+import { calculateTotalPrice } from '../components/calculateTotalPrice'
+import { checkExpiredDates } from '../components/checkExpiredDates'
 
 
 
@@ -29,11 +29,11 @@ export default class viewVehicle extends Component {
       features: [],
       address: {},
       Rating: 0,
-      dailyRate:0,
+      dailyRate: 0,
       InsurancePolicy: {},
       isModalVisible: false,
       calculatedTotalPrice: 0,
-      pickUpOptionCost:0,
+      pickUpOptionCost: 0,
       sentRequest: false,
       failedRequest: false,
       selectedPickUp: [],
@@ -110,7 +110,7 @@ export default class viewVehicle extends Component {
       availability: availability,
       address: vehicleData.address,
       dailyRate: vehicleData.dailyRate,
-      pickUpOptionCost:vehicleData.pickUpOptionCost ,
+      pickUpOptionCost: vehicleData.pickUpOptionCost,
       Rating: vehicleData.Rating,
       InsurancePolicy: vehicleData.InsurancePolicy,
     })
@@ -128,11 +128,11 @@ export default class viewVehicle extends Component {
 
   SelectAvailability = () => {
 
-  
+
     return (
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignSelf: 'flex-end', marginHorizontal: 30 }}>
-    
+
 
         {this.state.availability.map(date => {
           return (<TouchableOpacity
@@ -173,8 +173,8 @@ export default class viewVehicle extends Component {
                 })
               }
               console.log('pickUpOptionCost', this.state.pickUpOptionCost)
-             
-              this.setState({calculatedTotalPrice: calculateTotalPrice(this.state.selectedDates, this.state.dailyRate, this.state.selectedPickUp[0] === "توصيل"? this.state.pickUpOptionCost: 0  )});
+
+              this.setState({ calculatedTotalPrice: calculateTotalPrice(this.state.selectedDates, this.state.dailyRate, this.state.selectedPickUp[0] === "توصيل" ? this.state.pickUpOptionCost : 0) });
 
 
             }}
@@ -205,7 +205,7 @@ export default class viewVehicle extends Component {
               if (this.state.selectedPickUp) {
                 const selection = []
                 selection.push(option)
-                
+
                 //var newSelection = this.state.selectedDates.push(date)
                 this.setState({
                   selectedPickUp: selection
@@ -223,7 +223,7 @@ export default class viewVehicle extends Component {
                   selectedPickUp: selection
                 })
               }
-              this.setState({calculatedTotalPrice: calculateTotalPrice(this.state.selectedDates, this.state.dailyRate, option === "توصيل"? this.state.pickUpOptionCost: 0  )});
+              this.setState({ calculatedTotalPrice: calculateTotalPrice(this.state.selectedDates, this.state.dailyRate, option === "توصيل" ? this.state.pickUpOptionCost : 0) });
 
             }}
             style={{
@@ -234,11 +234,11 @@ export default class viewVehicle extends Component {
             <Text style={{ fontSize: 15, fontFamily: 'Tajawal_300Light', color: (this.state.selectedPickUp != undefined && this.state.selectedPickUp.includes(option)) ? '#fff' : 'black' }}>{option}</Text>
           </TouchableOpacity>)
         })}
-        
+
       </View>
 
     )
-    
+
   }
 
 
@@ -311,6 +311,7 @@ export default class viewVehicle extends Component {
 
     batch.commit().then(() => {
       database.collection('users').doc(ownerID).get().then((doc) => {
+
         let response = fetch('https://exp.host/--/api/v2/push/send', {
           method: 'POST',
           headers: {
@@ -324,7 +325,7 @@ export default class viewVehicle extends Component {
             body: 'تم ارسال طلب جديد يرجى التحقق منه.'
           })
         })
-        console.warn({ response })
+        console.log({ response })
 
       })
 
@@ -404,14 +405,14 @@ export default class viewVehicle extends Component {
                   <Text style={styles.requestModalTitle}>طلب حجز المركبة</Text>
 
                   <Text style={styles.requestModalLabel}>التواريخ المتاحة </Text>
-                  {this.state.availability[0]== null? 
-                
-                  <View style={{alignSelf:'center'}}>
-                    <Text style={{fontFamily:'Tajawal_400Regular', fontSize:20, color:colors.Subtitle}}>
-                      لا يوجد تواريخ متاحة
+                  {this.state.availability[0] == null ?
+
+                    <View style={{ alignSelf: 'center' }}>
+                      <Text style={{ fontFamily: 'Tajawal_400Regular', fontSize: 20, color: colors.Subtitle }}>
+                        لا يوجد تواريخ متاحة
                     </Text>
-                  </View>:<View>{this.SelectAvailability()}</View> }
-                         
+                    </View> : <View>{this.SelectAvailability()}</View>}
+
 
 
                   <Text style={styles.requestModalLabel}>نوع الإستلام </Text>
@@ -422,16 +423,17 @@ export default class viewVehicle extends Component {
                   <Text style={[styles.requestModalLabel, { fontSize: 20, }]}>المجموع</Text>
                   <Text style={[styles.requestModalLabel, { fontSize: 25, fontFamily: 'Tajawal_500Medium', bottom: 20 }]}> {this.state.calculatedTotalPrice} ريال</Text>
 
-                  
+
                   <View style={{ bottom: 20 }}>
-                      <CustomButton
-                        onPress={() => {
-                          this.state.availability[0]!= null? this.handleRequest():{}}}
-                          style={
-                            this.state.availability[0]== null? {backgroundColor:colors.Subtitle, }:{}}
-                        title='إرسال الطلب'
-                      />
-                  </View> 
+                    <CustomButton
+                      onPress={() => {
+                        this.state.availability[0] != null ? this.handleRequest() : {}
+                      }}
+                      style={
+                        this.state.availability[0] == null ? { backgroundColor: colors.Subtitle, } : {}}
+                      title='إرسال الطلب'
+                    />
+                  </View>
 
                 </View>}
               </View>
@@ -463,7 +465,7 @@ export default class viewVehicle extends Component {
   }
 
   renderFeature = () => {
-    {console.log('features: ',this.state.vehicleDetails.features)}
+    { console.log('features: ', this.state.vehicleDetails.features) }
     const features = [];
     for (let i = 0; i < this.state.vehicleDetails.features.length; i += 2) {
 
@@ -519,31 +521,31 @@ export default class viewVehicle extends Component {
       </View>
       <View style={{ flexDirection: 'row', }}>
 
-      
-      </View>
-     
-        <View style={{
-          padding: 12, backgroundColor: '#fff', borderRadius: 20, margin: 8, shadowColor: '#000',
-          shadowOpacity: 0.12,
-          shadowRadius: 6,
-          shadowOffset: {
-            height: 3,
-            width: 0
-          }
-        }}>
 
-          <View>
-            <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>خصائص المركبة</Text>
-           {this.state.vehicleDetails.features != null  && this.state.vehicleDetails.features[0] != null ?
-            this.renderFeature() 
-            : <View style={{alignSelf:'center'}}>
-              <Text style={{fontFamily:'Tajawal_400Regular', fontSize:16, color:colors.Subtitle}}>
-                      لا يوجد مميزات مضافة
+      </View>
+
+      <View style={{
+        padding: 12, backgroundColor: '#fff', borderRadius: 20, margin: 8, shadowColor: '#000',
+        shadowOpacity: 0.12,
+        shadowRadius: 6,
+        shadowOffset: {
+          height: 3,
+          width: 0
+        }
+      }}>
+
+        <View>
+          <Text style={{ fontSize: 16, textAlign: 'left', marginBottom: 12, fontFamily: 'Tajawal_400Regular' }}>خصائص المركبة</Text>
+          {this.state.vehicleDetails.features != null && this.state.vehicleDetails.features[0] != null ?
+            this.renderFeature()
+            : <View style={{ alignSelf: 'center' }}>
+              <Text style={{ fontFamily: 'Tajawal_400Regular', fontSize: 16, color: colors.Subtitle }}>
+                لا يوجد مميزات مضافة
                     </Text>
-              </View>}
-          </View>
+            </View>}
         </View>
-      
+      </View>
+
 
 
       <View style={{ flexDirection: 'row', }}>
