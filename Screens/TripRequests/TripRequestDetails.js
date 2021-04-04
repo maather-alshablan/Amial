@@ -10,7 +10,7 @@ import { database, auth } from '../../Configuration/firebase';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import CustomButton from '../../components/CustomButton';
 import Modal from 'react-native-modal';
-import {RequestDropAuthorization} from '../components/RequestDropAuthorization';
+import { RequestDropAuthorization } from '../components/RequestDropAuthorization';
 
 export default class BorrowerRequestDetails extends Component {
   constructor(props) {
@@ -63,9 +63,9 @@ export default class BorrowerRequestDetails extends Component {
       this.setState({
         ownerName: doc.data().name,
         mobileNumber: doc.data().mobileNumber,
-        ID: doc.data().nationalID, 
+        ID: doc.data().nationalID,
         Rating: doc.data().Rating,
-        OwnertotalBalance: doc.data().totalBalance ?doc.data().totalBalance: 0 
+        OwnertotalBalance: doc.data().totalBalance ? doc.data().totalBalance : 0
       })
 
     })
@@ -77,7 +77,27 @@ export default class BorrowerRequestDetails extends Component {
     ref.getDownloadURL()
       .then((url) => {
         this.setState({ image: url })
-      })
+      }).catch((error) => {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case 'storage/object-not-found':
+            // File doesn't exist
+            break;
+          case 'storage/unauthorized':
+            // User doesn't have permission to access the object
+            break;
+          case 'storage/canceled':
+            // User canceled the upload
+            break;
+
+          // ...
+
+          case 'storage/unknown':
+            // Unknown error occurred, inspect the server response
+            break;
+        }
+      });
   }
 
   successMessage = (message) => {
@@ -114,11 +134,11 @@ export default class BorrowerRequestDetails extends Component {
         break;
 
     }
-    console.log('countdown> ', countdown )
+    console.log('countdown> ', countdown)
     console
-    console.log('countdown:  ',new Date(new Date(this.state.currentRequest.requestTime).addHours(12)).getTime() - new Date().getTime())
+    console.log('countdown:  ', new Date(new Date(this.state.currentRequest.requestTime).addHours(12)).getTime() - new Date().getTime())
 
-    console.log('countdown' , new Date().getHours());
+    console.log('countdown', new Date().getHours());
     const children = ({ remainingTime }) => {
       const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((remainingTime % 3600) / 60)
@@ -151,22 +171,22 @@ export default class BorrowerRequestDetails extends Component {
         )}
       </CountdownCircleTimer>)
   }
-  handleCancelRequest =  async(automatically, timer) => {
+  handleCancelRequest = async (automatically, timer) => {
     var cancellationReason;
 
     if (this.state.cancellationReason != null) // case where cancellationReason is not null is when borrower reports owner no show
       cancellationReason = this.state.cancellationReason
 
-   if(this.state.currentRequest.status =='confirmed') //drop request authorization
-      {
-        var borrowerRef=   database.collection('users').doc(auth.currentUser.uid).get();
-        var borrowerInfo = borrowerRef.data();
-        var borrowerNationalID= borrowerInfo.nationalID;
-        
-        if(! RequestDropAuthorization(this.state.ID,borrowerNationalID, this.state.currentRequest.details.bookedDates ))
+    if (this.state.currentRequest.status == 'confirmed') //drop request authorization
+    {
+      var borrowerRef = database.collection('users').doc(auth.currentUser.uid).get();
+      var borrowerInfo = borrowerRef.data();
+      var borrowerNationalID = borrowerInfo.nationalID;
+
+      if (!RequestDropAuthorization(this.state.ID, borrowerNationalID, this.state.currentRequest.details.bookedDates))
         this.failureMessage('يرجى المحاولة مرة أخرى')
-        return;
-      }
+      return;
+    }
     if (timer == true)
       cancellationReason = 'session-expired'
 
@@ -290,51 +310,51 @@ export default class BorrowerRequestDetails extends Component {
 
   }
 
-  RequestVehicleAuthorization = async ()=>{
+  RequestVehicleAuthorization = async () => {
     // vehicle authorization ID made of 15 digits 
     var AuthorizationID = Math.floor(Math.random() * (100000000000000));
-    
+
     var ownerNationalID = this.state.ID;
     var ownername = this.state.ownerName;
 
 
-    var vehicleRef=  await database.collection('Vehicle').doc(this.state.currentRequest.vehicleID).get();
-  var vehicleInfo = vehicleRef.data();
-  var licensePlateNumber = vehicleInfo.LicensePlateNumber;
+    var vehicleRef = await database.collection('Vehicle').doc(this.state.currentRequest.vehicleID).get();
+    var vehicleInfo = vehicleRef.data();
+    var licensePlateNumber = vehicleInfo.LicensePlateNumber;
     var vehicleModel = this.state.currentRequest.model;
 
     var authorizationStartDate = this.state.currentRequest.details.bookedDates;
 
-   var borrowerRef=  await database.collection('users').doc(auth.currentUser.uid).get();
-  var borrowerInfo = borrowerRef.data();
-  var borrowerNationalID= borrowerInfo.nationalID;
-  var borrowerName = borrowerInfo.name;
+    var borrowerRef = await database.collection('users').doc(auth.currentUser.uid).get();
+    var borrowerInfo = borrowerRef.data();
+    var borrowerNationalID = borrowerInfo.nationalID;
+    var borrowerName = borrowerInfo.name;
 
-  var RequestDocument ={ 
-    AuthorizationNumber : AuthorizationID,
-    StartDate:authorizationStartDate,
-    Owner:{
-      ID: ownerNationalID,
-      Name:ownername,
-    },
-    vehicle:{
-    licensePlateNumber: licensePlateNumber,
-    model:vehicleModel
-    },
-    Driver:{
-      ID: borrowerNationalID,
-      Name:borrowerName
+    var RequestDocument = {
+      AuthorizationNumber: AuthorizationID,
+      StartDate: authorizationStartDate,
+      Owner: {
+        ID: ownerNationalID,
+        Name: ownername,
+      },
+      vehicle: {
+        licensePlateNumber: licensePlateNumber,
+        model: vehicleModel
+      },
+      Driver: {
+        ID: borrowerNationalID,
+        Name: borrowerName
+      }
     }
-  }
-  
+
     return RequestDocument;
   }
 
   handleConfirmRequest = async () => {
+    console.log("handleConfirmRequest")
+    var RequestDocument = await this.RequestVehicleAuthorization();
 
-    //var RequestDocument = await this.RequestVehicleAuthorization();
 
-    
     // Remove booked dates from vehicles availability dates
     var bookedDates = this.state.currentRequest.details.bookedDates;
     var availability = []
@@ -354,8 +374,8 @@ export default class BorrowerRequestDetails extends Component {
 
     var batch = database.batch();
 
-    // var Authorization = database.collection('DataSets').doc(RequestDocument.AuthorizationNumber);
-    // batch.set(Authorization, { RequestDocument});
+    var Authorization = database.collection('DataSets').doc(RequestDocument.AuthorizationNumber.toString());
+    batch.set(Authorization, { RequestDocument });
 
     var trip = database.collection('Trips').doc(this.state.currentRequest.tripID);
     batch.update(trip, { status: 'confirmed' });
@@ -370,18 +390,18 @@ export default class BorrowerRequestDetails extends Component {
 
     var vehicle = database.collection('Vehicle').doc(this.state.currentRequest.vehicleID)
     batch.update(vehicle, { availability: newAvailability })
-
+    console.log("batch")
 
     batch.commit().then(() => {
       // Add owner balance
       var newBalance = this.state.OwnertotalBalance + this.state.currentRequest.totalAmount;
-      this.setState({OwnertotalBalance: newBalance})
+      this.setState({ OwnertotalBalance: newBalance })
 
       // on success
       this.successMessage('تم تأكيد الحجز بنجاح');
       this.props.navigation.pop();
     }
-    ).catch(()=>{
+    ).catch(() => {
       this.failureMessage('يرجى المحاولة مرة اخرى')
       return;
     })
@@ -522,7 +542,7 @@ export default class BorrowerRequestDetails extends Component {
     return (
 
 
-      <View style={{ justifyContent: "center", alignSelf:'center' }}>
+      <View style={{ justifyContent: "center", alignSelf: 'center' }}>
 
         <Text style={styles.ModalTitle}> معلومات المؤجر </Text>
 

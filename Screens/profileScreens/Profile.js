@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Linking } from 'react-native';
+import { StyleSheet, Text, View, Linking, ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { auth, database, firebase } from '../../Configuration/firebase'
 import Person from '../profileScreens/person'
@@ -14,7 +14,7 @@ export default class Profile extends Component {
     }
     componentDidMount() {
 
-        this.retrieveConfirmedTrips()
+        // this.retrieveConfirmedTrips()
     }
 
 
@@ -51,86 +51,90 @@ export default class Profile extends Component {
 
         return (
             <View style={styles.container}>
-                <View style={{flex:1,marginBottom:15 }}>
-                <Person />
-                </View>
-                {/* <View style={{ flexDirection: 'row', alignItems: 'center' , marginVertical:5, marginBottom:20}}>
-                    <Text style={{ ...styles.title, marginRight: 8, alignSelf:'center' }}>رصيدك الحالي  {this.state.total} ريال</Text>
-                    <FontAwesome5 name='wallet'
-                        color={"#000"}
-                        size={20} />
-                </View> */}
-                <View style={[styles.list,{marginVertical:40, alignSelf:'center'}]}>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                    }}
+                >
 
-                    <TouchableOpacity
-                        style={styles.listItem}
-                        onPress={() => this.props.navigation.navigate('EditProfile')}>
-                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-                        <Text style={styles.title}>
-                            تعديل بيانات الحساب
-</Text>
-                    </TouchableOpacity>
+                    <View style={{ flex: 1, marginBottom: 15 }}>
+                        <Person />
+                    </View>
 
-                    <TouchableOpacity
-                        style={styles.listItem}
-                        onPress={() => this.props.navigation.navigate('creditCard')}>
-                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-                        <Text style={styles.title}>
-                            بيانات البطاقة البنكية
-</Text>
-                    </TouchableOpacity>
+                    <View style={[styles.list, { marginVertical: 40, alignSelf: 'center' }]}>
 
-                    <TouchableOpacity
-                        style={styles.listItem}
-                        onPress={() => this.props.navigation.navigate('changePassword')}>
-                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-                        <Text style={styles.title}>
-                            تغيير كلمة المرور
+                        <TouchableOpacity
+                            style={styles.listItem}
+                            onPress={() => this.props.navigation.navigate('EditProfile')}>
+                            <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                            <Text style={styles.title}>
+                                تعديل بيانات الحساب
 </Text>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.listItem}
-                        onPress={() => this.props.navigation.navigate('FAQ')}>
-                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-                        <Text style={styles.title}>
-                            الأسئلة الشائعة
+                        <TouchableOpacity
+                            style={styles.listItem}
+                            onPress={() => this.props.navigation.navigate('creditCard')}>
+                            <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                            <Text style={styles.title}>
+                                بيانات البطاقة البنكية
 </Text>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.listItem}
-                        onPress={() => {
-                            const phone = "0505220440"; //admin's phone
-                            Linking.canOpenURL('https://api.whatsapp.com/send?' + 'phone=' + phone)
-                                .then(supported => {
-                                    if (!supported) {
-                                        showMessage({
-                                            message: 'يرجى تنزيل برنامج الواتس اب',
-                                            type: 'danger',
-                                            style: {}
-                                        });
-                                    } else {
-                                        return Linking.openURL('https://api.whatsapp.com/send?' + 'phone=' + phone).catch(e => console.warn(e));
-                                    }
-                                })
-                        }}
-                    >
-                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-                        <Text style={styles.title}>
-                            تواصل معنا
+                        <TouchableOpacity
+                            style={styles.listItem}
+                            onPress={() => this.props.navigation.navigate('changePassword')}>
+                            <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                            <Text style={styles.title}>
+                                تغيير كلمة المرور
 </Text>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.listItem}
-                        onPress={() => this.handleSignOut()}>
-                        <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
-                        <Text style={styles.title}>
-                            تسجيل الخروج
+                        <TouchableOpacity
+                            style={styles.listItem}
+                            onPress={() => this.props.navigation.navigate('FAQ')}>
+                            <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                            <Text style={styles.title}>
+                                الأسئلة الشائعة
 </Text>
-                    </TouchableOpacity>
-                </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.listItem}
+                            onPress={() => {
+                                const phone = "0505220440"; //admin's phone
+                                Linking.canOpenURL('https://api.whatsapp.com/send?' + 'phone=' + phone)
+                                    .then(supported => {
+                                        if (!supported) {
+                                            showMessage({
+                                                message: 'يرجى تنزيل برنامج الواتس اب',
+                                                type: 'danger',
+                                                style: {}
+                                            });
+                                        } else {
+                                            return Linking.openURL('https://api.whatsapp.com/send?' + 'phone=' + phone).catch(e => console.warn(e));
+                                        }
+                                    })
+                            }}
+                        >
+                            <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                            <Text style={styles.title}>
+                                تواصل معنا
+</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.listItem}
+                            onPress={() => this.handleSignOut()}>
+                            <Entypo name='chevron-right' size={20} style={{ margin: 5 }} />
+                            <Text style={styles.title}>
+                                تسجيل الخروج
+</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
 
             </View>
         );
@@ -142,8 +146,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
+
     },
     listItem: {
         flexDirection: 'row-reverse',
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         marginLeft: 40,
         marginBottom: 140,
-        marginTop:20
+        marginTop: 20
 
     },
     title: {

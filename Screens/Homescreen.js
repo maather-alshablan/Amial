@@ -37,7 +37,7 @@ const carTypes = [
 ]
 export default class Homescreen extends Component {
   state = {
-    searchValue: null,
+    searchValue: "",
     mapView: false,
     selected: 'white',
     cars: [],
@@ -186,11 +186,9 @@ export default class Homescreen extends Component {
     const token = await this.registerForPushNotificationsAsync();
     database.collection('users').doc(auth.currentUser.uid).update({
       push_token: token,
-
     }).then(success => {
     }).catch(e => {
-      alert('failureMessage')
-
+      alert('failureMessage' + JSON.stringify(e))
     })
 
   }
@@ -351,14 +349,22 @@ navigation={this.props.navigation}
     // type
     if (this.state.carType != "" || this.state.date != "" || this.state.searchValue != "") {
       const filterCars = this.state.originalCars.filter(car => {
-        const { image = "", model = "" } = car.vehicleDetails || {}
+        const { image = "", model = "", type = "" } = car.vehicleDetails || {}
 
-        const avs = car.availability.join(', ')
-        if ((this.state.carType == car.type || (avs.indexOf(this.state.date) > -1)) &&
-          model.toLocaleLowerCase().indexOf(this.state.searchValue.toLocaleLowerCase()) > -1) {
-          return true
+        const avs = car.availability.join(',')
+        if (this.state.carType == type || (this.state.date ? avs.indexOf(this.state.date) > -1 : false)) {
+          if (this.state.searchValue != "") {
+            if (model.toLocaleLowerCase().indexOf(this.state.searchValue?.toLocaleLowerCase()) > -1) {
+              return true
+            } else {
+              return false
+            }
+          } else {
+            return true
+          }
         }
       })
+      console.log(filterCars, "----", this.state.carType)
       this.setState({
         cars: filterCars
       })
