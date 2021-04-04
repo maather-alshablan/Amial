@@ -29,11 +29,11 @@ export default class creditCard extends Component {
 
   componentDidMount() {
 
-    var cipher = CryptoES.AES.encrypt("Message234", firebase.auth().currentUser.uid,)
-    console.log('ciphering  > ', cipher.toString())
-    var decrypt = CryptoES.AES.decrypt(cipher, firebase.auth().currentUser.uid,)
+    // var cipher = CryptoES.AES.encrypt("Message234", firebase.auth().currentUser.uid,)
+    // console.log('ciphering  > ', cipher.toString())
+    // // var decrypt = CryptoES.AES.decrypt(cipher, firebase.auth().currentUser.uid,)
 
-    console.log('decrypting> ', decrypt.toString(CryptoES.enc.Utf8))
+    // console.log('decrypting> ', decrypt.toString(CryptoES.enc.Utf8))
 
     this.retrieveBillingAccount();
   }
@@ -263,6 +263,7 @@ export default class creditCard extends Component {
           <View >
             {/* <Text style={{color:'white',fontFamily:'Tajawal_400Regular',fontSize:25}}>حفظ </Text> */}
             <CustomButton
+              testID={'Payment-Save-Process-Button'}
               onPress={() => {
                 if (this.state.amount) {
                   this.payment()

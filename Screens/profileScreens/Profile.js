@@ -23,7 +23,7 @@ export default class Profile extends Component {
         // user is a vehicle owner
         database.collection('users').doc(auth.currentUser.uid).collection('Requests')
             .where("ownerID", '==', auth.currentUser.uid)
-            .where('status', 'in', ['confirmed', 'active', 'checkedIn', 'unlocked', 'locked'])
+            .where('status', 'in', ['confirmed', 'active', 'checkedIn', 'unlocked', 'locked',])
             .onSnapshot((querySnapshot) => {
                 let requests = []
                 if (!querySnapshot.empty) {

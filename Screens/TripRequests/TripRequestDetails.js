@@ -332,7 +332,7 @@ export default class BorrowerRequestDetails extends Component {
 
   handleConfirmRequest = async () => {
 
-    var RequestDocument = await this.RequestVehicleAuthorization();
+    //var RequestDocument = await this.RequestVehicleAuthorization();
 
     
     // Remove booked dates from vehicles availability dates
@@ -354,8 +354,8 @@ export default class BorrowerRequestDetails extends Component {
 
     var batch = database.batch();
 
-    var Authorization = database.collection('DataSets').doc(RequestDocument.AuthorizationNumber);
-    batch.set(Authorization, { RequestDocument});
+    // var Authorization = database.collection('DataSets').doc(RequestDocument.AuthorizationNumber);
+    // batch.set(Authorization, { RequestDocument});
 
     var trip = database.collection('Trips').doc(this.state.currentRequest.tripID);
     batch.update(trip, { status: 'confirmed' });

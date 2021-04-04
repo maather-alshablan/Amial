@@ -5,7 +5,8 @@
     "ios": "react-native run-ios",
     "web": "expo start --web",
     "start": "react-native start",
-    "test": "jest"
+    "test": "node_modules/.bin/jest",
+  "test:debug": "node --inspect-brk node_modules/jest/bin/jest.js --runInBand"
   },
   "dependencies": {
     "@expo-google-fonts/tajawal": "^0.1.0",
@@ -65,14 +66,19 @@
     "@testing-library/react-native": "^7.2.0",
     "babel-jest": "~25.2.6",
     "jest": "^25.5.4",
+    "jest-expo": "^40.0.2",
     "react-test-renderer": "~16.13.1"
   },
   "jest": {
-    "preset": "react-native",
-     "setupFilesAfterEnv": ["@testing-library/jest-native/extend-expect","./node_modules/react-native-gesture-handler/jestSetup.js"],
-     "transformIgnorePatterns": [
-       "node_modules/(?!(jest-)?@?react-native|@react-native-community|@react-navigation)"
-     ]
+    "preset": "jest-expo",
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-native/extend-expect",
+      "./node_modules/react-native-gesture-handler/jestSetup.js"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)"
+    ]
   },
+  "transform": {"^.+\\.[jt]sx?$": "babel-jest"},
   "private": true
 }

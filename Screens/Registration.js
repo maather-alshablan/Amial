@@ -54,6 +54,17 @@ export default class Registration extends Component {
         console.warn("Error getting documents: ", error);
       });
   }
+
+
+  checkMobileNumber = (mobileNumber)=>{
+    var ref = database.collection('users').where('mobileNumber','==', mobileNumber).get();
+    if (ref) // mobile number found thus already exists
+    return false;
+
+    return true;
+  }
+
+
   handleSignUp = async () => {
 
     if (this.state.password !== this.state.confirmPassword) {
@@ -75,10 +86,22 @@ export default class Registration extends Component {
       this.state.formValid = false;
       this.failureMessage(" يرجى ادخال جميع البيانات")
       return;
-
     }
 
-    if (this.state.mobileNumber.length != 10) {
+    if(!(/^\d+$/.test(this.state.nationalID))){ // validate only numbers
+      this.state.formValid = false;
+      this.failureMessage(" يرجى ادخال رقم هوية مكون من ١٠ خانات ")
+      return;
+    
+    }
+
+    if(!(/^[a-zA-Z]+$/.test(this.state.name))){
+      this.state.formValid = false;
+      this.failureMessage(" يرجى ادخال الاسم مكون من حروف باللغة العربية ")
+      return;
+    }
+
+    if (this.state.mobileNumber.length != 10 || !this.state.mobileNumber.startsWith('05') ) {
       this.state.formValid = false;
 
       this.failureMessage("يرجى استخدام رقم جوال صحيح")
@@ -87,10 +110,17 @@ export default class Registration extends Component {
 
     if (this.state.password.length < 8) {
       this.state.formValid = false;
-
       this.failureMessage("يرجى ادخال كلمة مرور مكونة من ٨ خانات او اكثر")
       return
     }
+
+//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
+  if (!(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(this.state.password))){
+    this.state.formValid = false;
+      this.failureMessage("يرجى ادخال كلمة مرور مكونة من حرف كبير،حرف صغير، ورموز ورقم ")
+      return
+  }
+
 
     if (!this.state.correctEmail) {
       this.failureMessage("يرجى استخدام بريد الكتروني صحيح")
@@ -102,6 +132,10 @@ export default class Registration extends Component {
       return;
     }
 
+    if (!this.checkMobileNumber(this.state.mobileNumber)){
+      this.failureMessage("عذرا رقم التواصل المدخل مسجل من قبل")
+      return;
+    }
     auth.
       createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then((response) => {
