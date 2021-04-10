@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, View, TouchableWithoutFeedback, Keyboard, TouchableOpacity, KeyboardAvoidingView } from "react-native";
-import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
+import { CreditCardInput } from "react-native-credit-card-input";
 import CryptoES from 'crypto-es';
 
 import { firebase } from '../../Configuration/firebase'
@@ -251,7 +251,7 @@ export default class creditCard extends Component {
               validColor={"black"}
               invalidColor={"red"}
               values={this.state.number, this.state.expiry, this.state.cvc, this.state.type}
-              inputContainerStyle={{ alignSelf: 'flex-end', marginVertical: 10,}}
+              inputContainerStyle={{ alignSelf: 'flex-start', marginVertical: 10,}}
               placeholderColor={"darkgray"}
               allowScroll={false}
               onFocus={this._onFocus}

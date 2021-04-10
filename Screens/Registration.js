@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, Alert, ImageBackground, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import DatePicker from 'react-native-datepicker'
 import CustomButton from '../components/CustomButton';
 import CustomHeader from '../components/CustomHeader';
 import Input from '../components/Input';
@@ -10,6 +10,7 @@ import { OverLay } from '../components/OverLay';
 import { auth, database } from '../Configuration/firebase'
 import { ModalComponent } from '../Constants/Components/Modal'
 import CryptoES from 'crypto-es';
+import { Fontisto, MaterialIcons } from '../Constants/icons';
 
 
 export default class Registration extends Component {
@@ -26,6 +27,8 @@ export default class Registration extends Component {
     loading: false,
     correctEmail: false
   }
+
+  
 
   checkDataBase = (nationalID) => {
     return database.collection('DataSets')
@@ -44,10 +47,11 @@ export default class Registration extends Component {
         });
 
         if (found) {
-          if (obj.Name?.toLocaleLowerCase() != this.state.name?.toLocaleLowerCase()) {
-            this.failureMessage("عذرا الاسم غير مطابق لرقم الهوية")
-            return false
-          } else if (obj['Driving License'] != "Active") {
+          // if (obj.Name?.toLocaleLowerCase() != this.state.name?.toLocaleLowerCase()) {
+          //   this.failureMessage("عذرا الاسم غير مطابق لرقم الهوية")
+          //   return false
+          // } else 
+          if (obj['Driving License'] != "Active") {
             this.failureMessage("عذرا يرجى تجديد الرخصة قبل استكمال عملية التسجيل")
             return false
           }
@@ -65,9 +69,12 @@ export default class Registration extends Component {
 
 
   checkMobileNumber = (mobileNumber)=>{
-    var ref = database.collection('users').where('mobileNumber','==', mobileNumber).get();
-    if (ref) // mobile number found thus already exists
-    return false;
+    var ref = database.collection('users').where('mobileNumber','==', mobileNumber).get()
+    .then((docSnapshot) => {
+      if (!docSnapshot.empty) 
+      // mobile number found thus already exists
+        return false;
+      });
 
     return true;
   }
@@ -91,7 +98,7 @@ export default class Registration extends Component {
       return;
 
     }
-    if (this.state.nationalID == '' || this.state.name == '' || this.state.mobileNumber == '' || this.state.email == '' || this.state.password == '' || this.state.confirmPassword == '') {
+    if (this.state.nationalID == '' || this.state.mobileNumber == '' || this.state.email == '' || this.state.password == '' || this.state.confirmPassword == '') {
       this.state.formValid = false;
       this.failureMessage(" يرجى ادخال جميع البيانات")
       return;
@@ -102,12 +109,6 @@ export default class Registration extends Component {
       this.failureMessage(" يرجى ادخال رقم هوية مكون من ١٠ خانات ")
       return;
     
-    }
-
-    if(!(/^[a-zA-Z]+$/.test(this.state.name))){
-      this.state.formValid = false;
-      this.failureMessage(" يرجى ادخال الاسم مكون من حروف باللغة العربية ")
-      return;
     }
 
     if (this.state.mobileNumber.length != 10 || !this.state.mobileNumber.startsWith('05') ) {
@@ -152,7 +153,7 @@ export default class Registration extends Component {
       .catch(
         (e) => {
           console.log('successfulRegistration[error]', e)
-          this.failureMessage(e?.message ? e?.message : 'يرجى التأكد من ادخال البيانات بالشكل الصحيح')
+          //this.failureMessage(e?.message ? e?.message : 'يرجى التأكد من ادخال البيانات بالشكل الصحيح')
         })
 
     if (this.state.errorMessage == '') {
@@ -216,12 +217,46 @@ export default class Registration extends Component {
               onChangeText={(nationalID) => this.setState({ nationalID })}
               iconName={'flag'}
             />
-            <Input
-              placeholder="الاسم الرباعي"
-              value={this.state.name}
-              onChangeText={(name) => this.setState({ name })}
-              iconName={'user'}
-            />
+
+<View
+      style={[{
+        flexDirection: 'row-reverse',
+        marginBottom: 20,
+        alignItems: 'center'
+      }, ]}>
+      
+                  <DatePicker
+                            style={{ width: 250,  }}
+                            mode="date"
+                            date={this.state.date}
+                            placeholder="تاريخ الميلاد"
+                            format="DD-MM-YYYY"
+                             minDate="01-01-1945"
+                              maxDate="01-01-2006"
+                            confirmBtnText="تاكيد"
+                            cancelBtnText="الغاء"
+                            showIcon={true}
+                            iconComponent = {<MaterialIcons name= {"date-range"}color={'#01b753'} size={30} style={{ marginLeft:4 }}/>}
+                            customStyles={{
+                              placeholderText:{
+                                paddingHorizontal: 10,
+                                textAlign: 'center',
+                                fontSize: 20,
+                                //color: 'grey',
+                                fontFamily: "Tajawal_400Regular",
+                              },
+                                dateInput: {
+                                    marginLeft: 17,
+                                    borderColor: "#fff",
+                                 
+                                    height: 30,
+                                    borderBottomColor: 'gray',
+                                } // ... You can check the source to find the other keys.
+                            }}
+                            onDateChange={(date) => { this.setState({ date: date }) }}
+
+                        />
+                        </View>
             <Input
               placeholder="البريد الالكتروني"
               value={this.state.email}

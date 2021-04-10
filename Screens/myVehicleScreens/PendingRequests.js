@@ -6,6 +6,7 @@ import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { database, auth } from '../../Configuration/firebase';
 import { MaterialCommunityIcons, } from '../../Constants/icons';
+import { checkExpiredDates } from '../components/checkExpiredDates'
 
 
 export default class PendingRequests extends Component {
@@ -27,6 +28,17 @@ export default class PendingRequests extends Component {
 
   }
 
+  checkExpiredDate = (date) =>{
+
+    var _checkedDate = new Date(date);
+    var newDate = checkExpiredDates([_checkedDate]);
+    if (newDate.length !=0)
+    return true
+
+  
+    return false
+    
+  }
 
   retreiveRequests = () => {
 
@@ -43,10 +55,25 @@ export default class PendingRequests extends Component {
           console.log(querySnapshot.size, ' Pending Requests found')
 
           querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            //requests.push(doc.id, " => ", doc.data());
+
+            // if(this.checkExpiredDate(doc.data().requestTime))
             requests.push(doc.data());
-            //requests[doc.id] = doc.data();
+            // else
+            // {
+            //   var batch = database.batch();
+
+            //   var trip = database.collection('Trips').doc(doc.data().tripID);
+            //   batch.update(trip, { status: 'cancelled'});
+
+            //   var ownerRequest = database.collection('users').doc(auth.currentUser.uid)
+            //     .collection('Requests').doc(doc.data().tripID);
+            //   batch.update(ownerRequest, { status: 'cancelled' });
+
+            //   var borrowerRequest = database.collection('users').doc(doc.data().borrowerID)
+            //     .collection('Requests').doc(doc.data().tripID);
+            //   batch.update(borrowerRequest, { status: 'cancelled'});
+            //   batch.commit();
+            // }
           });
           this.setState({ request: requests, hasRequest: true });
           console.log('array > ', this.state.request)

@@ -178,9 +178,10 @@ export default class OwnerRequestDetails extends Component {
     } else {
       Alert.alert(
         "إلغاء الطلب",
-        "هل أنت متأكد من رفض الطلب ؟ ",
+        "هل أنت متأكد من إلغاء الطلب ؟ ",
         [{
           text: " إلغاء الطلب ",
+          
 
           onPress: () => {
             var batch = database.batch();
@@ -245,7 +246,7 @@ export default class OwnerRequestDetails extends Component {
               this.failureMessage('يرجى المحاولة مرة أخرى')
             })
           },
-          style: "cancel"
+          style: "destructive"
 
         },
         { text: "لا", },
@@ -515,7 +516,6 @@ export default class OwnerRequestDetails extends Component {
           {this.actionButton()}
           {this.state.currentRequest.status == 'pending' ? <View style={{ flexDirection: 'row-reverse', alignSelf: 'center', marginHorizontal: 10 }}>
             <CustomButton
-              style={{ marginTop: 10, }}
               title={'إلغاء الطلب '}
               onPress={() => {
                 this.handleCancelRequest('rejected');
@@ -534,9 +534,8 @@ this.handleDeleteRequest();
 </TouchableOpacity>
 </View>:<View></View>} */}
 
-          {this.state.currentRequest.status == 'accepted' || this.state.currentRequest.status == 'confirmed' ? <View>
+          {this.state.currentRequest.status == 'accepted' || this.state.currentRequest.status == 'confirmed' ? <View style={{ flexDirection: 'row-reverse', alignSelf: 'center', marginHorizontal: 10 }}>
             <CustomButton
-              style={{ marginTop: 10, }}
               title={'إلغاء الطلب'}
               onPress={() => {
                 this.handleCancelRequest('cancelled');

@@ -6,6 +6,7 @@ import colors from '../../Constants/colors';
 import { ModalComponent } from '../../Constants/Components/Modal';
 import { database, auth } from '../../Configuration/firebase';
 import { MaterialCommunityIcons, EvilIcons, } from '../../Constants/icons';
+import { checkExpiredDates } from '../components/checkExpiredDates'
 
 
 export default class PendingRequests extends Component {
@@ -26,6 +27,17 @@ export default class PendingRequests extends Component {
   }
 
 
+  checkExpiredDate = (date) =>{
+
+    var _checkedDate = new Date(date);
+    var newDate = checkExpiredDates([_checkedDate]);
+    if (newDate.length == 0)
+    return false
+
+  
+    return true
+    
+  }
 
   retreiveRequests = () => {
 
@@ -40,7 +52,26 @@ export default class PendingRequests extends Component {
           querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             //requests.push(doc.id, " => ", doc.data());
+           // if(this.checkExpiredDate(doc.data().requestTime))
             requests.push(doc.data());
+            // else
+            // {
+            //   var batch = database.batch();
+
+            //   var trip = database.collection('Trips').doc(doc.data().tripID);
+            //   batch.update(trip, { status: 'cancelled'});
+
+            //   var borrowerRequest = database.collection('users').doc(auth.currentUser.uid)
+            //     .collection('Requests').doc(doc.data().tripID);
+            //   batch.update(borrowerRequest, { status: 'cancelled' });
+
+            //   var ownerRequest = database.collection('users').doc(doc.data().ownerID)
+            //     .collection('Requests').doc(doc.data().tripID);
+            //   batch.update(ownerRequest, { status: 'cancelled'});
+            //   batch.commit();
+            // }
+
+            console.log(doc.data().requestTime)
             //requests[doc.id] = doc.data();
           });
           this.setState({ request: requests, hasRequest: true });
@@ -63,7 +94,7 @@ export default class PendingRequests extends Component {
   }
 
 
-  renderRequest = ({ item, index }) => {
+  renderRequest = ({ item}) => {
     //Status Pending & Waiting for owners reply > 'قيد المراجعة'
     //Status Pending & accepted by owner > 'مقبولة'
     //Status Pending & rejected by owner > 'مرفوضة'

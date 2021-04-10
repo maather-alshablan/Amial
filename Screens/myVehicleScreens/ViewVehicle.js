@@ -115,7 +115,7 @@ export default class viewVehicle extends Component {
       InsurancePolicy: vehicleData.InsurancePolicy,
     })
 
-    if (availability.length == vehicleData.availability)
+    if (availability.length == vehicleData.availability.length)
       console.log('no update needed')
     else {
       console.log(' update of date has occured')
