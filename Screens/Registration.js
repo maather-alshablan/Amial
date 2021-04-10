@@ -24,11 +24,13 @@ export default class Registration extends Component {
     DoB: '',
     password: '',
     confirmPassword: '',
+    date:'',
     loading: false,
     correctEmail: false
   }
 
   
+
 
   checkDataBase = (nationalID) => {
     return database.collection('DataSets')
@@ -41,16 +43,18 @@ export default class Registration extends Component {
           // console.log(doc.data(), doc.id)
           if (doc.id == nationalID) {
             found = true
+            this.setState({name: doc.data().Name});
             obj = doc.data()
           }
           // console.warn(obj)
         });
 
         if (found) {
-          // if (obj.Name?.toLocaleLowerCase() != this.state.name?.toLocaleLowerCase()) {
-          //   this.failureMessage("عذرا الاسم غير مطابق لرقم الهوية")
-          //   return false
-          // } else 
+          // check birthdate 
+          if (obj.birthdate?.toString() != this.state.date) {
+            this.failureMessage("عذرا تاريخ الميلاد غير مطابق لرقم الهوية")
+            return false
+          } else 
           if (obj['Driving License'] != "Active") {
             this.failureMessage("عذرا يرجى تجديد الرخصة قبل استكمال عملية التسجيل")
             return false
@@ -60,7 +64,8 @@ export default class Registration extends Component {
           this.failureMessage("عذرا رقم الهوية المدخل غير صحيح")
           return false;
         }
-        console.warn('eeee');
+       
+        
       })
       .catch((error) => {
         console.warn("Error getting documents: ", error);
@@ -92,13 +97,13 @@ export default class Registration extends Component {
     }
 
 
-    if (this.state.email === '' && this.state.password === '') {
+    if (this.state.email === '' && this.state.password === '' ) {
       this.state.formValid = false;
       this.failureMessage(" يرجى ادخال جميع البيانات")
       return;
 
     }
-    if (this.state.nationalID == '' || this.state.mobileNumber == '' || this.state.email == '' || this.state.password == '' || this.state.confirmPassword == '') {
+    if (this.state.nationalID == '' || this.state.mobileNumber == '' || this.state.email == '' || this.state.password == '' || this.state.confirmPassword == '' || this.state.date=='') {
       this.state.formValid = false;
       this.failureMessage(" يرجى ادخال جميع البيانات")
       return;
@@ -162,6 +167,8 @@ export default class Registration extends Component {
   }
 
   successfulRegistration = () => {
+
+
     this.setState({ loading: true })
     const userid = auth.currentUser.uid;
     database.collection('users').doc(userid).set({
