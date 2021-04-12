@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Keyboard, Image, TouchableWithoutFeedback, ScrollView, Platform, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Keyboard, Image, TouchableWithoutFeedback, ScrollView, Platform, Dimensions, Alert } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Input from '../../components/Input';
 import DatePicker from 'react-native-datepicker'
@@ -12,7 +12,7 @@ import { OverLay } from '../../components/OverLay';
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import { Picker } from '@react-native-picker/picker';
 import { regoins } from '../../dataSet/regoins';
-import { Entypo } from '../../Constants/icons';
+import { Entypo, MaterialIcons } from '../../Constants/icons';
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
 import CustomLabel from '../../components/CustomLabel';
 import SelectLocation from '../myVehicleScreens/SelectLocation';
@@ -92,8 +92,7 @@ export default class AddOrEditVehicle extends Component {
                 state: car?.address?.city,
                 coordinates: car?.address?.coordinates,
                 selectedValues: [car?.dailyRate],
-                insuranceType: car?.InsurancePolicy?.type,
-                InsuranceCompany: car?.InsurancePolicy.company,
+
                 edit: true,
                 docId: docId
             })
@@ -447,7 +446,38 @@ export default class AddOrEditVehicle extends Component {
                 backgroundColor: '#fff'
             }}>
 
-
+{this.state.edit ? 
+<TouchableOpacity style={{ alignSelf:'flex-start',flexDirection:'row',justifyContent:'center',}} 
+onPress={() => {
+    Alert.alert(
+        "حذف المركبة",
+        "هل أنت متأكد من حذف المركبة ",
+        [
+          { text: "لا", onPress: () => console.log("OK Pressed") },
+          {
+            text: " حذف المركبة ",
+  
+            onPress: () => {
+              database.collection('Vehicle').doc(this.state.docId).delete().then(() => {
+  
+                  // on success
+                  this.successMessage('تم الحذف بنجاح');
+                  this.props.navigation.pop();
+                }
+                ).catch(() => {
+                  this.failureMessage('يرجى المحاولة مرة أخرى')
+                })
+            },
+            style: "destructive"
+  
+          },
+  
+        ],
+  
+      );
+  }}>
+                           <MaterialIcons name={"delete"} size={30}/>
+                        </TouchableOpacity> : <View></View>}
                 <View
                     style={{
                         marginBottom: 20,
@@ -456,7 +486,6 @@ export default class AddOrEditVehicle extends Component {
                         alignItems: 'center'
                     }}>
                     <Text style={styles.pictureAlignLabel}>إرفاق صورة المركبة</Text>
-                    {/* <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 24,alignSelf:'flex-start', textAlign: 'center', color: 'grey' }}>إرفاق صورة المركبة</Text> */}
 
 
                     <TouchableOpacity onPress={this.openImagePickerAsync} style={{ alignSelf: 'center', justifyContent: 'center' }}>
@@ -467,15 +496,7 @@ export default class AddOrEditVehicle extends Component {
                             }} />
                         <Entypo name="plus" color={this.state.image ? 'white' : colors.Green} size={50} style={{ position: 'absolute', top: 30, left: 100, opacity: 0.8 }} />
                     </TouchableOpacity>
-                    {/* <TouchableOpacity
-onPress={this.openImagePickerAsync}
-style={{ width: 80, height: 80, borderRadius: 4, borderWidth: 1, borderColor: 'gray', alignSelf: 'center' }}>
-{this.state.image ? <Image style={{ width: '100%', height: '100%', borderRadius: 4 }} source={{ uri: this.state.image }} /> : <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-
-<Icon name={"download"} color={'gray'} size={32} />
-</View>
-}
-</TouchableOpacity> */}
+                    
                 </View>
 
                 <Text style={styles.SectionLabel}>{'معلومات المركبة'}</Text>
@@ -589,6 +610,7 @@ onPress={this.handleSaveData}
 style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', justifyContent: 'center', alignItems: 'center', marginVertical: 16, alignSelf: 'center' }}>
 <Text style={{ fontSize: 14, color: '#fff' }}>حفظ</Text>
 </TouchableOpacity> */}
+                
             </ScrollView>
 
         )

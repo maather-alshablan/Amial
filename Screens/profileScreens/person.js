@@ -25,15 +25,15 @@ export default class Person extends Component {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     this.setState({ hasCameraPermission: status === "granted" });
 
-    this.retrieveProfile();
+   await this.retrieveProfile();
     // this.retrieveConfirmedTrips();
   }
 
 
-  retrieveConfirmedTrips = async () => {
+  retrieveConfirmedTrips =  () => {
 
     // user is a vehicle owner
-    await database.collection('users').doc(firebase.auth().currentUser.uid).collection('Requests')
+     database.collection('users').doc(firebase.auth().currentUser.uid).collection('Requests')
       .where("ownerID", '==', firebase.auth().currentUser.uid)
       .where('status', 'in', ['confirmed', 'active', 'checkedIn', 'unlocked', 'locked'])
       .onSnapshot((querySnapshot) => {
@@ -56,12 +56,12 @@ export default class Person extends Component {
       })
   }
 
-  retrieveProfile = () => {
+  retrieveProfile = async () => {
     // this is profile or someone else profile
     var personID = firebase.auth().currentUser.uid
 
     //1 . Retrieve User Name
-    database.collection('users').doc(personID).onSnapshot(snapshot => {
+    await database.collection('users').doc(personID).onSnapshot(snapshot => {
 
       this.setState({
         name: snapshot.data().name,

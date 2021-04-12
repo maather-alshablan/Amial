@@ -168,13 +168,12 @@ export default class Registration extends Component {
 
   successfulRegistration = () => {
 
-
     this.setState({ loading: true })
     const userid = auth.currentUser.uid;
     database.collection('users').doc(userid).set({
       name: this.state.name,
       email: this.state.email,
-      password: this.state.password,
+      //password: this.state.password,
       mobileNumber: this.state.mobileNumber,
       nationalID: CryptoES.AES.encrypt(this.state.nationalID, userid,).toString(),
       Rating: 0,

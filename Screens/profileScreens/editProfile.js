@@ -227,8 +227,7 @@ export default class editProfile extends Component {
           <FontAwesome name='user' color={colors.Subtitle} size={30} style={styles.icon} />
           <TextInput
             style={styles.InputField}
-            placeholder='الإسم الكامل'
-            onChangeText={name => this.setState({ name: name })}
+            editable={false}
             value={this.state.name}
             returnKeyType={'done'}
 

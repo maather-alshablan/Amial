@@ -12,39 +12,7 @@ export default class Profile extends Component {
     handleSignOut = () => {
         firebase.auth().signOut();
     }
-    componentDidMount() {
-
-        // this.retrieveConfirmedTrips()
-    }
-
-
-    retrieveConfirmedTrips = () => {
-
-        // user is a vehicle owner
-        database.collection('users').doc(auth.currentUser.uid).collection('Requests')
-            .where("ownerID", '==', auth.currentUser.uid)
-            .where('status', 'in', ['confirmed', 'active', 'checkedIn', 'unlocked', 'locked',])
-            .onSnapshot((querySnapshot) => {
-                let requests = []
-                if (!querySnapshot.empty) {
-                    let total = 0;
-                    querySnapshot.forEach((doc) => {
-                        // doc.data() is never undefined for query doc snapshots
-                        //requests.push(doc.id, " => ", doc.data());
-                        console.log(doc.data(), "=====")
-                        requests.push(doc.data());
-                        total = total + doc.data().totalAmount
-                        //requests[doc.id] = doc.data();
-                    });
-                    this.setState({ total: total });
-                    console.log('array > ', this.state.request)
-                } else {
-                    console.log('No Pending requests found')
-                }
-            })
-    }
-
-
+  
 
     render() {
 

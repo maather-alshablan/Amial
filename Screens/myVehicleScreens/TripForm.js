@@ -596,24 +596,7 @@ export default class tripForm extends Component {
                 <TouchableOpacity
                     onPress={() => {
                         this.setState({ReportNoShowModel:true})
-                        // Alert.alert(
-                        //     "إلغاء الطلب",
-                        //     "سيتم إلغاء الطلب في حال عدم إبراز رخصة سارية او عدم حضور المستأجر لموقع التسليم، هل انت متأكد من إلغاء الطلب؟",
-                        //     [
-                        //         {
-                        //             text: 'لا',
-                        //             style: 'default',
-                        //         }, {
-                        //             text: "نعم",
-                        //             onPress: () => Alert.prompt("إلغاء الطلب", 'يرجى ذكر السبب', (value) => {
-                        //                 this.setState({ cancellationReason: value })
-                        //                 this.cancelTrip();
-
-                        //             }),
-                        //             style: "destructive",
-                        //         }
-                        //     ],
-                        // );
+                  
                     }}
                     style={{ alignSelf: 'center', marginHorizontal: 30 }}>
                     <Text style={styles.reportLabel} >
