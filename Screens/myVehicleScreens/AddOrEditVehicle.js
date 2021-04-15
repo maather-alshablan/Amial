@@ -21,6 +21,8 @@ import { ModalComponent } from '../../Constants/Components/Modal';
 import { showMessage } from 'react-native-flash-message';
 import CryptoES from 'crypto-es';
 import { firebase } from '../../Configuration/firebase'
+import ModalDropdown from 'react-native-modal-dropdown';
+
 
 
 const carTypes = [
@@ -32,6 +34,8 @@ const carTypes = [
     { id: 6, label: 'عائلية', value: 'عائلية' },
     { id: 7, label: 'متعددة الاستخدامات', value: 'متعددة الاستخدامات' },
 ]
+
+
 
 const vehicleFeatures = ['مفتاح ذكي', 'AUX', 'مكيف أوتوماتك', 'CarPlay', 'أضواء محيطة', 'GPS', 'شاشة تعمل باللمس',]
 
@@ -63,6 +67,7 @@ export default class AddOrEditVehicle extends Component {
 
     }
 
+    
 
     onResult = (queury) => {
         let car = null
@@ -124,7 +129,10 @@ export default class AddOrEditVehicle extends Component {
     gnerateYears = () => {
         const arr = []
         for (let i = 2021; i > 2010; i--) {
-            arr.push({ id: i, label: i.toString(), value: i.toString() },)
+           
+          //  arr.push({ id: i, label: i.toString(), value: i.toString() },)
+            arr.push(   i.toString() )
+
         }
         // console.warn({ arr })
         this.setState({
@@ -323,7 +331,7 @@ export default class AddOrEditVehicle extends Component {
                 this.setState({ docId: ref })
                 database.collection('Vehicle').doc(ref).set({
                     vehicleID: ref, //document reference
-                    vehicleRegistration: this.state.carId,
+                    vehicleRegistration: CryptoES.AES.encrypt(this.state.carId, firebase.auth().currentUser.uid,).toString(),
                     vehicleDetails: {
                         features: this.state.selectedFeatures,
                         description: this.state.description,
@@ -337,7 +345,7 @@ export default class AddOrEditVehicle extends Component {
                     availability: this.state.availabilities,
                     Rating: 0,
                     numberofRatings: 0,
-                    LicensePlateNumber: this.state.carNumber,
+                    LicensePlateNumber: CryptoES.AES.encrypt(this.state.carNumber, firebase.auth().currentUser.uid,).toString(),
                     pickUpOption: this.state.pickUpOption,
                     pickUpOptionCost: this.state.pickUpOption == "التوصيل لموقع المستأجر" ? this.state.pickUpOptionCost : 0,
                     address: {
@@ -438,7 +446,13 @@ export default class AddOrEditVehicle extends Component {
         )
     }
 
+    
     renderFirstStep = () => {
+        var regions = []
+        var carType = []
+       regoins.forEach(region=> regions.push(region.name_ar));
+        carTypes.forEach(type => carType.push(type.value));
+        
         return (
 
             <ScrollView contentContainerStyle={{
@@ -502,7 +516,7 @@ onPress={() => {
                 <Text style={styles.SectionLabel}>{'معلومات المركبة'}</Text>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-                    <Picker
+                    {/* <Picker
                         itemStyle={{
                             height: 50,
                             fontFamily: "Tajawal_400Regular"
@@ -519,8 +533,18 @@ onPress={() => {
                         {carTypes.map(item => <Picker.Item key={item.id} label={item.label} value={item.value}
                             color={item.value == this.state.carType ? colors.LightBlue : '#000'}
                         />)}
-                    </Picker>
-                    <Picker
+                    </Picker> */}
+                     <ModalDropdown 
+                    defaultValue={this.state.carType ? this.state.carType : "نوع المركبة"}
+                    textStyle = {{color:colors.LightBlue,height: 45, fontFamily: "Tajawal_400Regular", fontSize:18,paddingTop:15}}
+                    options={carType} 
+                    showsVerticalScrollIndicator={true}
+                    dropdownTextStyle ={{color:colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize:18,alignSelf:'center',}}
+                    dropdownStyle={{alignSelf:'center', justifyContent:'center',height:200}}
+                    multipleSelect={false}
+                    onSelect = {(index , option )=>  this.setState({carType: option})   }
+                    style={{ width: '45%', backgroundColor:'#F0EEF0' ,borderRadius:7,alignItems:'center',}}/>
+                    {/* <Picker
                         itemStyle={{ height: 50, fontFamily: "Tajawal_400Regular" }}
                         selectedValue={this.state.year}
                         style={{ height: 50, width: '50%', }}
@@ -531,12 +555,22 @@ onPress={() => {
                         {this.state.years.map(item => <Picker.Item key={item.id} label={item.label} value={item.value}
                             color={item.value == this.state.year ? colors.LightBlue : '#000'}
                         />)}
-                    </Picker>
+                    </Picker> */}
+
+                    <ModalDropdown 
+                    defaultValue={this.state.year ? this.state.year : "سنة الصنع"}
+                    textStyle = {{color:colors.LightBlue,height: 45, fontFamily: "Tajawal_400Regular", fontSize:18,paddingTop:15}}
+                    options={this.state.years} 
+                    dropdownTextStyle ={{color:colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize:18,alignSelf:'center',}}
+                    dropdownStyle={{alignSelf:'center', justifyContent:'center',height:120}}
+                    multipleSelect={false}
+                    onSelect = {(index , option )=>  this.setState({year: option})   }
+                    style={{ width: '45%', backgroundColor:'#F0EEF0' ,borderRadius:7,alignItems:'center',marginLeft:24}}/>
                 </View>
 
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-                    <Picker
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20,}}>
+                    {/* <Picker
                         itemStyle={{ height: 50, fontFamily: "Tajawal_400Regular" }}
                         selectedValue={this.state.state}
                         style={{ height: 50, width: '50%', }}
@@ -547,8 +581,18 @@ onPress={() => {
                         {regoins.map(item => <Picker.Item key={item.region_id} label={item.name_ar} value={item.name_ar}
                             color={item.name_ar == this.state.state ? colors.LightBlue : '#000'}
                         />)}
-                    </Picker>
-                    <Picker
+                    </Picker> */}
+                    <ModalDropdown 
+                    defaultValue={this.state.state ? this.state.state : "المنطقة"}
+                    textStyle = {{color:colors.LightBlue,height: 45, fontFamily: "Tajawal_400Regular", fontSize:18,paddingTop:15}}
+                    options={regions} 
+                    showsVerticalScrollIndicator={true}
+                    dropdownTextStyle ={{color:colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize:18,alignSelf:'center',}}
+                    dropdownStyle={{alignSelf:'center', justifyContent:'center',height:200}}
+                    multipleSelect={false}
+                    onSelect = {(index , option )=>  this.setState({state: option})   }
+                    style={{ width: '45%', backgroundColor:'#F0EEF0' ,borderRadius:7,alignItems:'center',}}/>
+                    {/* /* <Picker
                         itemStyle={{ height: 50, fontFamily: "Tajawal_400Regular" }}
                         selectedValue={this.state.transmission}
                         style={{ height: 50, width: '50%' }}
@@ -558,7 +602,17 @@ onPress={() => {
                         <Picker.Item label="نوع الجير" value="نوع الجير" />
                         <Picker.Item label="عادي" value="عادي" color={"عادي" == this.state.transmission ? colors.LightBlue : '#000'} />
                         <Picker.Item label="اوتوماتك" value="اوتوماتك" color={"اوتوماتك" == this.state.transmission ? colors.LightBlue : '#000'} />
-                    </Picker>
+                    </Picker> */ }
+
+                    <ModalDropdown 
+                    defaultValue={this.state.transmission ? this.state.transmission : "نوع الجير"}
+                    textStyle = {{color:colors.LightBlue,height: 45, fontFamily: "Tajawal_400Regular", fontSize:18,paddingTop:15}}
+                    options={[ "عادي", "اوتوماتك"]} 
+                    dropdownTextStyle ={{color:colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize:18,alignSelf:'center',}}
+                    dropdownStyle={{alignSelf:'center', justifyContent:'center',height:80}}
+                    multipleSelect={false}
+                    onSelect = {(index , option )=>  this.setState({transmission: option})   }
+                    style={{ width: '45%', backgroundColor:'#F0EEF0' ,borderRadius:7,alignItems:'center',marginLeft:24}}/>
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', }}>

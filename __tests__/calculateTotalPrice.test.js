@@ -8,3 +8,8 @@ test('total price of request', () => {
   test('total price of request for two days', () => {
     expect(calculateTotalPrice(["2021-03-27","2021-03-28"],250, 20)).toBeCloseTo(598); 
   });
+
+
+  test('total price of request for no selected date', () => {
+    expect((undefined,250, 20)).toBeCloseTo(0); 
+  });
