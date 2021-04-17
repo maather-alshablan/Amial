@@ -3,6 +3,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Login from '../Screens/Login'
 import Registration from "../Screens/Registration";
+import OtpScreen from "../Screens/OtpScreen";
+
 import ForgotPassword from "../Screens/ForgotPassword";
 
 
@@ -12,7 +14,7 @@ function Authuntication() {
 
 
   return (
-    
+
     <Stack.Navigator
       initialRouteName="Login"
       screenOptions={{ headerShown: false }}>
@@ -20,6 +22,7 @@ function Authuntication() {
       <Stack.Screen name="Login" component={Login} unmountOnBlur={true} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} unmountOnBlur={true} />
       <Stack.Screen name="Registration" component={Registration} unmountOnBlur={true} />
+      <Stack.Screen name="OtpScreen" component={OtpScreen} unmountOnBlur={true} />
 
     </Stack.Navigator>
   );

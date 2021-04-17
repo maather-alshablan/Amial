@@ -67,7 +67,7 @@ export default class AddOrEditVehicle extends Component {
 
     }
 
-    
+
 
     onResult = (queury) => {
         let car = null
@@ -129,9 +129,9 @@ export default class AddOrEditVehicle extends Component {
     gnerateYears = () => {
         const arr = []
         for (let i = 2021; i > 2010; i--) {
-           
-          //  arr.push({ id: i, label: i.toString(), value: i.toString() },)
-            arr.push(   i.toString() )
+
+            //  arr.push({ id: i, label: i.toString(), value: i.toString() },)
+            arr.push(i.toString())
 
         }
         // console.warn({ arr })
@@ -176,6 +176,30 @@ export default class AddOrEditVehicle extends Component {
             });
     }
 
+    checkDataBaseCarId = (carId) => {
+        return database.collection('DataSets').where('Serial number', "==", carId)
+            .get()
+            .then((querySnapshot) => {
+                let found = false;
+                let obj = null;
+                querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    found = true
+                    obj = doc.data()
+                });
+
+                if (found) {
+                    return true;
+                } else {
+                    this.failureMessage('عذرا لا تستطيع اضافة هذه المركبة لعدم وجودها داخل البيانات')
+                    this.setState({ errors: true })
+                    return false;
+                }
+            })
+            .catch((error) => {
+                console.warn("Error getting documents: ", error);
+            });
+    }
     openImagePickerAsync = async () => {
         await Permissions.askAsync(Permissions.CAMERA_ROLL);
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -446,13 +470,13 @@ export default class AddOrEditVehicle extends Component {
         )
     }
 
-    
+
     renderFirstStep = () => {
         var regions = []
         var carType = []
-       regoins.forEach(region=> regions.push(region.name_ar));
+        regoins.forEach(region => regions.push(region.name_ar));
         carTypes.forEach(type => carType.push(type.value));
-        
+
         return (
 
             <ScrollView contentContainerStyle={{
@@ -460,38 +484,38 @@ export default class AddOrEditVehicle extends Component {
                 backgroundColor: '#fff'
             }}>
 
-{this.state.edit ? 
-<TouchableOpacity style={{ alignSelf:'flex-start',flexDirection:'row',justifyContent:'center',}} 
-onPress={() => {
-    Alert.alert(
-        "حذف المركبة",
-        "هل أنت متأكد من حذف المركبة ",
-        [
-          { text: "لا", onPress: () => console.log("OK Pressed") },
-          {
-            text: " حذف المركبة ",
-  
-            onPress: () => {
-              database.collection('Vehicle').doc(this.state.docId).delete().then(() => {
-  
-                  // on success
-                  this.successMessage('تم الحذف بنجاح');
-                  this.props.navigation.pop();
-                }
-                ).catch(() => {
-                  this.failureMessage('يرجى المحاولة مرة أخرى')
-                })
-            },
-            style: "destructive"
-  
-          },
-  
-        ],
-  
-      );
-  }}>
-                           <MaterialIcons name={"delete"} size={30}/>
-                        </TouchableOpacity> : <View></View>}
+                {this.state.edit ?
+                    <TouchableOpacity style={{ alignSelf: 'flex-start', flexDirection: 'row', justifyContent: 'center', }}
+                        onPress={() => {
+                            Alert.alert(
+                                "حذف المركبة",
+                                "هل أنت متأكد من حذف المركبة ",
+                                [
+                                    { text: "لا", onPress: () => console.log("OK Pressed") },
+                                    {
+                                        text: " حذف المركبة ",
+
+                                        onPress: () => {
+                                            database.collection('Vehicle').doc(this.state.docId).delete().then(() => {
+
+                                                // on success
+                                                this.successMessage('تم الحذف بنجاح');
+                                                this.props.navigation.pop();
+                                            }
+                                            ).catch(() => {
+                                                this.failureMessage('يرجى المحاولة مرة أخرى')
+                                            })
+                                        },
+                                        style: "destructive"
+
+                                    },
+
+                                ],
+
+                            );
+                        }}>
+                        <MaterialIcons name={"delete"} size={30} />
+                    </TouchableOpacity> : <View></View>}
                 <View
                     style={{
                         marginBottom: 20,
@@ -510,7 +534,7 @@ onPress={() => {
                             }} />
                         <Entypo name="plus" color={this.state.image ? 'white' : colors.Green} size={50} style={{ position: 'absolute', top: 30, left: 100, opacity: 0.8 }} />
                     </TouchableOpacity>
-                    
+
                 </View>
 
                 <Text style={styles.SectionLabel}>{'معلومات المركبة'}</Text>
@@ -534,16 +558,16 @@ onPress={() => {
                             color={item.value == this.state.carType ? colors.LightBlue : '#000'}
                         />)}
                     </Picker> */}
-                     <ModalDropdown 
-                    defaultValue={this.state.carType ? this.state.carType : "نوع المركبة"}
-                    textStyle = {{color:colors.LightBlue,height: 45, fontFamily: "Tajawal_400Regular", fontSize:18,paddingTop:15}}
-                    options={carType} 
-                    showsVerticalScrollIndicator={true}
-                    dropdownTextStyle ={{color:colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize:18,alignSelf:'center',}}
-                    dropdownStyle={{alignSelf:'center', justifyContent:'center',height:200}}
-                    multipleSelect={false}
-                    onSelect = {(index , option )=>  this.setState({carType: option})   }
-                    style={{ width: '45%', backgroundColor:'#F0EEF0' ,borderRadius:7,alignItems:'center',}}/>
+                    <ModalDropdown
+                        defaultValue={this.state.carType ? this.state.carType : "نوع المركبة"}
+                        textStyle={{ color: colors.LightBlue, height: 45, fontFamily: "Tajawal_400Regular", fontSize: 18, paddingTop: 15 }}
+                        options={carType}
+                        showsVerticalScrollIndicator={true}
+                        dropdownTextStyle={{ color: colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize: 18, alignSelf: 'center', }}
+                        dropdownStyle={{ alignSelf: 'center', justifyContent: 'center', height: 200 }}
+                        multipleSelect={false}
+                        onSelect={(index, option) => this.setState({ carType: option })}
+                        style={{ width: '45%', backgroundColor: '#F0EEF0', borderRadius: 7, alignItems: 'center', }} />
                     {/* <Picker
                         itemStyle={{ height: 50, fontFamily: "Tajawal_400Regular" }}
                         selectedValue={this.state.year}
@@ -557,19 +581,19 @@ onPress={() => {
                         />)}
                     </Picker> */}
 
-                    <ModalDropdown 
-                    defaultValue={this.state.year ? this.state.year : "سنة الصنع"}
-                    textStyle = {{color:colors.LightBlue,height: 45, fontFamily: "Tajawal_400Regular", fontSize:18,paddingTop:15}}
-                    options={this.state.years} 
-                    dropdownTextStyle ={{color:colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize:18,alignSelf:'center',}}
-                    dropdownStyle={{alignSelf:'center', justifyContent:'center',height:120}}
-                    multipleSelect={false}
-                    onSelect = {(index , option )=>  this.setState({year: option})   }
-                    style={{ width: '45%', backgroundColor:'#F0EEF0' ,borderRadius:7,alignItems:'center',marginLeft:24}}/>
+                    <ModalDropdown
+                        defaultValue={this.state.year ? this.state.year : "سنة الصنع"}
+                        textStyle={{ color: colors.LightBlue, height: 45, fontFamily: "Tajawal_400Regular", fontSize: 18, paddingTop: 15 }}
+                        options={this.state.years}
+                        dropdownTextStyle={{ color: colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize: 18, alignSelf: 'center', }}
+                        dropdownStyle={{ alignSelf: 'center', justifyContent: 'center', height: 120 }}
+                        multipleSelect={false}
+                        onSelect={(index, option) => this.setState({ year: option })}
+                        style={{ width: '45%', backgroundColor: '#F0EEF0', borderRadius: 7, alignItems: 'center', marginLeft: 24 }} />
                 </View>
 
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20,}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, }}>
                     {/* <Picker
                         itemStyle={{ height: 50, fontFamily: "Tajawal_400Regular" }}
                         selectedValue={this.state.state}
@@ -582,16 +606,16 @@ onPress={() => {
                             color={item.name_ar == this.state.state ? colors.LightBlue : '#000'}
                         />)}
                     </Picker> */}
-                    <ModalDropdown 
-                    defaultValue={this.state.state ? this.state.state : "المنطقة"}
-                    textStyle = {{color:colors.LightBlue,height: 45, fontFamily: "Tajawal_400Regular", fontSize:18,paddingTop:15}}
-                    options={regions} 
-                    showsVerticalScrollIndicator={true}
-                    dropdownTextStyle ={{color:colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize:18,alignSelf:'center',}}
-                    dropdownStyle={{alignSelf:'center', justifyContent:'center',height:200}}
-                    multipleSelect={false}
-                    onSelect = {(index , option )=>  this.setState({state: option})   }
-                    style={{ width: '45%', backgroundColor:'#F0EEF0' ,borderRadius:7,alignItems:'center',}}/>
+                    <ModalDropdown
+                        defaultValue={this.state.state ? this.state.state : "المنطقة"}
+                        textStyle={{ color: colors.LightBlue, height: 45, fontFamily: "Tajawal_400Regular", fontSize: 18, paddingTop: 15 }}
+                        options={regions}
+                        showsVerticalScrollIndicator={true}
+                        dropdownTextStyle={{ color: colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize: 18, alignSelf: 'center', }}
+                        dropdownStyle={{ alignSelf: 'center', justifyContent: 'center', height: 200 }}
+                        multipleSelect={false}
+                        onSelect={(index, option) => this.setState({ state: option })}
+                        style={{ width: '45%', backgroundColor: '#F0EEF0', borderRadius: 7, alignItems: 'center', }} />
                     {/* /* <Picker
                         itemStyle={{ height: 50, fontFamily: "Tajawal_400Regular" }}
                         selectedValue={this.state.transmission}
@@ -604,15 +628,15 @@ onPress={() => {
                         <Picker.Item label="اوتوماتك" value="اوتوماتك" color={"اوتوماتك" == this.state.transmission ? colors.LightBlue : '#000'} />
                     </Picker> */ }
 
-                    <ModalDropdown 
-                    defaultValue={this.state.transmission ? this.state.transmission : "نوع الجير"}
-                    textStyle = {{color:colors.LightBlue,height: 45, fontFamily: "Tajawal_400Regular", fontSize:18,paddingTop:15}}
-                    options={[ "عادي", "اوتوماتك"]} 
-                    dropdownTextStyle ={{color:colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize:18,alignSelf:'center',}}
-                    dropdownStyle={{alignSelf:'center', justifyContent:'center',height:80}}
-                    multipleSelect={false}
-                    onSelect = {(index , option )=>  this.setState({transmission: option})   }
-                    style={{ width: '45%', backgroundColor:'#F0EEF0' ,borderRadius:7,alignItems:'center',marginLeft:24}}/>
+                    <ModalDropdown
+                        defaultValue={this.state.transmission ? this.state.transmission : "نوع الجير"}
+                        textStyle={{ color: colors.LightBlue, height: 45, fontFamily: "Tajawal_400Regular", fontSize: 18, paddingTop: 15 }}
+                        options={["عادي", "اوتوماتك"]}
+                        dropdownTextStyle={{ color: colors.LightBlue, fontFamily: "Tajawal_400Regular", fontSize: 18, alignSelf: 'center', }}
+                        dropdownStyle={{ alignSelf: 'center', justifyContent: 'center', height: 80 }}
+                        multipleSelect={false}
+                        onSelect={(index, option) => this.setState({ transmission: option })}
+                        style={{ width: '45%', backgroundColor: '#F0EEF0', borderRadius: 7, alignItems: 'center', marginLeft: 24 }} />
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', }}>
@@ -664,7 +688,7 @@ onPress={this.handleSaveData}
 style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', justifyContent: 'center', alignItems: 'center', marginVertical: 16, alignSelf: 'center' }}>
 <Text style={{ fontSize: 14, color: '#fff' }}>حفظ</Text>
 </TouchableOpacity> */}
-                
+
             </ScrollView>
 
         )
@@ -753,12 +777,28 @@ style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', j
         // return;
         // }
 
-        if (this.state.carNumber != "") {
-            const check = await this.checkDataBase(this.state.carNumber);
-            if (!check) {
+        // if (this.state.carNumber != "") {
+        //     const check = await this.checkDataBase(this.state.carNumber);
+        //     if (!check) {
+        //         return;
+        //     }
+        // }
+
+        if (this.state.carId != "") {
+            if (this.state.carId.length == 9) {
+                const check = await this.checkDataBaseCarId(this.state.carId);
+                if (!check) {
+                    return;
+                }
+            } else {
+                this.failureMessage('الرجاء التأكد من رقم الاستمارة المدخل')
+                this.setState({
+                    errors: true,
+                });
                 return;
             }
         }
+
         this.setState({
             errors: false,
         });

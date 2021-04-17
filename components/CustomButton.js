@@ -33,8 +33,11 @@ const styles = StyleSheet.create({
 });
 
 export default function CustomButton(props) {
-  return (<TouchableOpacity style={[styles.EmptyaddVehicleButton, props.style]}
-    onPress={props.onPress}>
+  return (<TouchableOpacity
+    {...props}
+    style={[styles.EmptyaddVehicleButton, props.style]}
+    onPress={props.onPress}
+  >
     {/* {<Ionicons name={'add'} color={'white'} size={28} style={{ top: 3 }} />} */}
     <Text style={styles.ButtonText}>{props.title}</Text>
 

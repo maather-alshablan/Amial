@@ -24,12 +24,12 @@ export default class Registration extends Component {
     DoB: '',
     password: '',
     confirmPassword: '',
-    date:'',
+    date: '',
     loading: false,
     correctEmail: false
   }
 
-  
+
 
 
   checkDataBase = (nationalID) => {
@@ -43,29 +43,28 @@ export default class Registration extends Component {
           // console.log(doc.data(), doc.id)
           if (doc.id == nationalID) {
             found = true
-            this.setState({name: doc.data().Name});
+            this.setState({ name: doc.data().Name });
             obj = doc.data()
           }
           // console.warn(obj)
         });
-
+        console.log({ found })
         if (found) {
           // check birthdate 
-          if (obj.birthdate?.toString() != this.state.date) {
-            this.failureMessage("عذرا تاريخ الميلاد غير مطابق لرقم الهوية")
-            return false
-          } else 
-          if (obj['Driving License'] != "Active") {
-            this.failureMessage("عذرا يرجى تجديد الرخصة قبل استكمال عملية التسجيل")
-            return false
-          }
-          return true
+          // if (obj.birthdate?.toString() != this.state.date) {
+          //   this.failureMessage("عذرا تاريخ الميلاد غير مطابق لرقم الهوية")
+          //   return false
+          // } else if (obj['Driving License'] != "Active") {
+          //   this.failureMessage("عذرا يرجى تجديد الرخصة قبل استكمال عملية التسجيل")
+          //   return false
+          // }
+          return obj
         } else {
           this.failureMessage("عذرا رقم الهوية المدخل غير صحيح")
           return false;
         }
-       
-        
+
+
       })
       .catch((error) => {
         console.warn("Error getting documents: ", error);
@@ -73,19 +72,22 @@ export default class Registration extends Component {
   }
 
 
-  checkMobileNumber = (mobileNumber)=>{
-    var ref = database.collection('users').where('mobileNumber','==', mobileNumber).get()
-    .then((docSnapshot) => {
-      if (!docSnapshot.empty) 
-      // mobile number found thus already exists
-        return false;
+  checkMobileNumber = (mobileNumber) => {
+    var ref = database.collection('users').where('mobileNumber', '==', mobileNumber).get()
+      .then((docSnapshot) => {
+        if (!docSnapshot.empty)
+          // mobile number found thus already exists
+          return false;
       });
 
     return true;
   }
 
+  sendOtp = () => {
 
+  }
   handleSignUp = async () => {
+
 
 
     if (this.state.password !== this.state.confirmPassword) {
@@ -97,26 +99,26 @@ export default class Registration extends Component {
     }
 
 
-    if (this.state.email === '' && this.state.password === '' ) {
+    if (this.state.email === '' && this.state.password === '') {
       this.state.formValid = false;
       this.failureMessage(" يرجى ادخال جميع البيانات")
       return;
 
     }
-    if (this.state.nationalID == '' || this.state.mobileNumber == '' || this.state.email == '' || this.state.password == '' || this.state.confirmPassword == '' || this.state.date=='') {
+    if (this.state.nationalID == '' || this.state.mobileNumber == '' || this.state.email == '' || this.state.password == '' || this.state.confirmPassword == '' || this.state.date == '') {
       this.state.formValid = false;
       this.failureMessage(" يرجى ادخال جميع البيانات")
       return;
     }
 
-    if(!(/^\d+$/.test(this.state.nationalID))){ // validate only numbers
+    if (!(/^\d+$/.test(this.state.nationalID))) { // validate only numbers
       this.state.formValid = false;
       this.failureMessage(" يرجى ادخال رقم هوية مكون من ١٠ خانات ")
       return;
-    
+
     }
 
-    if (this.state.mobileNumber.length != 10 || !this.state.mobileNumber.startsWith('05') ) {
+    if (this.state.mobileNumber.length != 10 || !this.state.mobileNumber.startsWith('05')) {
       this.state.formValid = false;
       this.failureMessage("يرجى استخدام رقم جوال صحيح")
       return
@@ -128,12 +130,12 @@ export default class Registration extends Component {
       return
     }
 
-//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-  if (!(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(this.state.password))){
-    this.state.formValid = false;
+    //Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
+    if (!(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(this.state.password))) {
+      this.state.formValid = false;
       this.failureMessage("يرجى ادخال كلمة مرور مكونة من حرف كبير،حرف صغير، ورموز ورقم ")
       return
-  }
+    }
 
 
     if (!this.state.correctEmail) {
@@ -146,20 +148,21 @@ export default class Registration extends Component {
       return;
     }
 
-    if (!this.checkMobileNumber(this.state.mobileNumber)){
+    if (!this.checkMobileNumber(this.state.mobileNumber)) {
       this.failureMessage("عذرا رقم التواصل المدخل مسجل من قبل")
       return;
     }
-    auth.
-      createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then((response) => {
+
+    this.props.navigation.navigate('OtpScreen', {
+      name: check['Name'],
+      phoneNumber: check['Phone Number'],
+      email: this.state.email,
+      password: this.state.password,
+      completeRegister: () => {
         this.successfulRegistration()
-      })
-      .catch(
-        (e) => {
-          console.log('successfulRegistration[error]', e)
-          //this.failureMessage(e?.message ? e?.message : 'يرجى التأكد من ادخال البيانات بالشكل الصحيح')
-        })
+      }
+    })
+
 
     if (this.state.errorMessage == '') {
 
@@ -169,7 +172,8 @@ export default class Registration extends Component {
   successfulRegistration = () => {
 
     this.setState({ loading: true })
-    const userid = auth.currentUser.uid;
+    const userid = auth?.currentUser?.uid;
+    console.log({ userid })
     database.collection('users').doc(userid).set({
       name: this.state.name,
       email: this.state.email,
@@ -224,45 +228,45 @@ export default class Registration extends Component {
               iconName={'flag'}
             />
 
-<View
-      style={[{
-        flexDirection: 'row-reverse',
-        marginBottom: 20,
-        alignItems: 'center'
-      }, ]}>
-      
-                  <DatePicker
-                            style={{ width: 250,  }}
-                            mode="date"
-                            date={this.state.date}
-                            placeholder="تاريخ الميلاد"
-                            format="DD-MM-YYYY"
-                             minDate="01-01-1945"
-                              maxDate="01-01-2006"
-                            confirmBtnText="تاكيد"
-                            cancelBtnText="الغاء"
-                            showIcon={true}
-                            iconComponent = {<MaterialIcons name= {"date-range"}color={'#01b753'} size={30} style={{ marginLeft:4 }}/>}
-                            customStyles={{
-                              placeholderText:{
-                                paddingHorizontal: 10,
-                                textAlign: 'center',
-                                fontSize: 20,
-                                //color: 'grey',
-                                fontFamily: "Tajawal_400Regular",
-                              },
-                                dateInput: {
-                                    marginLeft: 17,
-                                    borderColor: "#fff",
-                                 
-                                    height: 30,
-                                    borderBottomColor: 'gray',
-                                } // ... You can check the source to find the other keys.
-                            }}
-                            onDateChange={(date) => { this.setState({ date: date }) }}
+            <View
+              style={[{
+                flexDirection: 'row-reverse',
+                marginBottom: 20,
+                alignItems: 'center'
+              },]}>
 
-                        />
-                        </View>
+              <DatePicker
+                style={{ width: 250, }}
+                mode="date"
+                date={this.state.date}
+                placeholder="تاريخ الميلاد"
+                format="DD-MM-YYYY"
+                minDate="01-01-1945"
+                maxDate="01-01-2006"
+                confirmBtnText="تاكيد"
+                cancelBtnText="الغاء"
+                showIcon={true}
+                iconComponent={<MaterialIcons name={"date-range"} color={'#01b753'} size={30} style={{ marginLeft: 4 }} />}
+                customStyles={{
+                  placeholderText: {
+                    paddingHorizontal: 10,
+                    textAlign: 'center',
+                    fontSize: 20,
+                    //color: 'grey',
+                    fontFamily: "Tajawal_400Regular",
+                  },
+                  dateInput: {
+                    marginLeft: 17,
+                    borderColor: "#fff",
+
+                    height: 30,
+                    borderBottomColor: 'gray',
+                  } // ... You can check the source to find the other keys.
+                }}
+                onDateChange={(date) => { this.setState({ date: date }) }}
+
+              />
+            </View>
             <Input
               placeholder="البريد الالكتروني"
               value={this.state.email}
