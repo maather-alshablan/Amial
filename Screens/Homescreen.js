@@ -348,7 +348,7 @@ navigation={this.props.navigation}
     // availability
     // type
     if (this.state.carType != "" || this.state.date != "" || this.state.searchValue != "") {
-      const filterCars = this.state.originalCars.filter(car => {
+      let filterCars = this.state.originalCars.filter(car => {
         const { image = "", model = "", type = "" } = car.vehicleDetails || {}
 
         const avs = car.availability.join(',')
@@ -362,9 +362,19 @@ navigation={this.props.navigation}
           } else {
             return true
           }
+        } else {
+          if (this.state.searchValue != "") {
+            if (model.toLocaleLowerCase().indexOf(this.state.searchValue?.toLocaleLowerCase()) > -1) {
+              return true
+            } else {
+              return false
+            }
+          } else {
+            return true
+          }
         }
       })
-      console.log(filterCars, "----", this.state.carType)
+
       this.setState({
         cars: filterCars
       })
