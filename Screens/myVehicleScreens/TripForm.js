@@ -12,8 +12,7 @@ import CustomButton from '../../components/CustomButton'
 import CustomHeader from '../../components/CustomHeader';
 import { Rating, AirbnbRating, } from 'react-native-ratings';
 import Modal from 'react-native-modal';
-
-
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default class tripForm extends Component {
     constructor(props) {
@@ -396,14 +395,17 @@ export default class tripForm extends Component {
                 CheckOutTime: time
             }
 
+
+            
+
             var batch = database.batch();
 
             var trip = database.collection('Trips').doc(this.state.currentRequest.tripID);
-            batch.update(trip, { status: 'completed', OwnerPostTrip: OwnerPostTrip });
+            batch.update(trip, { status: 'completed', OwnerPostTrip: OwnerPostTrip,  });
 
             var ownerRequest = database.collection('users').doc(this.state.currentRequest.ownerID)
                 .collection('Requests').doc(this.state.currentRequest.tripID);
-            batch.update(ownerRequest, { status: 'completed' });
+            batch.update(ownerRequest, { status: 'completed',  });
 
             batch.commit().then(() => {
                 // on success
@@ -947,6 +949,7 @@ export default class tripForm extends Component {
         return (
 
             <View style={styles.container}>
+                <ScrollView>
                 <View >
                     <DismissKeyboard>
                         {form}
@@ -956,6 +959,7 @@ export default class tripForm extends Component {
                     {RateModal}
                     {NoShowModal}
                 </View>
+                </ScrollView>
             </View>
 
         )

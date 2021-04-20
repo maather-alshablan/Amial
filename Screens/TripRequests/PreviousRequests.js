@@ -33,7 +33,7 @@ export default class ActiveRequests extends Component {
     console.log('user is borrower')
     database.collection('users').doc(auth.currentUser.uid).collection('Requests')
       .where("borrowerID", '==', auth.currentUser.uid)
-      .where('status', 'in', ['completed', 'rejected', 'cancelled']).orderBy('requestTime', 'asc')
+      .where('status', 'in', ['completed', 'rejected', 'cancelled']).orderBy('timestamp', 'desc')
       .onSnapshot((querySnapshot) => {
         let requests = []
         if (!querySnapshot.empty) {
@@ -48,7 +48,7 @@ export default class ActiveRequests extends Component {
           this.setState({ request: requests, hasRequest: true });
           console.log('array > ', this.state.request)
         } else {
-          console.log('No Pending requests found')
+          console.log('No previous requests found')
           this.setState({ request: requests, hasRequest: false });
         }
       })

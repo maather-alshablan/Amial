@@ -83,7 +83,7 @@ export default class Person extends Component {
         .then((url) => {
           this.setState({ image: url });
         }).catch(e => {
-          console.log({ e })
+          console.log('error with storage')
         })
     } catch (error) {
 

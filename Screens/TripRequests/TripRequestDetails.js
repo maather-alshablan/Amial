@@ -4,7 +4,6 @@ import { showMessage } from 'react-native-flash-message';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 import { Rating, AirbnbRating, } from 'react-native-ratings';
 import { firebase } from '../../Configuration/firebase'
-// import {Moyasar} from 'moyasar'
 import colors from '../../Constants/colors';
 import { database, auth } from '../../Configuration/firebase';
 import { ModalComponent } from '../../Constants/Components/Modal';
@@ -378,15 +377,15 @@ export default class BorrowerRequestDetails extends Component {
     batch.set(Authorization, { RequestDocument });
 
     var trip = database.collection('Trips').doc(this.state.currentRequest.tripID);
-    batch.update(trip, { status: 'confirmed' });
+    batch.update(trip, { status: 'confirmed' , DriverAuthorization:RequestDocument.AuthorizationNumber});
 
     var borrowerRequest = database.collection('users').doc(auth.currentUser.uid)
       .collection('Requests').doc(this.state.currentRequest.tripID);
-    batch.update(borrowerRequest, { status: 'confirmed' });
+    batch.update(borrowerRequest, { status: 'confirmed' ,DriverAuthorization:RequestDocument.AuthorizationNumber});
 
     var ownerRequest = database.collection('users').doc(this.state.currentRequest.ownerID)
       .collection('Requests').doc(this.state.currentRequest.tripID);
-    batch.update(ownerRequest, { status: 'confirmed' });
+    batch.update(ownerRequest, { status: 'confirmed' ,DriverAuthorization:RequestDocument.AuthorizationNumber});
 
     var vehicle = database.collection('Vehicle').doc(this.state.currentRequest.vehicleID)
     batch.update(vehicle, { availability: newAvailability })
