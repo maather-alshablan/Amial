@@ -20,3 +20,10 @@ export  function RequestDropAuthorization(OwnerID, DriverID, authorizationStartD
       
 return false;
 }
+
+function DeauthorizeDriver (authorizationNumber){
+
+  
+  database.collection('DataSets').doc(authorizationNumber).delete
+}
+
