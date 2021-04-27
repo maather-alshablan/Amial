@@ -78,7 +78,7 @@ export default class Person extends Component {
         .ref()
         .child('userImages/' + personID);
       // Get the download URL
-      console.log({ ref })
+      //console.log({ ref })
       ref.getDownloadURL()
         .then((url) => {
           this.setState({ image: url });
@@ -86,7 +86,7 @@ export default class Person extends Component {
           console.log('error with storage')
         })
     } catch (error) {
-
+      console.log('error with storage')
     }
 
 

@@ -44,11 +44,12 @@ export default class editProfile extends Component {
 
     const documentSnapshot = await database
       .collection('users')
-      .doc(this.state.userId)
+      .doc(firebase.auth().currentUser.uid)
       .get().catch(() =>
         this.setState({ errorMessage: 'يرجى الحفظ  ' })
       )
 
+      console.log(firebase.auth().currentUser.uid)
     const userData = documentSnapshot.data();
     this.setState({
       nationalID: CryptoES.AES.decrypt(userData.nationalID, firebase.auth().currentUser.uid).toString(CryptoES.enc.Utf8),
@@ -59,11 +60,6 @@ export default class editProfile extends Component {
   }
 
   handleSaveInfo = () => {
-
-    //check name constraint
-    if (this.state.name === '')
-      this.failureMessage('يرجى تعبئة الإسم الكامل')
-
 
     //check email constraint 
     const regexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -79,7 +75,7 @@ export default class editProfile extends Component {
 
 
     database.collection('users').doc(auth().currentUser.uid).update({
-      name: this.state.name,
+     
       email: this.state.email,
       mobileNumber: this.state.mobileNumber,
     }).then(() => {
