@@ -22,7 +22,7 @@ function ProfileStack (){
         unmountOnBlur={true}
         options={{ 
           headerTitle: props => <Header {...props} /> ,
-            headerStyle: { shadowColor: 'transparent' ,height:140},
+            headerStyle: { shadowColor: 'transparent' ,height:140,},
             headerTintColor:colors.LightBlue
 
             }}
@@ -41,7 +41,7 @@ function ProfileStack (){
             headerTitle:props => <FAQHeader {...props} />,
             headerBackTitleVisible:false,
             headerBackTitleStyle:{color:'#5dbcd2'},
-            headerStyle: { shadowColor: 'transparent',height:140},
+            headerStyle: { shadowColor: 'transparent',height:140, },
             headerTintColor:colors.LightBlue
             }}/>
            
@@ -91,8 +91,8 @@ function Header(){
 
   function FAQHeader(){
     return(
-      <View >
-      <Text style={{fontSize:33,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', }}>الأسئلة الشائعة</Text>
+      <View  >
+      <Text style={{fontSize:35,color:'#5dbcd2', fontFamily:'Tajawal_400Regular', padding:10}}>الأسئلة الشائعة</Text>
       </View>
     )
   }
