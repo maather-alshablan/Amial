@@ -40,28 +40,21 @@ export default class ActiveRequests extends Component {
           console.log(querySnapshot.size, ' Pending Requests found')
 
           querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            //requests.push(doc.id, " => ", doc.data());
             requests.push(doc.data());
-            //requests[doc.id] = doc.data();
           });
           this.setState({ request: requests, hasRequest: true });
           console.log('array > ', this.state.request)
         } else {
           console.log('No previous requests found')
           this.setState({ request: requests, hasRequest: false });
-        }
-      })
-  }
+        } }) }
 
   renderRequest = ({ item, index }) => {
 
     var status = item.status + '';
     var button = (<TouchableOpacity style={[styles.Button, { borderColor: colors.Subtitle, borderWidth: 1, width: 150, marginHorizontal: 10, alignSelf: 'flex-start' }]}
       onPress={() => {
-        this.props.navigation.navigate('RequestDetails', { currentRequest: item })
-
-      }}>
+        this.props.navigation.navigate('RequestDetails', { currentRequest: item }) }}>
       <Text style={[styles.ButtonText, { color: colors.Subtitle }]}> تفاصيل الطلب  </Text>
     </TouchableOpacity>)
 
