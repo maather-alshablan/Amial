@@ -103,17 +103,7 @@ export default class AddOrEditVehicle extends Component {
             })
         }
 
-        // if (car) {
-        // this.setState({
-        // carId: car.carId,
-        // carModel: car.carModel,
-        // carType: car.carType,
-        // availabilities: car.availabilities,
-        // edit: true,
-        // image: car.image,
-        // docId: docId
-        // })
-        // }
+        
     }
     onError = (e) => {
         // console.warn(e, "===")
@@ -412,19 +402,7 @@ export default class AddOrEditVehicle extends Component {
                     {vehicleFeatures.map(feature => {
                         return (<TouchableOpacity
                             onPress={() => {
-                                // if (this.state.selectedFeatures[feature.id]) {
-                                // const featurs = { ...this.state.selectedFeatures };
-                                // delete featurs[feature.id]
-                                // this.setState({
-                                // selectedFeatures: featurs
-                                // })
-
-                                // } else {
-                                // this.setState({
-                                // selectedFeatures: { ...this.state.selectedFeatures, [feature.id]: feature }
-                                // })
-                                // console.log(this.state.selectedFeatures);
-                                // }
+                         
                                 if (this.state.selectedFeatures == undefined) {
                                     console.log('undefined array')
                                     const features = []
@@ -540,24 +518,7 @@ export default class AddOrEditVehicle extends Component {
                 <Text style={styles.SectionLabel}>{'معلومات المركبة'}</Text>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-                    {/* <Picker
-                        itemStyle={{
-                            height: 50,
-                            fontFamily: "Tajawal_400Regular"
-                        }}
-                        selectedValue={this.state.carType}
-                        style={{
-                            height: 50,
-                            width: '50%',
-                        }}
-                        onValueChange={(itemValue, itemIndex) =>
-                            this.setState({ carType: itemValue })
-                        }>
-                        <Picker.Item label="نوع المركبة" value="نوع المركبة" />
-                        {carTypes.map(item => <Picker.Item key={item.id} label={item.label} value={item.value}
-                            color={item.value == this.state.carType ? colors.LightBlue : '#000'}
-                        />)}
-                    </Picker> */}
+                
                     <ModalDropdown
                         defaultValue={this.state.carType ? this.state.carType : "نوع المركبة"}
                         textStyle={{ color: colors.LightBlue, height: 45, fontFamily: "Tajawal_400Regular", fontSize: 18, paddingTop: 15 }}
@@ -568,18 +529,7 @@ export default class AddOrEditVehicle extends Component {
                         multipleSelect={false}
                         onSelect={(index, option) => this.setState({ carType: option })}
                         style={{ width: '45%', backgroundColor: '#F0EEF0', borderRadius: 7, alignItems: 'center', }} />
-                    {/* <Picker
-                        itemStyle={{ height: 50, fontFamily: "Tajawal_400Regular" }}
-                        selectedValue={this.state.year}
-                        style={{ height: 50, width: '50%', }}
-                        onValueChange={(itemValue, itemIndex) =>
-                            this.setState({ year: itemValue })
-                        }>
-                        <Picker.Item label="سنة الصنع" value="سنة الصنع" />
-                        {this.state.years.map(item => <Picker.Item key={item.id} label={item.label} value={item.value}
-                            color={item.value == this.state.year ? colors.LightBlue : '#000'}
-                        />)}
-                    </Picker> */}
+             
 
                     <ModalDropdown
                         defaultValue={this.state.year ? this.state.year : "سنة الصنع"}
@@ -594,18 +544,7 @@ export default class AddOrEditVehicle extends Component {
 
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, }}>
-                    {/* <Picker
-                        itemStyle={{ height: 50, fontFamily: "Tajawal_400Regular" }}
-                        selectedValue={this.state.state}
-                        style={{ height: 50, width: '50%', }}
-                        onValueChange={(itemValue, itemIndex) =>
-                            this.setState({ state: itemValue })
-                        }>
-                        <Picker.Item label="المنطقة" value="المنطقة" />
-                        {regoins.map(item => <Picker.Item key={item.region_id} label={item.name_ar} value={item.name_ar}
-                            color={item.name_ar == this.state.state ? colors.LightBlue : '#000'}
-                        />)}
-                    </Picker> */}
+              
                     <ModalDropdown
                         defaultValue={this.state.state ? this.state.state : "المنطقة"}
                         textStyle={{ color: colors.LightBlue, height: 45, fontFamily: "Tajawal_400Regular", fontSize: 18, paddingTop: 15 }}
@@ -616,17 +555,7 @@ export default class AddOrEditVehicle extends Component {
                         multipleSelect={false}
                         onSelect={(index, option) => this.setState({ state: option })}
                         style={{ width: '45%', backgroundColor: '#F0EEF0', borderRadius: 7, alignItems: 'center', }} />
-                    {/* /* <Picker
-                        itemStyle={{ height: 50, fontFamily: "Tajawal_400Regular" }}
-                        selectedValue={this.state.transmission}
-                        style={{ height: 50, width: '50%' }}
-                        onValueChange={(itemValue, itemIndex) =>
-                            this.setState({ transmission: itemValue })
-                        }>
-                        <Picker.Item label="نوع الجير" value="نوع الجير" />
-                        <Picker.Item label="عادي" value="عادي" color={"عادي" == this.state.transmission ? colors.LightBlue : '#000'} />
-                        <Picker.Item label="اوتوماتك" value="اوتوماتك" color={"اوتوماتك" == this.state.transmission ? colors.LightBlue : '#000'} />
-                    </Picker> */ }
+             
 
                     <ModalDropdown
                         defaultValue={this.state.transmission ? this.state.transmission : "نوع الجير"}
@@ -683,11 +612,7 @@ export default class AddOrEditVehicle extends Component {
 
                 {this.renderVehicleFeatures()}
 
-                {/* <TouchableOpacity
-onPress={this.handleSaveData}
-style={{ width: 200, height: 40, borderRadius: 20, backgroundColor: '#01b753', justifyContent: 'center', alignItems: 'center', marginVertical: 16, alignSelf: 'center' }}>
-<Text style={{ fontSize: 14, color: '#fff' }}>حفظ</Text>
-</TouchableOpacity> */}
+            
 
             </ScrollView>
 
